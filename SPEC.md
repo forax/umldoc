@@ -37,14 +37,18 @@ The idea is to use a line of comment inside the section in plantuml or mermaid
 to indicate a section that should be auto-generated
 
 For plantUML
+````
 ```plantuml
   ' umldoc ...
 ```
+````
 
 For mermaidjs
+````
 ```mermaid
   %% umldoc ...
 ```
+````
 
 This pattern seems simple enough for a human to understand and a line scanner to find.
 
