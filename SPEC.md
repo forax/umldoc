@@ -32,8 +32,23 @@ Generates different UML diagrams that can be embedded directly in Markdown docum
 - mermaidjs (https://mermaid-js.github.io/mermaid/)
 - GraphViz ? (https://graphviz.org/)
 
-### Snippet format
-to be defined ...
+### Snippet
+The idea is to use a line of comment inside the section in plantuml or mermaid
+to indicate a section that should be auto-generated
+
+For plantUML
+```plantuml
+  ' umldoc ...
+```
+
+For mermaidjs
+```mermaid
+  %% umldoc ...
+```
+
+This pattern seems simple enough for a human to understand and a line scanner to find.
+
+When the diagram is generated, the comment stay at the top so it can be generated again.
 
 ### Calendar
 
