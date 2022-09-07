@@ -32,27 +32,53 @@ Generates different UML diagrams that can be embedded directly in Markdown docum
 - mermaidjs (https://mermaid-js.github.io/mermaid/)
 - GraphViz ? (https://graphviz.org/)
 
-### Snippet
-The idea is to use a line of comment inside the section in plantuml or mermaid
-to indicate a section that should be auto-generated
+### Snippets
+
+Snippets are section of text that are replaced by a diagram by umldoc.
+
+There are 2 kinds of snippets
+- a file with extensions ".pu", ".plantuml" for plantuml file (respectively ".mmd", ".mermaid" for mermaidjs)
+- a block open/closed with 3 backticks inside a markdown file (".md")
+
+In both cases, the idea is to use a comment line to indicate a section that should be auto-generated,
+for plantuml, a line comment starts with a quote (') while for mermaidjs a line comment starts
+with a %%. It must be followed by "umldoc" and the command indicating which kind of diagram
+should be constructed ("class", "sequence", "component") with some optional parameter
+
+This pattern seems simple enough for a human to understand and a line scanner to find.
+When the diagram is generated, the comment stay at the top so it can be generated again.
+
+#### file with an extension
+
+For a plantUML file
+```
+@startuml
+' umldoc ... 
+@enduml
+```
+
+For a mermaidjs file
+```
+%% umldoc ...
+```
+
+#### backticks block inside a markdown file
 
 For plantUML
 ````
 ```plantuml
-  ' umldoc ...
+@startuml
+' umldoc ...
+@enduml
 ```
 ````
 
 For mermaidjs
 ````
 ```mermaid
-  %% umldoc ...
+%% umldoc ...
 ```
 ````
-
-This pattern seems simple enough for a human to understand and a line scanner to find.
-
-When the diagram is generated, the comment stay at the top so it can be generated again.
 
 ### Calendar
 
