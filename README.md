@@ -1,4 +1,8 @@
 # umldoc
 Automatically generates documentation with the UML diagrams using either plantUML or mermaidjs 
 
-The development will start soon, see [SPEC.md](SPEC.md).
+What we want, [SPEC.md](SPEC.md).
+
+Sessions
+1. try to model the core classes [design/ClassDiagram.md](design/ClassDiagram.md)
+   on a blackboard
