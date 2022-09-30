@@ -6,6 +6,9 @@ Try to model the classes necessary to represent a class diagram using blackboard
 
 ![class diagram](images/pereira_velu_class_diagram.jpg)
 
+**Mermaid**
+![mermaid class diagram](images/pereira_velu_class_diagram_mermaid.png)
+
 ### Brian - Axel
 
 ![class diagram](images/brian_axel_class_diagram.jpg)
