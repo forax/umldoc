@@ -13,6 +13,13 @@ Try to model the classes necessary to represent a class diagram using blackboard
 
 ![class diagram](images/brian_axel_class_diagram.jpg)
 
+**Mermaid**
+TODO
+<!-- ![mermaid class diagram](images/) -->
+
+**PlantUML**
+![PlantUML class diagram](images/BELIN_BABILLON_planUML.png)
+
 ### Léo - Adrien
 ![class diagram](images/leo_adrien_class_diagram.jpg)
 

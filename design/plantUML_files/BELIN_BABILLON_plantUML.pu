@@ -1,0 +1,59 @@
+@startuml BELIN_BABILLON_planUML
+
+skinparam class {
+    BackgroundColor Azure
+}
+
+enum Navigability {
+    FROM_ENTITY
+    TO_ENTITY
+    BOTH
+}
+
+enum Visibility {
+    PUBLIC
+    PRIVATE
+    PROTECTED
+    PACKAGE
+}
+
+class Association
+
+class ArrowSide {
+    -cardinality: String
+    -navigability: Navigability
+}
+
+class Entity {
+    -name: String
+    -stereotype: String
+}
+
+class Field {
+    -name: String
+    -type: String
+    -visibility: Visibility
+}
+
+class Method {
+    -name: String
+    -returnType: String
+    -visibility: Visibility
+}
+
+class Parameter {
+    -name: String
+    -type: String
+}
+
+Association "1" <--> "2" ArrowSide: association
+ArrowSide --> "1" Entity: direction
+ArrowSide ..> Navigability
+Entity <-- "*" Entity: subTypes
+Entity "1" --> "*" Field: attributes
+Entity "1" --> "*" Method: methods
+Method "1" --> "*" Parameter: arguments
+Method ..> Visibility
+Field ..> Visibility
+
+@enduml
