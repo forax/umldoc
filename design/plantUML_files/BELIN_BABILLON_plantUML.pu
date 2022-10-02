@@ -21,7 +21,6 @@ class Association
 
 class ArrowSide {
     -cardinality: String
-    -navigability: Navigability
 }
 
 class Entity {
@@ -32,13 +31,11 @@ class Entity {
 class Field {
     -name: String
     -type: String
-    -visibility: Visibility
 }
 
 class Method {
     -name: String
     -returnType: String
-    -visibility: Visibility
 }
 
 class Parameter {
@@ -48,12 +45,12 @@ class Parameter {
 
 Association "1" <--> "2" ArrowSide: association
 ArrowSide --> "1" Entity: direction
-ArrowSide ..> Navigability
+ArrowSide --> "1" Navigability: navigability
 Entity <-- "*" Entity: subTypes
 Entity "1" --> "*" Field: attributes
 Entity "1" --> "*" Method: methods
 Method "1" --> "*" Parameter: arguments
-Method ..> Visibility
-Field ..> Visibility
+Method --> "1" Visibility: visibility
+Field --> "1" Visibility: visibility
 
 @enduml
