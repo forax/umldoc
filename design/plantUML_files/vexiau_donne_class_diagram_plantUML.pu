@@ -1,0 +1,64 @@
+@startuml
+left to right direction
+Entity "1" --> "*" Arrow : arrows
+Entity "1" --> "*" Field : fields
+Entity "1" --> "*" Method : methods
+Method "1" --> "*" Parameter : parameters
+Arrow "1" <-- "*" Association : associations
+Arrow "1" <-- "*" Dependency : dependencies
+
+class Entity {
+ - name : String
+ - stereotype : String
+ + String getName() 
+ + String getStereotype() 
+}
+
+class Arrow {
+ - entityA : Entity
+ - entityB : Entity
+ - navigability : String
+ + Entity getEntityA() 
+ + Entity getEntityB() 
+ + String getNavigability() 
+}
+
+class Field {
+ - name : String
+ - type : Entity
+ - visibility : String
+ + String getName() 
+ + Entity getType() 
+ + String getVisibility() 
+}
+
+class Method {
+ - name : String
+ - returnType : Entity
+ - visibility : String
+ + String getName() 
+ + Entity getReturnType() 
+ + String getVisibility()
+}
+
+class Parameter {
+ - name : String
+ - type : Entity
+ + String getName() 
+ + Entity getType() 
+}
+
+class Association {
+ - name : String
+ - cardinalityA : String
+ - cardinalityB : String
+ + String getCardinalityA() 
+ + String getCardinalityB() 
+ + String getName()
+}
+
+class Dependency {
+}
+
+
+@enduml
