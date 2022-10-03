@@ -1,0 +1,54 @@
+@startuml
+
+class Box {
+    - name : String
+    - stereotype : String
+    + name() : String
+    + stereotype() : String
+}
+
+class Field {
+    - name : String
+    - visibility : String
+    - type : String
+    + name() : String
+    + visibility() : String
+    + type() : String
+}
+
+class Method {
+    - name : String
+    - visibility : String
+    - return_type : String
+    + name() : String
+    + visibility() : String
+    + return_type() : String
+}
+
+class Parameter {
+    - name : String
+    - type : String
+    + name() : String
+    + type() : String
+}
+
+class Association {
+    - start_cardinality : int
+    - end_cardinality : int
+    + start_cardinality() : int
+    + end_cardinality() : int
+}
+
+
+
+Box -|> "1" Box : implementations
+
+Box "1" -|> "*" Association : associates
+
+Field "*" <|- Box : fields
+
+Box -|> "*" Method : methods
+
+Method -|> Parameter : parameters
+
+@enduml
