@@ -1,0 +1,45 @@
+classDiagram
+    direction TB
+    Entity-->"*" Arrow : arrows
+    
+    class Entity{
+        +getName() String
+        +getStereotype() String
+    }
+    Arrow <|-- Dependencie 
+    Arrow <|-- Association 
+     
+    class Arrow{
+        <<interface>>
+        +getEntityA() Entity
+        +getEntityB() Entity
+    }
+    
+   
+    class Association{
+        +getNavigability() String
+        +getCardinalityA() String
+        +getCardinalityB() String
+    }
+    
+    Entity -->"*"  Field : fields
+    Entity -->"*"  Method : methods
+
+    class Field{
+        +getName() String
+        +getType() Entity
+        +getVisibility() String
+    }
+
+    class Method{
+        +getName() String
+        +getReturnType() Entity
+        +getVisibility() String
+    }
+    Method -->"*" Parameter : parameters
+
+    class Parameter{
+        +getName() String
+        +getType() Entity
+        
+    }
