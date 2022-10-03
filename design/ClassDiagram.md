@@ -27,5 +27,7 @@ TODO
 
 ### Marius - Thomas (VX)
 ![class diagram](images/vexiau-donne_class_diagram.jpg)
+**PlantUML**
 ![class diagram](images/vexiau_donne_class_diagram_plantUML.png)
+**Mermaid**
 ![class diagram](images/vexiau_donne_class_diagram_mermaid.png)
