@@ -24,6 +24,9 @@ TODO
 
 ### Léo - Adrien
 ![class diagram](images/leo_adrien_class_diagram.jpg)
+![PlantUML class diagram](images/COSTANDI_TOSTAIN_plantUML.png)
+![mermaid class diagram](images/COSTANDI_TOSTAIN_mermaid.png)
+
 
 ### Marius - Thomas (VX)
 ![class diagram](images/vexiau-donne_class_diagram.jpg)
