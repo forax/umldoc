@@ -15,8 +15,7 @@ Try to model the classes necessary to represent a class diagram using blackboard
 
 **Mermaid**
 
-TODO
-<!-- ![mermaid class diagram](images/) -->
+![mermaid class diagram](images/brian_axel_mermaid.png)
 
 **PlantUML**
 
