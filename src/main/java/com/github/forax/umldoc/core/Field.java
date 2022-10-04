@@ -1,11 +1,13 @@
 package com.github.forax.umldoc.core;
 
+import java.util.Set;
+
 /**
  * A field on an {@link Entity}.
  *
- * @param modifier the field modifier
+ * @param modifiers the field modifier
  * @param name the name of the field
  * @param type the type of the field
  */
-public record Field(Modifier modifier, String name, String type) {
+public record Field(Set<Modifier> modifiers, String name, String type) {
 }
