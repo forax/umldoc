@@ -1,16 +1,17 @@
 package com.github.forax.umldoc.core;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A method of an {@link Entity}.
  *
- * @param modifier the method modifier
+ * @param modifiers the method modifier
  * @param name the method name
  * @param returnType the return type
  * @param parameters the parameters
  */
-public record Method(Modifier modifier, String name, String returnType,
+public record Method(Set<Modifier> modifiers, String name, String returnType,
                      List<Parameter> parameters) {
   /**
    * A parameter of a method.
