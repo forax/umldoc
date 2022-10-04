@@ -1,0 +1,56 @@
+@startuml
+
+Field "*"<|-- Entity : Entity's fields
+Method "*"<|-- Entity : Entity's methods
+Parameters "*"<|-- Method : Method's parameters
+Entity "1"<|--|>"2" ArrowSide : Arrow's side
+Association <|-- ArrowSide : Association
+
+class Entity {
+    String name
+    String type
+    +String getName()
+    +String getType()
+}
+
+class Field {
+    String name
+    String type
+    String visibility
+    +String getName()
+    +String getType()
+    +String getVisibility()
+}
+
+class Method {
+    String returnType
+    String name
+    String visibility
+    +String getReturnType()
+    +String getName()
+    +String getVisibility()
+}
+
+class Parameters {
+    String type 
+    String name
+    +String getType()
+    +String getName()
+}
+
+class ArrowSide {
+    String cardinality
+    String navigability
+    +String getCardinality()
+    +String getNavigability()
+
+}
+
+class Association{
+    Entity firstEntity
+    Entity secondEntity
+    +Entity getFirstEntity()
+    +Entity getSecondEntity()
+}
+
+@enduml
