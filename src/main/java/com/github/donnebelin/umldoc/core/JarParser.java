@@ -3,43 +3,37 @@ import com.github.forax.umldoc.core.Entity;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
-
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class JarParser {
-    private final ArrayList<Entity> entities = new ArrayList<>();
+public final class JarParser {
 
-    private static String getModifier(int access) {
-        if (Modifier.isPublic(access)) {
-            return "+";
-        }
-        if (Modifier.isPrivate(access)) {
-            return "-";
-        }
-        if (Modifier.isProtected(access)) {
-            return "#";
-        }
-        return "";
-    }
+//    private static Modifier getModifier(int access) {
+//        if (Modifier.isPublic(access)) {
+//            return Modifier.PUBLIC;
+//        }
+//        if (Modifier.isPrivate(access)) {
+//            return Modifier.PRIVATE;
+//        }
+//        if (Modifier.isProtected(access)) {
+//            return Modifier.PROTECTED;
+//        }
+//        return Modifier.PACKAGE;
+//    }
 
-    private void getASMData(ClassReader classReader) {
+    private void getASMData(ClassReader classReader, ArrayList<Entity> entities) {
         classReader.accept(new ClassVisitor(Opcodes.ASM9) {
-            private static String modifier(int access) {
-                return getModifier(access);
-            }
+//            private static String modifier(int access) {
+//                return getModifier(access);
+//            }
 
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                                  + " " + (interfaces != null? Arrays.toString(interfaces): ""));
-                var modifier = modifier(access);
-                var className = name;
-
-
+//                System.err.println("class " + modifier(access) + " " + name + " " + superName + " " + (interfaces != null? Arrays.toString(interfaces): ""));
+                entities.add(new Entity(Set.of(), name, Optional.empty(), List.of(), List.of())); // TODO handle all parameters for entity creation
             }
 //
 //                            @Override
@@ -62,7 +56,7 @@ public class JarParser {
         }, 0);
     }
 
-    private void recoverEntitiesFromJar() throws IOException {
+    private void recoverEntitiesFromJar(ArrayList<Entity> entities) throws IOException {
         var path = Path.of("target");
         var finder = ModuleFinder.of(path);
         for(var moduleReference: finder.findAll()) {
@@ -73,7 +67,7 @@ public class JarParser {
                     }
                     try (var inputStream = reader.open(filename).orElseThrow()) {
                         var classReader = new ClassReader(inputStream);
-                        getASMData(classReader);
+                        getASMData(classReader, entities);
                     }
                 }
             }
@@ -81,7 +75,8 @@ public class JarParser {
     }
 
     public List<Entity> parse() throws IOException {
-        recoverEntitiesFromJar();
-        return entities;
+       var entities = new ArrayList<Entity>();
+        recoverEntitiesFromJar(entities);
+        return List.copyOf(entities);
     }
 }
