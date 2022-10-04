@@ -7,11 +7,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class WriterTest {
+public class SchemaGeneratorTest {
 
     @Test
     public void writerPreconditions() {
-        var writer = new Writer();
+        var writer = new SchemaGenerator();
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> writer.writeLines(null, List.of("test")))
         );
