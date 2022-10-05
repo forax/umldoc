@@ -16,7 +16,7 @@ import java.util.Set;
 public record Method(Set<Modifier> modifiers, String name, String returnType,
                      List<Parameter> parameters) {
   /**
-   * Creates a method;
+   * Creates a method.
    *
    * @param modifiers the method modifier
    * @param name the method name
