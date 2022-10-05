@@ -9,7 +9,7 @@ Sessions
    - [src/test/java/com/github/forax/umldoc/classfile/ASMTest.java](ASMTest.java) how to use ASM
 2. Creates the skeleton of the applications
    - extract the entities from a jar and generate the corresponding plantuml/mermaid file
-   - write tests and static analysis (CheckStyle: code convention verifier, Jacoco: test code coverage) 
+   - write tests and static analysis (CheckStyle: [code convention](https://google.github.io/styleguide/javaguide.html) verifier, Jacoco: test code coverage) 
 3. Implements the hard stuff first
    - ???
 
