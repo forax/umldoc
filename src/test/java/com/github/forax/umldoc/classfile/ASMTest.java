@@ -21,7 +21,7 @@ import java.util.Iterator;
 public class ASMTest {
   @Test
   public void asm() throws IOException {
-    var path = Path.of("target");
+    var path = Path.of("target/classes");
     var finder = ModuleFinder.of(path);
     for(var moduleReference: finder.findAll()) {
       try(var reader = moduleReference.open()) {
