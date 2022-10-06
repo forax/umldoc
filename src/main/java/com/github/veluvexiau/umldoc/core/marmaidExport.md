@@ -1,5 +1,6 @@
 ```mermaid
-classDiagram;
+%% umldoc
+classDiagram
 	direction TB
 	class module-info{
 	}
@@ -14,30 +15,39 @@ classDiagram;
 	}
 
 	class Entity{
+		<<Record>>
 	}
 
 	class Field{
+		<<Record>>
 	}
 
 	class AssociationDependency_Side{
+		<<Record>>
 	}
 
 	class SubtypeDependency{
+		<<Record>>
 	}
 
 	class Modifier{
+		<<Enum>>
 	}
 
 	class Method{
+		<<Record>>
 	}
 
 	class Method_Parameter{
+		<<Record>>
 	}
 
 	class Package{
+		<<Record>>
 	}
 
 	class AssociationDependency{
+		<<Record>>
 	}
 
 	class Dependency{

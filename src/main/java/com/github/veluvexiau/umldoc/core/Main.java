@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class Main {
     public static void main(String[] args) throws IOException {
        /* if (args.length<1){
-            throw new IllegalStateException("no path spécified");
+            throw new IllegalStateException("no path specified");
         }*/
         var path = Path.of("target");
         var entityFromJar = readJarFile(path);
@@ -37,7 +37,7 @@ public class Main {
         int temp = name.lastIndexOf('/');
         name = name.substring(temp+1);
 
-        //In the case of a record inside an other record for exemple.
+        //In the case of a record inside another record for example.
         Pattern p = Pattern.compile("\\$") ;
         Matcher m = p.matcher(name) ;
         if (m.find()) {
@@ -46,7 +46,25 @@ public class Main {
 
         return name;
     }
-    
+
+    private static String getStereotype(String entityStereotype){
+        String ster = entityStereotype;
+        int temp = ster.lastIndexOf('/');
+        ster = ster.substring(temp+1);
+
+        if (ster.contains("Record")){
+            return "Record";
+        }
+        else if (ster.contains("Enum")){
+            return "Enum";
+        }
+
+
+
+        return "";
+    }
+
+
     
     private static void displayEntitiesMarmaid(List<Entity> entities) throws IOException {
         String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
@@ -54,6 +72,10 @@ public class Main {
         initMermaidFile(writer);
         for (Entity entity : entities){
             writer.println("\tclass "+getNameFromPath(entity.name())+"{");
+            var stereo = getStereotype(entity.stereotype().toString());
+            if (!stereo.equals("")){
+                writer.println("\t\t<<"+stereo+">>");
+            }
             for (Method method : entity.methods()){
                 writer.println("\t\t"+method.name());
             }
@@ -93,7 +115,7 @@ public class Main {
                                     return Modifier.PROTECTED;
                                 }
                                 return null;
-                               // throw new IllegalStateException("Modifier is neither Public or Private or Protected" + access);
+                               // throw new IllegalStateException("Modifier is neither Public nor Private nor Protected" + access);
                             }
 
                             @Override
