@@ -2,64 +2,95 @@
 %% umldoc
 classDiagram
 	direction TB
-	class module-info{
-	}
-
-	class Main{
+	class JarParser_1{
 	}
 
 	class JarParser{
 	}
 
-	class JarParser_1{
-	}
-
-	class Entity{
-		<<Record>>
-	}
-
-	class Field{
-		<<Record>>
+	class Main{
 	}
 
 	class AssociationDependency_Side{
 		<<Record>>
-	}
-
-	class SubtypeDependency{
-		<<Record>>
-	}
-
-	class Modifier{
-		<<Enum>>
-	}
-
-	class Method{
-		<<Record>>
-	}
-
-	class Method_Parameter{
-		<<Record>>
-	}
-
-	class Package{
-		<<Record>>
+		Entity : entity
+		boolean : navigability
+		String : cardinality
 	}
 
 	class AssociationDependency{
 		<<Record>>
+		AssociationDependency$Side : left
+		AssociationDependency$Side : right
 	}
 
 	class Dependency{
 	}
 
+	class Entity{
+		<<Record>>
+		Set : modifiers
+		String : name
+		Optional : stereotype
+		List : fields
+		List : methods
+	}
+
+	class Field{
+		<<Record>>
+		Set : modifiers
+		String : name
+		String : type
+	}
+
+	class Method_Parameter{
+		<<Record>>
+		String : name
+		String : type
+	}
+
+	class Method{
+		<<Record>>
+		Set : modifiers
+		String : name
+		String : returnType
+		List : parameters
+	}
+
+	class Modifier{
+		<<Enum>>
+		Modifier : PRIVATE
+		Modifier : PACKAGE
+		Modifier : PROTECTED
+		Modifier : PUBLIC
+		Modifier : STATIC
+		Modifier : SEALED
+		Modifier[] : $VALUES
+	}
+
+	class Package{
+		<<Record>>
+		String : name
+		List : entities
+		List : dependencies
+	}
+
+	class SubtypeDependency{
+		<<Record>>
+		Entity : supertype
+		Entity : subtype
+	}
+
 	class Hello{
+	}
+
+	class Main_1{
 	}
 
 	class Main{
 	}
 
-	class Main_1{
+	class module-info{
 	}
 
 	class Main{

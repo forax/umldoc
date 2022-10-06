@@ -1,6 +1,7 @@
 package com.github.veluvexiau.umldoc.core;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import org.objectweb.asm.*;
@@ -31,19 +32,22 @@ public class Main {
         writer.println("%% umldoc");
         writer.println("classDiagram\n\tdirection TB");
     }
+
+    private static void endMermaidFile(PrintWriter writer){
+        writer.println("```");
+        writer.close();
+    }
     
     private static String getNameFromPath(String path){
         String name = path;
         int temp = name.lastIndexOf('/');
         name = name.substring(temp+1);
-
         //In the case of a record inside another record for example.
         Pattern p = Pattern.compile("\\$") ;
         Matcher m = p.matcher(name) ;
         if (m.find()) {
             name = m.replaceAll("_");
         }
-
         return name;
     }
 
@@ -58,9 +62,7 @@ public class Main {
         else if (ster.contains("Enum")){
             return "Enum";
         }
-
-
-
+        //TODO find a way to detect difference between Interface and Class, to add Interface as
         return "";
     }
 
@@ -76,14 +78,16 @@ public class Main {
             if (!stereo.equals("")){
                 writer.println("\t\t<<"+stereo+">>");
             }
+            for (Field field : entity.fields()){
+                writer.println("\t\t"+field.type() +" : "+field.name());
+            }
             for (Method method : entity.methods()){
                 writer.println("\t\t"+method.name());
             }
             writer.println("\t}\n");
 
         }
-        writer.println("```");
-        writer.close();
+        endMermaidFile(writer);
     }
 
 
@@ -128,13 +132,26 @@ public class Main {
 
                             @Override
                             public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-                                System.out.println("  component " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName());
+                                //TODO check if it is really usefull, because it seams like for records, fields have exactly the same informations as "recordComponent"
+                                System.out.println("  component " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName()+ " signa "+signature);
                                 return null;
                             }
 
                             @Override
                             public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+                                //TODO create method to get the full type (like String, List<String>, Set<Entity> for exemple --> concatenation of descriptor and signature
+                                if (modifier(access) != null){
+                                    var type = ClassDesc.ofDescriptor(descriptor).displayName();
+
+                                    Field field = new Field(Set.of(modifier(access)),name,type);
+                                    var oldEntity = entities.get(entities.size()-1);
+                                    var listOfFields = new ArrayList<>(oldEntity.fields());
+                                    listOfFields.add(field);
+                                    Entity entity = new Entity(oldEntity.modifiers(),oldEntity.name(),oldEntity.stereotype(),listOfFields, oldEntity.methods());
+                                    entities.set(entities.size()-1,entity);
+                                }
                                 System.out.println("  field " + modifier(access) + " " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName() + " " + signature);
+
                                 return null;
                             }
 
