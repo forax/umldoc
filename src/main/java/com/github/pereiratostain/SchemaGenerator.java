@@ -1,4 +1,4 @@
-package pereira.tostain;
+package com.github.pereiratostain;
 
 import java.io.IOException;
 import java.io.Writer;

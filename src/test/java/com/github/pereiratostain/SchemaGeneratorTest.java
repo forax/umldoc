@@ -1,5 +1,6 @@
-package pereira.tostain;
+package com.github.pereiratostain;
 
+import com.github.pereiratostain.SchemaGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
