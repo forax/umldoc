@@ -1,15 +1,17 @@
-package pereira.tostain;
+package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.RecordComponentVisitor;
 
-import java.lang.constant.ClassDesc;
-import java.lang.constant.MethodTypeDesc;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 class Visitor extends ClassVisitor {
     private Entity entity = null;
@@ -34,7 +36,7 @@ class Visitor extends ClassVisitor {
     }
 
     private void buildEntity() {
-        this.entity = new Entity(modif, name, null, null, null);
+        this.entity = new Entity(modif, name, Optional.empty(), new ArrayList<>(), new ArrayList<>());
     }
 
     public Entity getEntity() {
@@ -46,26 +48,28 @@ class Visitor extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        System.err.println("class " + modifier(access) + " " + name + " " + superName + " " + (interfaces != null? Arrays.toString(interfaces): ""));
-        this.modif.add(Main.modifier(modifier(access)));
-        this.name = name.substring(name.lastIndexOf("/") + 1);
+        var modifier = Main.modifier(modifier(access));
+        if (modifier != null) {
+            this.modif.add(Main.modifier(modifier(access)));
+        }
+        var tmpName = name.substring(name.lastIndexOf("/") + 1);
+        tmpName = tmpName.replace('-', '_');
+        tmpName = tmpName.replace('$', ' ');
+        this.name = tmpName;
     }
 
     @Override
     public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-        System.err.println("  component " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName());
         return null;
     }
 
     @Override
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-        System.err.println("  field " + modifier(access) + " " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName() + " " + signature);
         return null;
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-        System.err.println("  method " + modifier(access) + " " + name + " " + MethodTypeDesc.ofDescriptor(descriptor).displayDescriptor() + " " + signature);
         return null;
     }
 }
