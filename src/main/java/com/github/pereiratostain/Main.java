@@ -1,10 +1,12 @@
 package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.pereiratostain.generator.MermaidSchemaGenerator;
 import org.objectweb.asm.*;
 import com.github.forax.umldoc.core.Modifier;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 import java.lang.module.ModuleFinder;
@@ -16,9 +18,10 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         try {
-            var entities = Main.asm();
-            for(var entity : entities) {
-                System.out.println(entity);
+            var entities = asm();
+            try (var writer = new OutputStreamWriter(System.out)) {
+                var generator = new MermaidSchemaGenerator(writer);
+                generator.generate(entities);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
