@@ -7,19 +7,20 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+
 /**
- * Generate a schema in the Mermaid format.
+ * Generate a schema in the PlantUML format.
  */
-public class MermaidSchemaGenerator implements Generator {
+public class PlantUmlSchemaGenerator implements Generator {
 
   private final Writer writer;
 
   /**
-   * Creates a MermaidSchemaGenerator that will write in the given writer.
+   * Creates a PlantUMLSchemaGenerator that will write in the given writer.
    *
    * @param writer The writer in which the generator must write.
    */
-  public MermaidSchemaGenerator(Writer writer) {
+  public PlantUmlSchemaGenerator(Writer writer) {
     requireNonNull(writer);
 
     this.writer = writer;
@@ -27,20 +28,11 @@ public class MermaidSchemaGenerator implements Generator {
 
   @Override
   public void generate(List<Entity> entities) throws IOException {
-    requireNonNull(entities);
-
-    generateHeader();
+    writer.append("@startuml\n\n");
     for (var entity : entities) {
       generateEntity(entity);
     }
-  }
-
-  private void generateHeader() throws IOException {
-    writer.append("""
-            classDiagram
-                direction TB
-
-            """);
+    writer.append("@enduml");
   }
 
   private void generateEntity(Entity entity) throws IOException {
