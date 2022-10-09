@@ -13,29 +13,19 @@ import java.util.List;
  */
 public class PlantUmlSchemaGenerator implements Generator {
 
-  private final Writer writer;
-
-  /**
-   * Creates a PlantUMLSchemaGenerator that will write in the given writer.
-   *
-   * @param writer The writer in which the generator must write.
-   */
-  public PlantUmlSchemaGenerator(Writer writer) {
-    requireNonNull(writer);
-
-    this.writer = writer;
-  }
-
   @Override
-  public void generate(List<Entity> entities) throws IOException {
+  public void generate(Writer writer, List<Entity> entities) throws IOException {
+    requireNonNull(writer);
+    requireNonNull(entities);
+
     writer.append("@startuml\n\n");
     for (var entity : entities) {
-      generateEntity(entity);
+      generateEntity(writer, entity);
     }
     writer.append("@enduml");
   }
 
-  private void generateEntity(Entity entity) throws IOException {
+  private void generateEntity(Writer writer, Entity entity) throws IOException {
     writer.append("    class ")
             .append(entity.name())
             .append(" {")

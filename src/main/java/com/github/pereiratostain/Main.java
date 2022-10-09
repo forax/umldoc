@@ -27,8 +27,8 @@ public class Main {
     try {
       var entities = asm();
       try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
-        var generator = new MermaidSchemaGenerator(writer);
-        generator.generate(entities);
+        var generator = new MermaidSchemaGenerator();
+        generator.generate(writer, entities);
       }
     } catch (IOException e) {
       throw new RuntimeException(e);

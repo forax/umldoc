@@ -12,30 +12,18 @@ import java.util.List;
  */
 public class MermaidSchemaGenerator implements Generator {
 
-  private final Writer writer;
-
-  /**
-   * Creates a MermaidSchemaGenerator that will write in the given writer.
-   *
-   * @param writer The writer in which the generator must write.
-   */
-  public MermaidSchemaGenerator(Writer writer) {
-    requireNonNull(writer);
-
-    this.writer = writer;
-  }
-
   @Override
-  public void generate(List<Entity> entities) throws IOException {
+  public void generate(Writer writer, List<Entity> entities) throws IOException {
+    requireNonNull(writer);
     requireNonNull(entities);
 
-    generateHeader();
+    generateHeader(writer);
     for (var entity : entities) {
-      generateEntity(entity);
+      generateEntity(writer, entity);
     }
   }
 
-  private void generateHeader() throws IOException {
+  private void generateHeader(Writer writer) throws IOException {
     writer.append("""
             classDiagram
                 direction TB
@@ -43,7 +31,7 @@ public class MermaidSchemaGenerator implements Generator {
             """);
   }
 
-  private void generateEntity(Entity entity) throws IOException {
+  private void generateEntity(Writer writer, Entity entity) throws IOException {
     writer.append("    class ")
             .append(entity.name())
             .append(" {")
