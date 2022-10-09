@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Modifier;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
