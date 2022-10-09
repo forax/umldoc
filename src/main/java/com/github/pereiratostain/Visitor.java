@@ -17,22 +17,10 @@ class Visitor extends ClassVisitor {
   private Set<com.github.forax.umldoc.core.Modifier> modif = new HashSet<>();
   private String name;
 
-  protected Visitor(int api) {
+  public Visitor(int api) {
     super(api);
   }
 
-  private static String modifier(int access) {
-    if (Modifier.isPublic(access)) {
-      return "+";
-    }
-    if (Modifier.isPrivate(access)) {
-      return "-";
-    }
-    if (Modifier.isProtected(access)) {
-      return "#";
-    }
-    return "";
-  }
 
   private void buildEntity() {
     this.entity = new Entity(modif, name, Optional.empty(), new ArrayList<>(), new ArrayList<>());
@@ -48,14 +36,26 @@ class Visitor extends ClassVisitor {
   @Override
   public void visit(int version, int access, String name, String signature,
                     String superName, String[] interfaces) {
-    var modifier = Main.modifier(modifier(access));
-    if (modifier != null) {
-      this.modif.add(Main.modifier(modifier(access)));
-    }
+    this.modif.add(modifier(access));
     var tmpName = name.substring(name.lastIndexOf("/") + 1);
     tmpName = tmpName.replace('-', '_');
     tmpName = tmpName.replace('$', ' ');
     this.name = tmpName;
+  }
+
+  /**
+   * Converts an int to a Modifier.
+   *
+   * @param int The int to convert
+   * @return A value of the enum Modifier
+   */
+  private com.github.forax.umldoc.core.Modifier modifier(int modifier) {
+    return switch (modifier) {
+      case Modifier.PUBLIC -> com.github.forax.umldoc.core.Modifier.PUBLIC;
+      case Modifier.PRIVATE -> com.github.forax.umldoc.core.Modifier.PRIVATE;
+      case Modifier.PROTECTED -> com.github.forax.umldoc.core.Modifier.PROTECTED;
+      default -> com.github.forax.umldoc.core.Modifier.PACKAGE;
+    };
   }
 
   @Override

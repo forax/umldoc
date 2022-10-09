@@ -1,7 +1,6 @@
 package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
-import com.github.forax.umldoc.core.Modifier;
 import com.github.pereiratostain.generator.MermaidSchemaGenerator;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -33,22 +32,6 @@ public class Main {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  /**
-   * Converts a string to a Modifier.
-   *
-   * @param string The string to convert
-   * @return A value of the enum Modifier or null if
-   *          the string can't be converted
-   */
-  public static Modifier modifier(String string) {
-    return switch (string) {
-      case "+" -> Modifier.PUBLIC;
-      case "-" -> Modifier.PRIVATE;
-      case "#" -> Modifier.PACKAGE;
-      default -> null;
-    };
   }
 
   /**
