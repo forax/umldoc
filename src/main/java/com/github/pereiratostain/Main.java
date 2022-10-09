@@ -58,6 +58,6 @@ public class Main {
         return visitors.stream().map(Visitor::getEntity).toList();
       }
     }
-    return null;   //FIXME there is something wrong here !
+    return List.of();
   }
 }
