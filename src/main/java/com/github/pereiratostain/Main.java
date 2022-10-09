@@ -22,15 +22,11 @@ public class Main {
    *
    * @param args The arguments from the command line.
    */
-  public static void main(String[] args) {
-    try {
-      var entities = asm();
-      try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
-        var generator = new MermaidSchemaGenerator();
-        generator.generate(writer, entities);
-      }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+  public static void main(String[] args) throws IOException {
+    var entities = asm();
+    try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
+      var generator = new MermaidSchemaGenerator();
+      generator.generate(writer, entities);
     }
   }
 
@@ -62,6 +58,6 @@ public class Main {
         return visitors.stream().map(Visitor::getEntity).toList();
       }
     }
-    return null;
+    return null;   //FIXME there is something wrong here !
   }
 }

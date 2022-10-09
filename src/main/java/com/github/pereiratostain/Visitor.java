@@ -27,7 +27,8 @@ class Visitor extends ClassVisitor {
   }
 
   public Entity getEntity() {
-    if (entity == null) {
+    if (entity == null) {   // FIXME instead of doing something lazy, initialize the entity in visit(version, access)
+                            // so it will be available in the subsequent methods
       this.buildEntity();
     }
     return this.entity;
@@ -46,10 +47,10 @@ class Visitor extends ClassVisitor {
   /**
    * Converts an int to a Modifier.
    *
-   * @param int The int to convert
+   * @param modifier The int to convert
    * @return A value of the enum Modifier
    */
-  private com.github.forax.umldoc.core.Modifier modifier(int modifier) {
+  private static com.github.forax.umldoc.core.Modifier modifier(int modifier) {
     return switch (modifier) {
       case Modifier.PUBLIC -> com.github.forax.umldoc.core.Modifier.PUBLIC;
       case Modifier.PRIVATE -> com.github.forax.umldoc.core.Modifier.PRIVATE;
