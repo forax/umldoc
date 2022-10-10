@@ -1,4 +1,5 @@
 package com.github.donnebelin.umldoc.core;
+
 import com.github.forax.umldoc.core.Entity;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -7,7 +8,10 @@ import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public final class JarParser {
 
