@@ -1,4 +1,4 @@
-package com.github.forax.umldoc.magickoders;
+package com.github.magickoders;
 
 public class Hello {
     public static void main(String[] args) {
