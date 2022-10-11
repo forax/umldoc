@@ -87,8 +87,8 @@ For mermaidjs
 * October, 11th Autonomy
 * October, 18th
 * October, 25th
-* October, 8th
-* October, 15th
+* November, 8th
+* November, 15th
 
 ### Resources
 - Libraries
