@@ -39,35 +39,30 @@ public class Main {
     var path = Path.of("target");
     var entityFromJar = readJarFile(path);
     displayEntitiesMarmaid(entityFromJar);
+    displayEntitiesPlantUml(entityFromJar);
   }
 
-  /**
-   * The method to init a Mermaid file in Markdown.
-   *
-   * @param writer to write in the file
-   */
   private static void initMermaidFile(PrintWriter writer) {
     writer.println("```mermaid");
     writer.println("%% umldoc");
     writer.println("classDiagram\n\tdirection TB");
   }
 
-  /**
-   * The method to end a Mermaid file in Markdown.
-   *
-   * @param writer to write in the file
-   */
   private static void endMermaidFile(PrintWriter writer) {
     writer.println("```");
     writer.close();
   }
+  private static void initPlantFile(PrintWriter writer) {
+    writer.println("```plantuml");
+    writer.println("@startuml");
+    writer.println("' umldoc");
+  }
 
-
-  /**
-   * The method to delete useless characters in a path to get only the name.
-   *
-   * @param path the full path
-   */
+  private static void endPlantFile(PrintWriter writer) {
+    writer.println("@enduml");
+    writer.println("```");
+    writer.close();
+  }
   private static String getNameFromPath(String path) {
     String name = path;
     int temp = name.lastIndexOf('/');
@@ -81,12 +76,6 @@ public class Main {
     return name;
   }
 
-  /**
-   * a method to get the stereotype, from the type of the superclass.
-   *
-   * @param entityStereotype the full stereotype
-   * @return the stereotype that we will display in our export
-   */
   private static String getStereotype(String entityStereotype) {
     String ster = entityStereotype;
     int temp = ster.lastIndexOf('/');
@@ -100,7 +89,6 @@ public class Main {
     //TODO find a way to detect difference between Interface and Class, to add Interface as
     return "";
   }
-
 
   private static void displayEntitiesMarmaid(List<Entity> entities) throws IOException {
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
@@ -122,6 +110,28 @@ public class Main {
 
     }
     endMermaidFile(writer);
+  }
+
+  private static void displayEntitiesPlantUml(List<Entity> entities) throws IOException {
+    String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/plantExport.md";
+    PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
+    initPlantFile(writer);
+    for (Entity entity : entities) {
+      writer.println("\tclass " + getNameFromPath(entity.name()) + "{");
+      var stereo = getStereotype(entity.stereotype().toString());
+      if (!stereo.equals("")) {
+        writer.println("\t\t<<" + stereo + ">>");
+      }
+      for (Field field : entity.fields()) {
+        writer.println("\t\t" + field.type() + " : " + field.name());
+      }
+      for (Method method : entity.methods()) {
+        writer.println("\t\t" + method.name());
+      }
+      writer.println("\t}\n");
+
+    }
+    endPlantFile(writer);
   }
 
 
