@@ -7,13 +7,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class to extract to a PlantUml file.
  */
-public class PlantUmlExtract implements Extract {
-  @Override
+public class PlantUmlExtract {
+
+  /**
+   * Method to create the PlantUml.
+   *
+   * @param entities list of entity do add in Mermaid
+   * @throws IOException by the PrintWriter
+   */
   public void generate(List<Entity> entities) throws IOException {
+    Objects.requireNonNull(entities);
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/plantExport.md";
     PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
     init(writer);
@@ -24,24 +32,21 @@ public class PlantUmlExtract implements Extract {
 
   }
 
-  @Override
-  public void init(PrintWriter writer) {
+  private void init(PrintWriter writer) {
     writer.println("```plantuml");
     writer.println("@startuml");
     writer.println("' umldoc");
   }
 
-  @Override
-  public void end(PrintWriter writer) {
+  private void end(PrintWriter writer) {
     writer.println("@enduml");
     writer.println("```");
     writer.close();
   }
 
-  @Override
-  public void displayEntity(PrintWriter writer, Entity entity) {
-    writer.println("\tclass " + getNameFromPath(entity.name()) + "{");
-    var stereo = getStereotype(entity.stereotype().toString());
+  private void displayEntity(PrintWriter writer, Entity entity) {
+    writer.println("\tclass " + ExtractMethods.getNameFromPath(entity.name()) + "{");
+    var stereo = ExtractMethods.getStereotype(entity.stereotype().toString());
     if (!stereo.equals("")) {
       writer.println("\t\t<<" + stereo + ">>");
     }

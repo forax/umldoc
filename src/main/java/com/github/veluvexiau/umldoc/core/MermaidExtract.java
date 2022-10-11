@@ -7,14 +7,22 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
+
 
 /**
  * Class to extract to a Mermaid File.
  */
-public class MermaidExtract implements Extract {
+public class MermaidExtract {
 
-  @Override
+  /**
+   * Method to create the Mermaid.
+   *
+   * @param entities list of entity do add in Mermaid
+   * @throws IOException by the PrintWriter
+   */
   public void generate(List<Entity> entities) throws IOException {
+    Objects.requireNonNull(entities);
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
     PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
     init(writer);
@@ -24,23 +32,21 @@ public class MermaidExtract implements Extract {
     end(writer);
   }
 
-  @Override
-  public void init(PrintWriter writer) {
+
+  private void init(PrintWriter writer) {
     writer.println("```mermaid");
     writer.println("%% umldoc");
     writer.println("classDiagram\n\tdirection TB");
   }
 
-  @Override
-  public void end(PrintWriter writer) {
+  private void end(PrintWriter writer) {
     writer.println("```");
     writer.close();
   }
 
-  @Override
-  public void displayEntity(PrintWriter writer, Entity entity) {
-    writer.println("\tclass " + getNameFromPath(entity.name()) + "{");
-    var stereo = getStereotype(entity.stereotype().toString());
+  private void displayEntity(PrintWriter writer, Entity entity) {
+    writer.println("\tclass " + ExtractMethods.getNameFromPath(entity.name()) + "{");
+    var stereo = ExtractMethods.getStereotype(entity.stereotype().toString());
     if (!stereo.equals("")) {
       writer.println("\t\t<<" + stereo + ">>");
     }

@@ -34,8 +34,8 @@ public class Main {
     var path = Path.of("target");
     var entityFromJar = readJarFile(path);
 
-    Extract mermaid = new MermaidExtract();
-    Extract plantUml = new PlantUmlExtract();
+    MermaidExtract mermaid = new MermaidExtract();
+    PlantUmlExtract plantUml = new PlantUmlExtract();
 
     mermaid.generate(entityFromJar);
     plantUml.generate(entityFromJar);
