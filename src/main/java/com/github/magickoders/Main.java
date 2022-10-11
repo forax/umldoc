@@ -19,11 +19,9 @@ public class Main {
     System.exit(1);
   }
 
-  private static void writeToPath(Path path, String content) {
+  private static void writeToPath(Path path, String content) throws IOException {
     try (var writer = Files.newBufferedWriter(path)) {
       writer.write(content);
-    } catch (IOException e) {
-      crash("Could not write to file : " + path);
     }
   }
 
