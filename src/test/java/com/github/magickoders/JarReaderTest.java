@@ -32,7 +32,9 @@ public class JarReaderTest {
                 .filter(entity -> entity.name().contains("magickoders") || entity.name().contains("forax"))
                 .toList();
 
-        var entity = entities.stream().filter(e -> e.name().contains("Entity")).findFirst().orElseThrow();
+        var entity = entities.stream()
+                .filter(e -> e.name().substring(e.name().lastIndexOf(".") + 1).equals("Entity"))
+                .findFirst().orElseThrow();
         assertEquals(Set.of(Modifier.PUBLIC), entity.modifiers());
         assertEquals(Optional.of("record"), entity.stereotype());
     }
