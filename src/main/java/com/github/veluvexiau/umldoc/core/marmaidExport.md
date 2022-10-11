@@ -131,7 +131,16 @@ classDiagram
 	class Dependency{
 	}
 
+	class PlantUMLExtract{
+	}
+
+	class MermaidExtract{
+	}
+
 	class Main{
+	}
+
+	class Extract{
 	}
 
 	class Main_1{
