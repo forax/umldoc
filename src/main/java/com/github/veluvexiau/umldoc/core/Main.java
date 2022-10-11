@@ -2,22 +2,17 @@ package com.github.veluvexiau.umldoc.core;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
-import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 import java.lang.module.ModuleFinder;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -38,100 +33,12 @@ public class Main {
     }*/
     var path = Path.of("target");
     var entityFromJar = readJarFile(path);
-    displayEntitiesMarmaid(entityFromJar);
-    displayEntitiesPlantUml(entityFromJar);
-  }
 
-  private static void initMermaidFile(PrintWriter writer) {
-    writer.println("```mermaid");
-    writer.println("%% umldoc");
-    writer.println("classDiagram\n\tdirection TB");
-  }
+    Extract mermaid = new MermaidExtract();
+    Extract plantUml = new PlantUmlExtract();
 
-  private static void endMermaidFile(PrintWriter writer) {
-    writer.println("```");
-    writer.close();
-  }
-  private static void initPlantFile(PrintWriter writer) {
-    writer.println("```plantuml");
-    writer.println("@startuml");
-    writer.println("' umldoc");
-  }
-
-  private static void endPlantFile(PrintWriter writer) {
-    writer.println("@enduml");
-    writer.println("```");
-    writer.close();
-  }
-  private static String getNameFromPath(String path) {
-    String name = path;
-    int temp = name.lastIndexOf('/');
-    name = name.substring(temp + 1);
-    //In the case of a record inside another record for example.
-    Pattern p = Pattern.compile("\\$");
-    Matcher m = p.matcher(name);
-    if (m.find()) {
-      name = m.replaceAll("_");
-    }
-    return name;
-  }
-
-  private static String getStereotype(String entityStereotype) {
-    String ster = entityStereotype;
-    int temp = ster.lastIndexOf('/');
-    ster = ster.substring(temp + 1);
-
-    if (ster.contains("Record")) {
-      return "Record";
-    } else if (ster.contains("Enum")) {
-      return "Enum";
-    }
-    //TODO find a way to detect difference between Interface and Class, to add Interface as
-    return "";
-  }
-
-  private static void displayEntitiesMarmaid(List<Entity> entities) throws IOException {
-    String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
-    PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
-    initMermaidFile(writer);
-    for (Entity entity : entities) {
-      writer.println("\tclass " + getNameFromPath(entity.name()) + "{");
-      var stereo = getStereotype(entity.stereotype().toString());
-      if (!stereo.equals("")) {
-        writer.println("\t\t<<" + stereo + ">>");
-      }
-      for (Field field : entity.fields()) {
-        writer.println("\t\t" + field.type() + " : " + field.name());
-      }
-      for (Method method : entity.methods()) {
-        writer.println("\t\t" + method.name());
-      }
-      writer.println("\t}\n");
-
-    }
-    endMermaidFile(writer);
-  }
-
-  private static void displayEntitiesPlantUml(List<Entity> entities) throws IOException {
-    String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/plantExport.md";
-    PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
-    initPlantFile(writer);
-    for (Entity entity : entities) {
-      writer.println("\tclass " + getNameFromPath(entity.name()) + "{");
-      var stereo = getStereotype(entity.stereotype().toString());
-      if (!stereo.equals("")) {
-        writer.println("\t\t<<" + stereo + ">>");
-      }
-      for (Field field : entity.fields()) {
-        writer.println("\t\t" + field.type() + " : " + field.name());
-      }
-      for (Method method : entity.methods()) {
-        writer.println("\t\t" + method.name());
-      }
-      writer.println("\t}\n");
-
-    }
-    endPlantFile(writer);
+    mermaid.generate(entityFromJar);
+    plantUml.generate(entityFromJar);
   }
 
 
