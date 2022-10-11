@@ -1,7 +1,6 @@
-```mermaid
-%% umldoc
-classDiagram
-	direction TB
+```plantuml
+@startuml
+' umldoc
 	class module-info{
 	}
 
@@ -137,4 +136,5 @@ classDiagram
 	class Main_1{
 	}
 
+@enduml
 ```
