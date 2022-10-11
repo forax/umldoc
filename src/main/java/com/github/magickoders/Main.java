@@ -35,8 +35,6 @@ public class Main {
       crash("Only one argument is accepted");
     }
 
-    var output = Path.of(args[0]);
-
     var testEntity = new Entity(Set.of(), "test", Optional.empty(), List.of(), List.of());
     var testPackage = new Package("test", List.of(testEntity, testEntity), List.of());
 
@@ -47,7 +45,6 @@ public class Main {
     System.out.println("plant uml\n");
     System.out.println(new PlantumlParser().parse(testPackage));
     System.out.println();
-    //writeToPath(output, "```mermaid\n" + mermaidParser.parse(testPackage) + "\n```");
 
   }
 }
