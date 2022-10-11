@@ -46,7 +46,7 @@ public interface Extract {
    * @return the stereotype
    */
   default String getStereotype(String entityStereotype) {
-    Objects.requireNonNull(path);
+    Objects.requireNonNull(entityStereotype);
     String ster = entityStereotype;
     int temp = ster.lastIndexOf('/');
     ster = ster.substring(temp + 1);
