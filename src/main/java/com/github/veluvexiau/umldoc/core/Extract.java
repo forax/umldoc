@@ -26,6 +26,7 @@ public interface Extract {
    * @return only the name
    */
   default String getNameFromPath(String path) {
+    Objects.requireNonNull(path);
     String name = path;
     int temp = name.lastIndexOf('/');
     name = name.substring(temp + 1);
@@ -45,6 +46,7 @@ public interface Extract {
    * @return the stereotype
    */
   default String getStereotype(String entityStereotype) {
+    Objects.requireNonNull(path);
     String ster = entityStereotype;
     int temp = ster.lastIndexOf('/');
     ster = ster.substring(temp + 1);
