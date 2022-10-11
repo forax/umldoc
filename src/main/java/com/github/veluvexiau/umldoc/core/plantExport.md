@@ -130,19 +130,19 @@
 	class Dependency{
 	}
 
-	class PlantUMLExtract{
+	class MermaidExtract{
 	}
 
-	class MermaidExtract{
+	class ExtractMethods{
 	}
 
 	class Main{
 	}
 
-	class Extract{
+	class Main_1{
 	}
 
-	class Main_1{
+	class PlantUmlExtract{
 	}
 
 @enduml
