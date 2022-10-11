@@ -1,11 +1,12 @@
 package com.github.donnebelin.umldoc.core;
-import com.github.forax.umldoc.gen.MermaidGenerator;
-import com.github.forax.umldoc.gen.PlantUmlGenerator;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import com.github.forax.umldoc.gen.MermaidGenerator;
+import com.github.forax.umldoc.gen.PlantUmlGenerator;
 
 /**
  * Contains the main method for this package

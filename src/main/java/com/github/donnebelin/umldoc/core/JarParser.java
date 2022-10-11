@@ -1,63 +1,38 @@
 package com.github.donnebelin.umldoc.core;
-import com.github.forax.umldoc.core.Entity;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.lang.module.ModuleFinder;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import com.github.forax.umldoc
+        .core.Entity;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
-import java.io.IOException;
-import java.lang.module.ModuleFinder;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * Class to parse a jar file.
  * This class uses ASM library to recover entities, fields and methods from .class files of the given jar.
  */
 public final class JarParser {
-
-/* private static Modifier getModifier(int access) {
-//        if (Modifier.isPublic(access)) {
-//            return Modifier.PUBLIC;
-//        }
-//        if (Modifier.isPrivate(access)) {
-//            return Modifier.PRIVATE;
-//        }
-//        if (Modifier.isProtected(access)) {
-//            return Modifier.PROTECTED;
-//        }
-//        return Modifier.PACKAGE;
-//    } */
-
     private static void getASMData(ClassReader classReader, HashSet<Entity> entities) {
         classReader.accept(new ClassVisitor(Opcodes.ASM9) {
-/*            private static String modifier(int access) {
-//                return getModifier(access);
-//            } */
 
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                System.err.println("class " + modifier(access) + " " + name + " " + superName + " " + (interfaces != null? Arrays.toString(interfaces): ""));
                 if(! name.equals("module-info")) {
-                    entities.add(new Entity(Set.of(), name.replace('/', '_').replace('$', '_'), Optional.empty(), List.of(), List.of())); // TODO handle all parameters for entity creation
+                    entities.add(new Entity(
+                            Set.of(),
+                            name.replace('/', '_').replace('$', '_'),
+                            Optional.empty(),
+                            List.of(),
+                            List.of())
+                    );
                 }
             }
-/*
-//                            @Override
-//                            public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-//                                System.err.println("  component " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName());
-//                                return null;
-//                            }
-//
-//                            @Override
-//                            public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-//                                System.err.println("  field " + modifier(access) + " " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName() + " " + signature);
-//                                return null;
-//                            }
-//
-//                            @Override
-//                            public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-//                                System.err.println("  method " + modifier(access) + " " + name + " " + MethodTypeDesc.ofDescriptor(descriptor).displayDescriptor() + " " + signature);
-//                                return null;
-//                            } */
         }, 0);
     }
 
