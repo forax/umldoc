@@ -52,7 +52,7 @@ public final class ModuleScrapper {
           .map(entry -> new Package(entry.getKey(), entry.getValue(), List.of()))
           .toList();
     } catch (UncheckedIOException e) {
-      throw e;
+      throw e.getCause();
     }
   }
 }
