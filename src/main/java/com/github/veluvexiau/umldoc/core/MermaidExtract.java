@@ -59,10 +59,10 @@ public class MermaidExtract {
 
 
     for (Method method : entity.methods()) {
-      StringBuilder stringBuilder = new StringBuilder();
-
-
-      writer.println("\t\t" + method.name()+"("+method.parameters().stream().map(Method.Parameter::name).collect(Collectors.joining(", "))+") : "+method.returnType());
+      writer.println("\t\t" + method.name() + "(" + method.parameters().stream()
+          .map(Method.Parameter::name)
+          .collect(Collectors.joining(", "))
+          + ") : " + method.returnType());
     }
     writer.println("\t}\n");
   }
