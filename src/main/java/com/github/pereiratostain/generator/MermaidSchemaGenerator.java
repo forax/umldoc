@@ -54,14 +54,12 @@ public class MermaidSchemaGenerator implements Generator {
       fields = computeFieldsClass(entity, associations, entitiesName);
     }
 
-    writer.append("    class ")
-            .append(entity.name())
-            .append(" {\n")
-            .append(stereotype)
-            .append(fields)
-            .append("\n    }\n")
-            .append(generateAssociations(entity, associations))
-            .append("\n");
+    writer.append("    class "
+            + entity.name()
+            + " {\n" + stereotype
+            + fields + "\n    }\n"
+            + generateAssociations(entity, associations)
+            + "\n\n");
   }
 
   private String computeFieldsEnum(Entity entity) {
