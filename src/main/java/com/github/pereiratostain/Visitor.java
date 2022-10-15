@@ -1,10 +1,10 @@
 package com.github.pereiratostain;
 
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
-
-import java.lang.constant.ClassDesc;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,8 +13,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.RecordComponentVisitor;
-
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 
 class Visitor extends ClassVisitor {
