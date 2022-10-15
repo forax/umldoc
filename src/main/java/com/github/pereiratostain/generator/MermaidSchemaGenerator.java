@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,18 +19,17 @@ import java.util.stream.Collectors;
  * Generate a schema in the Mermaid format.
  */
 public class MermaidSchemaGenerator implements Generator {
-  private HashSet<String> entitiesName;
 
   @Override
   public void generate(Writer writer, List<Entity> entities) throws IOException {
     requireNonNull(writer);
     requireNonNull(entities);
 
-    entitiesName = new HashSet<>(entities.stream().map(Entity::name).collect(Collectors.toSet()));
+    var entitiesName = entities.stream().map(Entity::name).collect(Collectors.toSet());
 
     generateHeader(writer);
     for (var entity : entities) {
-      generateEntity(writer, entity);
+      generateEntity(writer, entity, entitiesName);
     }
   }
 
@@ -41,7 +41,7 @@ public class MermaidSchemaGenerator implements Generator {
             """);
   }
 
-  private void generateEntity(Writer writer, Entity entity) throws IOException {
+  private void generateEntity(Writer writer, Entity entity, Set<String> entitiesName) throws IOException {
     var associations = new ArrayList<String>();
     var stereotype = "";
     String fields;
@@ -50,7 +50,7 @@ public class MermaidSchemaGenerator implements Generator {
       fields = computeFieldsEnum(entity);
       stereotype = "\t<<enumeration>>\n";
     } else {
-      fields = computeFieldsClass(entity, associations);
+      fields = computeFieldsClass(entity, associations, entitiesName);
     }
 
     writer.append("    class ")
@@ -72,7 +72,7 @@ public class MermaidSchemaGenerator implements Generator {
     return generateRecordFields(fields);
   }
 
-  private String computeFieldsClass(Entity entity, ArrayList<String> associations) {
+  private String computeFieldsClass(Entity entity, ArrayList<String> associations, Set<String> entitiesName) {
     var fields = new ArrayList<Field>();
     Pattern pattern = Pattern.compile("<.*>");
 
