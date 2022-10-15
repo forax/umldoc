@@ -1,6 +1,7 @@
 package com.github.magickoders;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Package;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +34,7 @@ public class Main {
       crash("Only one argument is accepted");
     }
 
-    var testEntity = new Entity(Set.of(), "test", Optional.empty(), List.of(), List.of());
+    var testEntity = new Entity(Set.of(), "test", Stereotype.CLASS, List.of(), List.of());
     var testPackage = new Package("test", List.of(testEntity, testEntity), List.of());
 
     System.out.println("mermaid\n");
