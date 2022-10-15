@@ -1,6 +1,7 @@
 package com.github.veluvexiau.umldoc.core;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class Main {
                                 String[] inter) {
 
                 var entity = new Entity(Set.of(), name,
-                                        Optional.ofNullable(supName), List.of(), List.of());
+                                        Stereotype.CLASS, List.of(), List.of());
                 System.out.println("class " + modifier(access)
                                     + " " + name + " " + supName + " "
                                     + (inter != null ? Arrays.toString(inter) : ""));

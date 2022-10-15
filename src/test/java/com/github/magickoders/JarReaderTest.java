@@ -1,5 +1,6 @@
 package com.github.magickoders;
 
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Modifier;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,6 @@ public class JarReaderTest {
             .filter(e -> e.name().substring(e.name().lastIndexOf(".") + 1).equals("Entity"))
             .findFirst().orElseThrow();
     assertEquals(Set.of(Modifier.PUBLIC), entity.modifiers());
-    assertEquals(Optional.of("record"), entity.stereotype());
+    assertEquals(Stereotype.RECORD, entity.stereotype());
   }
 }

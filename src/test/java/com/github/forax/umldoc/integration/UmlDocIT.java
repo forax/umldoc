@@ -43,36 +43,43 @@ public class UmlDocIT {
         
             class com.github.forax.umldoc.core.AssociationDependency {
             }
-        
+             
+            class com.github.forax.umldoc.core.AssociationDependency$Cardinality {
+            }
+            
             class com.github.forax.umldoc.core.AssociationDependency$Side {
             }
-        
+            
             class com.github.forax.umldoc.core.Dependency {
             }
-        
+            
             class com.github.forax.umldoc.core.Entity {
             }
-        
+            
+            class com.github.forax.umldoc.core.Entity$Stereotype {
+            }
+            
             class com.github.forax.umldoc.core.Field {
             }
-        
+            
             class com.github.forax.umldoc.core.Method {
             }
-        
+            
             class com.github.forax.umldoc.core.Method$Parameter {
             }
-        
+            
             class com.github.forax.umldoc.core.Modifier {
             }
-        
+            
             class com.github.forax.umldoc.core.Package {
             }
-        
+            
             class com.github.forax.umldoc.core.SubtypeDependency {
             }
         
         """, writer.toString());
   }
+
 
   @Test
   public void generatePlantUml() throws IOException {
@@ -96,31 +103,37 @@ public class UmlDocIT {
         
             class com.github.forax.umldoc.core.AssociationDependency {
             }
-        
+            
+            class com.github.forax.umldoc.core.AssociationDependency$Cardinality {
+            }
+            
             class com.github.forax.umldoc.core.AssociationDependency$Side {
             }
-        
+            
             class com.github.forax.umldoc.core.Dependency {
             }
-        
+            
             class com.github.forax.umldoc.core.Entity {
             }
-        
+            
+            class com.github.forax.umldoc.core.Entity$Stereotype {
+            }
+            
             class com.github.forax.umldoc.core.Field {
             }
-        
+            
             class com.github.forax.umldoc.core.Method {
             }
-        
+            
             class com.github.forax.umldoc.core.Method$Parameter {
             }
-        
+            
             class com.github.forax.umldoc.core.Modifier {
             }
-        
+            
             class com.github.forax.umldoc.core.Package {
             }
-        
+            
             class com.github.forax.umldoc.core.SubtypeDependency {
             }
         

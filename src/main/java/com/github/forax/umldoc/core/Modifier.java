@@ -6,5 +6,5 @@ package com.github.forax.umldoc.core;
 public enum Modifier {
   PRIVATE, PACKAGE, PROTECTED, PUBLIC,
   STATIC,
-  SEALED
+  FINAL
 }

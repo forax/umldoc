@@ -1,12 +1,12 @@
 package com.github.donnebelin.umldoc.core;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -29,7 +29,7 @@ public final class JarParser {
           entities.add(new Entity(
               Set.of(),
               name.replace('/', '_').replace('$', '_'),
-              Optional.empty(),
+              Stereotype.CLASS,
                List.of(),
                List.of()));
         }

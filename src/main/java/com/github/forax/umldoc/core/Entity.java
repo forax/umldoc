@@ -3,7 +3,6 @@ package com.github.forax.umldoc.core;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -11,12 +10,12 @@ import java.util.Set;
  *
  * @param modifiers the entity modifier
  * @param name the entity name
- * @param stereotype the stereotype if it exists
+ * @param stereotype the stereotype
  * @param fields the fields of the entity
  * @param methods the methods of the entity
  */
 public record Entity(Set<Modifier> modifiers, String name,
-                     Optional<String> stereotype,
+                     Stereotype stereotype,
                      List<Field> fields, List<Method> methods) {
   /**
    * Creates an entity.
@@ -33,5 +32,35 @@ public record Entity(Set<Modifier> modifiers, String name,
     requireNonNull(stereotype);
     fields = List.copyOf(fields);
     methods = List.copyOf(methods);
+  }
+
+  /**
+   * Stereotype of an entity.
+   */
+  public enum Stereotype {
+    /**
+     * Stereotype of a class.
+     */
+    CLASS,
+    /**
+    * Stereotype of an interface.
+    */
+    INTERFACE,
+    /**
+    * Stereotype of an annotation.
+    */
+    ANNOTATION,
+    /**
+    * Stereotype of an enum.
+    */
+    ENUM,
+    /**
+    * Stereotype of a record.
+    */
+    RECORD,
+    /**
+    * Stereotype of an abstract class.
+    */
+    ABSTRACT,
   }
 }

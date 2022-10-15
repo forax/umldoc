@@ -1,6 +1,7 @@
 package com.github.magickoders;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
@@ -108,15 +109,15 @@ public class JarReader {
      * @return an Optional which contains the stereotype of the class. Optional.empty()
      *     if it is a simple class
      */
-    private static Optional<String> getStereotype(int access) {
+    private static Stereotype getStereotype(int access) {
       if (isRecord(access)) {
-        return Optional.of("record");
+        return Stereotype.RECORD;
       } else if (isInterface(access)) {
-        return Optional.of("interface");
+        return Stereotype.INTERFACE;
       } else if (isEnum(access)) {
-        return Optional.of("enum");
+        return Stereotype.ENUM;
       } else {
-        return Optional.empty();
+        return Stereotype.CLASS;
       }
     }
   }
