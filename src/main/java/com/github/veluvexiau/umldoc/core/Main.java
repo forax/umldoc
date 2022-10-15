@@ -3,6 +3,7 @@ package com.github.veluvexiau.umldoc.core;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
 import java.lang.constant.ClassDesc;
@@ -12,7 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -32,7 +33,7 @@ public class Main {
     /* if (args.length<1){
         throw new IllegalStateException("no path specified");
     }*/
-    var path = Path.of("target");
+    var path = Path.of("target/classes");
     var entityFromJar = readJarFile(path);
 
     MermaidExtract mermaid = new MermaidExtract();
@@ -71,7 +72,7 @@ public class Main {
                   return Modifier.PROTECTED;
                 }
                 return null;
-                // throw new IllegalStateException("Modifier not recognized" + access);
+                //throw new IllegalStateException("Modifier not recognized" + access);
               }
 
               @Override
@@ -81,12 +82,24 @@ public class Main {
                                 String sign,
                                 String supName,
                                 String[] inter) {
-
-                var entity = new Entity(Set.of(), name,
-                                        Stereotype.CLASS, List.of(), List.of());
-                System.out.println("class " + modifier(access)
-                                    + " " + name + " " + supName + " "
-                                    + (inter != null ? Arrays.toString(inter) : ""));
+                Entity entity;
+                System.out.println(access + "here" + name);
+                if (java.lang.reflect.Modifier.isInterface(access)){
+                  entity = new Entity(Set.of(), name,
+                  Stereotype.INTERFACE, List.of(), List.of());
+                }
+                else if ((access & Opcodes.ACC_RECORD) !=0){
+                  entity = new Entity(Set.of(), name,
+                  Stereotype.RECORD, List.of(), List.of());
+                }
+                else if ((access & Opcodes.ACC_ENUM) !=0){
+                  entity = new Entity(Set.of(), name,
+                  Stereotype.ENUM, List.of(), List.of());
+                }
+                else {
+                  entity = new Entity(Set.of(), name,
+                  Stereotype.CLASS, List.of(), List.of());
+                }
                 entities.add(entity);
               }
 
@@ -116,8 +129,8 @@ public class Main {
                   var listOfFields = new ArrayList<>(oldEntity.fields());
                   listOfFields.add(field);
                   Entity entity = new Entity(oldEntity.modifiers(), oldEntity.name(),
-                                      oldEntity.stereotype(), listOfFields,
-                                      oldEntity.methods());
+                  oldEntity.stereotype(), listOfFields,
+                  oldEntity.methods());
                   entities.set(entities.size() - 1, entity);
                 }
                 System.out.println("  field " + modifier(access) + " " + name
@@ -136,6 +149,27 @@ public class Main {
                 System.out.println("  method " + modifier(access) + " " + name
                                   + " " + MethodTypeDesc.ofDescriptor(desc).displayDescriptor()
                                   + " " + signature);
+                var oldEntity = entities.get(entities.size() - 1);
+                var listOfMethods = new ArrayList<>(oldEntity.methods());
+
+                if (modifier(access) != null ) {
+                  List<Method.Parameter> parameters = new ArrayList<>();
+                  System.out.println("ici "+MethodTypeDesc.ofDescriptor(desc));
+                  for (var met : MethodTypeDesc.ofDescriptor(desc).parameterList()){
+                    Method.Parameter p = new Method.Parameter(met.toString(), met.displayName());
+                    parameters.add(p);
+                  }
+
+
+
+                  Method method = new Method(Set.of(modifier(access)), name, ""+signature, parameters);
+                  listOfMethods.add(method);
+                  Entity entity = new Entity(oldEntity.modifiers(), oldEntity.name(),
+                  oldEntity.stereotype(), oldEntity.fields(),
+                  listOfMethods);
+                  entities.set(entities.size() - 1, entity);
+                }
+
                 return null;
               }
             }, 0);
