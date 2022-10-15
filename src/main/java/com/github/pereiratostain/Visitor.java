@@ -3,6 +3,8 @@ package com.github.pereiratostain;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
+
+import java.lang.constant.ClassDesc;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +13,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.RecordComponentVisitor;
+
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 
 class Visitor extends ClassVisitor {
@@ -82,6 +86,10 @@ class Visitor extends ClassVisitor {
   @Override
   public FieldVisitor visitField(int access, String name, String descriptor, String signature,
                                  Object value) {
+    // Check if the field is Synthetic
+    if ((access & ACC_SYNTHETIC) == ACC_SYNTHETIC) {
+      return null;
+    }
     var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modifier.add(modifier(access));
     descriptor = removePath(descriptor);
@@ -92,6 +100,7 @@ class Visitor extends ClassVisitor {
     }
     var fields = new ArrayList<>(this.entity.fields());
     var field = new Field(modifier, name, descriptor);
+
     fields.add(field);
     this.entity = new Entity(entity.modifiers(), entity.name(), entity.stereotype(), fields,
             List.of());

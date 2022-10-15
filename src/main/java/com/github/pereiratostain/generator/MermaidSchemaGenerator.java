@@ -67,9 +67,7 @@ public class MermaidSchemaGenerator implements Generator {
     var fields = new ArrayList<Field>();
 
     for (var field : entity.fields()) {
-      if (!field.name().equals("$VALUES")) {
-        fields.add(field);
-      }
+      fields.add(field);
     }
     return generateRecordFields(fields);
   }
