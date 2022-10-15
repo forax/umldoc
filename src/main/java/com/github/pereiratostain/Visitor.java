@@ -2,7 +2,9 @@ package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
+import com.github.forax.umldoc.core.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.objectweb.asm.ClassVisitor;
@@ -59,6 +61,20 @@ class Visitor extends ClassVisitor {
   @Override
   public FieldVisitor visitField(int access, String name, String descriptor, String signature,
                                  Object value) {
+    var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
+    modifier.add(modifier(access));
+    descriptor = descriptor.substring(descriptor.lastIndexOf("/") + 1);
+    if (signature != null) {
+      signature = signature.substring(signature.lastIndexOf("/") + 1);
+      signature = signature.substring(0, signature.indexOf(';'));
+      System.out.println(signature);
+      descriptor = descriptor + "<" + signature + ">";
+    }
+    var fields = new ArrayList<>(this.entity.fields());
+    var field = new Field(modifier, name, descriptor);
+    fields.add(field);
+    this.entity = new Entity(entity.modifiers(), entity.name(), entity.stereotype(), fields,
+            List.of());
     return null;
   }
 
