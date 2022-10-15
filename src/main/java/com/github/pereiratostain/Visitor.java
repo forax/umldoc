@@ -84,7 +84,6 @@ class Visitor extends ClassVisitor {
     if (signature != null) {
       signature = signature.substring(signature.lastIndexOf("/") + 1);
       signature = signature.substring(0, signature.indexOf(';'));
-      System.out.println(signature);
       descriptor = descriptor + "<" + signature + ">";
     }
     var fields = new ArrayList<>(this.entity.fields());
