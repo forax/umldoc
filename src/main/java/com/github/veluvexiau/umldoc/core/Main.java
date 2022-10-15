@@ -84,19 +84,17 @@ public class Main {
                                 String[] inter) {
                 Entity entity;
                 System.out.println(access + "here" + name);
-                if (java.lang.reflect.Modifier.isInterface(access)){
+
+                if (java.lang.reflect.Modifier.isInterface(access)) {
                   entity = new Entity(Set.of(), name,
                   Stereotype.INTERFACE, List.of(), List.of());
-                }
-                else if ((access & Opcodes.ACC_RECORD) !=0){
+                } else if ((access & Opcodes.ACC_RECORD) != 0) {
                   entity = new Entity(Set.of(), name,
                   Stereotype.RECORD, List.of(), List.of());
-                }
-                else if ((access & Opcodes.ACC_ENUM) !=0){
+                } else if ((access & Opcodes.ACC_ENUM) != 0) {
                   entity = new Entity(Set.of(), name,
                   Stereotype.ENUM, List.of(), List.of());
-                }
-                else {
+                } else {
                   entity = new Entity(Set.of(), name,
                   Stereotype.CLASS, List.of(), List.of());
                 }
@@ -152,21 +150,20 @@ public class Main {
                 var oldEntity = entities.get(entities.size() - 1);
                 var listOfMethods = new ArrayList<>(oldEntity.methods());
 
-                if (modifier(access) != null ) {
+                if (modifier(access) != null) {
                   List<Method.Parameter> parameters = new ArrayList<>();
-                  System.out.println("ici "+MethodTypeDesc.ofDescriptor(desc));
-                  for (var met : MethodTypeDesc.ofDescriptor(desc).parameterList()){
-                    Method.Parameter p = new Method.Parameter(met.toString(), met.displayName());
+                  for (var met : MethodTypeDesc.ofDescriptor(desc).parameterList()) {
+                    Method.Parameter p = new Method.Parameter(met.displayName(),
+                        met.displayName());
                     parameters.add(p);
                   }
 
-
-
-                  Method method = new Method(Set.of(modifier(access)), name, ""+signature, parameters);
+                  Method method = new Method(Set.of(modifier(access)),
+                      name, "" + signature, parameters);
                   listOfMethods.add(method);
                   Entity entity = new Entity(oldEntity.modifiers(), oldEntity.name(),
-                  oldEntity.stereotype(), oldEntity.fields(),
-                  listOfMethods);
+                      oldEntity.stereotype(), oldEntity.fields(),
+                      listOfMethods);
                   entities.set(entities.size() - 1, entity);
                 }
 
