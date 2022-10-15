@@ -54,8 +54,12 @@ public class MermaidExtract {
     for (Field field : entity.fields()) {
       writer.println("\t\t" + field.type() + " : " + field.name());
     }
-    for (Method method : entity.methods()) {
-      var sb = new StringBuilder();
+    writer.println(methodParameters(entity));
+  }
+
+  private String methodParameters(Entity entity) {
+    var sb = new StringBuilder();
+    for (var method : entity.methods()) {
       sb.append("\t\t")
           .append(method.name())
           .append("(");
@@ -66,9 +70,8 @@ public class MermaidExtract {
       sb.append(stream)
           .append(") : ")
           .append(method.returnType());
-      writer.println(sb.toString());
     }
-    writer.println("\t}\n");
+    return sb.toString();
   }
 }
 
