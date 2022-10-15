@@ -20,6 +20,10 @@ class Visitor extends ClassVisitor {
     super(api);
   }
 
+  private String removePath(String className) {
+    return className.substring(className.lastIndexOf('/') + 1);
+  }
+
   public Entity getEntity() {
     return this.entity;
   }
@@ -40,13 +44,13 @@ class Visitor extends ClassVisitor {
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
 
-    name = name.substring(name.lastIndexOf("/") + 1);
+    name = removePath(name);
     name = name.replace('-', '_');
     name = name.replace('$', ' ');
 
     var stereotype = Stereotype.CLASS;
     if (superName != null) {
-      superName = superName.substring(superName.lastIndexOf("/") + 1);
+      superName = removePath(superName);
       stereotype = translateStereotype(superName);
     }
 
@@ -80,9 +84,9 @@ class Visitor extends ClassVisitor {
                                  Object value) {
     var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modifier.add(modifier(access));
-    descriptor = descriptor.substring(descriptor.lastIndexOf("/") + 1);
+    descriptor = removePath(descriptor);
     if (signature != null) {
-      signature = signature.substring(signature.lastIndexOf("/") + 1);
+      signature = removePath(signature);
       signature = signature.substring(0, signature.indexOf(';'));
       descriptor = descriptor + "<" + signature + ">";
     }
