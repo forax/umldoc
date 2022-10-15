@@ -47,6 +47,7 @@ public class ExtractMethods {
       return "Enum";
     }
     //TODO find a way to detect difference between Interface and Class, to add Interface as
+    // Test result : class will always have <init> as a method, not for the interface
     return "";
   }
 }

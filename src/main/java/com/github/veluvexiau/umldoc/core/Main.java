@@ -84,6 +84,7 @@ public class Main {
                                 String[] inter) {
                 Entity entity;
                 System.out.println(access + "here" + name);
+
                 if (java.lang.reflect.Modifier.isInterface(access)) {
                   entity = new Entity(Set.of(), name,
                   Stereotype.INTERFACE, List.of(), List.of());
@@ -126,8 +127,8 @@ public class Main {
                   var listOfFields = new ArrayList<>(oldEntity.fields());
                   listOfFields.add(field);
                   Entity entity = new Entity(oldEntity.modifiers(), oldEntity.name(),
-                      oldEntity.stereotype(), listOfFields,
-                      oldEntity.methods());
+                  oldEntity.stereotype(), listOfFields,
+                  oldEntity.methods());
                   entities.set(entities.size() - 1, entity);
                 }
                 System.out.println("  field " + modifier(access) + " " + name
