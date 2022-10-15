@@ -3,47 +3,47 @@
 classDiagram
 	direction TB
 	class JarParser_1{
-		visit([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
+		visit(int, int, String, String, String, String[]) : null
 	}
 
 	class JarParser{
-		<init>([]) : null
-		populateEntities([Parameter[name=ClassDesc[ClassReader], type=ClassReader], Parameter[name=ClassDesc[HashSet], type=HashSet]]) : (Lorg/objectweb/asm/ClassReader;Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Entity;>;)V
-		recoverEntitiesFromJar([Parameter[name=ClassDesc[HashSet], type=HashSet]]) : (Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Entity;>;)V
-		getEntities([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		<init>() : null
+		populateEntities(ClassReader, HashSet) : (Lorg/objectweb/asm/ClassReader;Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Entity;>;)V
+		recoverEntitiesFromJar(HashSet) : (Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Entity;>;)V
+		getEntities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 	}
 
 	class Main{
-		<init>([]) : null
-		main([Parameter[name=ClassDesc[String[]], type=String[]]]) : null
+		<init>() : null
+		main(String[]) : null
 	}
 
 	class ClassFileParser_1{
-		visit([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		visitRecordComponent([Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String]]) : null
-		visitField([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[Object], type=Object]]) : null
-		visitMethod([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
+		visit(int, int, String, String, String, String[]) : null
+		visitRecordComponent(String, String, String) : null
+		visitField(int, String, String, String, Object) : null
+		visitMethod(int, String, String, String, String[]) : null
 	}
 
 	class ClassFileParser_EntityBuilder{
 		String : name
-		<init>([]) : null
-		name([Parameter[name=ClassDesc[String], type=String]]) : null
-		build([]) : null
+		<init>() : null
+		name(String) : null
+		build() : null
 	}
 
 	class ClassFileParser{
-		<init>([]) : null
-		parseClass([Parameter[name=ClassDesc[InputStream], type=InputStream]]) : null
+		<init>() : null
+		parseClass(InputStream) : null
 	}
 
 	class ModuleScrapper{
-		<init>([]) : null
-		packageName([Parameter[name=ClassDesc[String], type=String]]) : null
-		parseModule([Parameter[name=ClassDesc[ModuleReference], type=ModuleReference], Parameter[name=ClassDesc[Consumer], type=Consumer]]) : (Ljava/lang/module/ModuleReference;Ljava/util/function/Consumer<Lcom/github/forax/umldoc/core/Entity;>;)V
-		scrapModule([Parameter[name=ClassDesc[ModuleReference], type=ModuleReference]]) : (Ljava/lang/module/ModuleReference;)Ljava/util/List<Lcom/github/forax/umldoc/core/Package;>;
-		lambda$scrapModule$1([Parameter[name=ClassDesc[Map$Entry], type=Map$Entry]]) : null
-		lambda$scrapModule$0([Parameter[name=ClassDesc[Entity], type=Entity]]) : null
+		<init>() : null
+		packageName(String) : null
+		parseModule(ModuleReference, Consumer) : (Ljava/lang/module/ModuleReference;Ljava/util/function/Consumer<Lcom/github/forax/umldoc/core/Entity;>;)V
+		scrapModule(ModuleReference) : (Ljava/lang/module/ModuleReference;)Ljava/util/List<Lcom/github/forax/umldoc/core/Package;>;
+		lambda$scrapModule$1(Map$Entry) : null
+		lambda$scrapModule$0(Entity) : null
 	}
 
 	class AssociationDependency_Cardinality{
@@ -52,10 +52,10 @@ classDiagram
 		AssociationDependency$Cardinality : ZERO_OR_ONE
 		AssociationDependency$Cardinality : MANY
 		AssociationDependency$Cardinality[] : $VALUES
-		values([]) : null
-		valueOf([Parameter[name=ClassDesc[String], type=String]]) : null
-		<init>([Parameter[name=ClassDesc[String], type=String], Parameter[name=PrimitiveClassDesc[int], type=int]]) : ()V
-		$values([]) : null
+		values() : null
+		valueOf(String) : null
+		<init>(String, int) : ()V
+		$values() : null
 	}
 
 	class AssociationDependency_Side{
@@ -64,26 +64,26 @@ classDiagram
 		Optional : label
 		boolean : navigability
 		AssociationDependency$Cardinality : cardinality
-		<init>([Parameter[name=ClassDesc[Entity], type=Entity], Parameter[name=ClassDesc[Optional], type=Optional], Parameter[name=PrimitiveClassDesc[boolean], type=boolean], Parameter[name=ClassDesc[AssociationDependency$Cardinality], type=AssociationDependency$Cardinality]]) : (Lcom/github/forax/umldoc/core/Entity;Ljava/util/Optional<Ljava/lang/String;>;ZLcom/github/forax/umldoc/core/AssociationDependency$Cardinality;)V
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		entity([]) : null
-		label([]) : ()Ljava/util/Optional<Ljava/lang/String;>;
-		navigability([]) : null
-		cardinality([]) : null
+		<init>(Entity, Optional, boolean, AssociationDependency$Cardinality) : (Lcom/github/forax/umldoc/core/Entity;Ljava/util/Optional<Ljava/lang/String;>;ZLcom/github/forax/umldoc/core/AssociationDependency$Cardinality;)V
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		entity() : null
+		label() : ()Ljava/util/Optional<Ljava/lang/String;>;
+		navigability() : null
+		cardinality() : null
 	}
 
 	class AssociationDependency{
 		<<RECORD>>
 		AssociationDependency$Side : left
 		AssociationDependency$Side : right
-		<init>([Parameter[name=ClassDesc[AssociationDependency$Side], type=AssociationDependency$Side], Parameter[name=ClassDesc[AssociationDependency$Side], type=AssociationDependency$Side]]) : null
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		left([]) : null
-		right([]) : null
+		<init>(AssociationDependency$Side, AssociationDependency$Side) : null
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		left() : null
+		right() : null
 	}
 
 	class Dependency{
@@ -99,10 +99,10 @@ classDiagram
 		Entity$Stereotype : RECORD
 		Entity$Stereotype : ABSTRACT
 		Entity$Stereotype[] : $VALUES
-		values([]) : null
-		valueOf([Parameter[name=ClassDesc[String], type=String]]) : null
-		<init>([Parameter[name=ClassDesc[String], type=String], Parameter[name=PrimitiveClassDesc[int], type=int]]) : ()V
-		$values([]) : null
+		values() : null
+		valueOf(String) : null
+		<init>(String, int) : ()V
+		$values() : null
 	}
 
 	class Entity{
@@ -112,15 +112,15 @@ classDiagram
 		Entity$Stereotype : stereotype
 		List : fields
 		List : methods
-		<init>([Parameter[name=ClassDesc[Set], type=Set], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[Entity$Stereotype], type=Entity$Stereotype], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[List], type=List]]) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Lcom/github/forax/umldoc/core/Entity$Stereotype;Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;)V
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		modifiers([]) : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
-		name([]) : null
-		stereotype([]) : null
-		fields([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;
-		methods([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;
+		<init>(Set, String, Entity$Stereotype, List, List) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Lcom/github/forax/umldoc/core/Entity$Stereotype;Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;)V
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		modifiers() : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
+		name() : null
+		stereotype() : null
+		fields() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;
+		methods() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;
 	}
 
 	class Field{
@@ -128,25 +128,25 @@ classDiagram
 		Set : modifiers
 		String : name
 		String : type
-		<init>([Parameter[name=ClassDesc[Set], type=Set], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String]]) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Ljava/lang/String;)V
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		modifiers([]) : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
-		name([]) : null
-		type([]) : null
+		<init>(Set, String, String) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Ljava/lang/String;)V
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		modifiers() : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
+		name() : null
+		type() : null
 	}
 
 	class Method_Parameter{
 		<<RECORD>>
 		String : name
 		String : type
-		<init>([Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String]]) : null
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		name([]) : null
-		type([]) : null
+		<init>(String, String) : null
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		name() : null
+		type() : null
 	}
 
 	class Method{
@@ -155,14 +155,14 @@ classDiagram
 		String : name
 		String : returnType
 		List : parameters
-		<init>([Parameter[name=ClassDesc[Set], type=Set], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[List], type=List]]) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Ljava/lang/String;Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;)V
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		modifiers([]) : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
-		name([]) : null
-		returnType([]) : null
-		parameters([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;
+		<init>(Set, String, String, List) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Ljava/lang/String;Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;)V
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		modifiers() : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
+		name() : null
+		returnType() : null
+		parameters() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;
 	}
 
 	class Modifier{
@@ -174,10 +174,10 @@ classDiagram
 		Modifier : STATIC
 		Modifier : FINAL
 		Modifier[] : $VALUES
-		values([]) : null
-		valueOf([Parameter[name=ClassDesc[String], type=String]]) : null
-		<init>([Parameter[name=ClassDesc[String], type=String], Parameter[name=PrimitiveClassDesc[int], type=int]]) : ()V
-		$values([]) : null
+		values() : null
+		valueOf(String) : null
+		<init>(String, int) : ()V
+		$values() : null
 	}
 
 	class Package{
@@ -185,148 +185,148 @@ classDiagram
 		String : name
 		List : entities
 		List : dependencies
-		<init>([Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[List], type=List]]) : (Ljava/lang/String;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;)V
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		name([]) : null
-		entities([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
-		dependencies([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;
+		<init>(String, List, List) : (Ljava/lang/String;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;)V
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		name() : null
+		entities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		dependencies() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;
 	}
 
 	class SubtypeDependency{
 		<<RECORD>>
 		Entity : supertype
 		Entity : subtype
-		<init>([Parameter[name=ClassDesc[Entity], type=Entity], Parameter[name=ClassDesc[Entity], type=Entity]]) : null
-		toString([]) : null
-		hashCode([]) : null
-		equals([Parameter[name=ClassDesc[Object], type=Object]]) : null
-		supertype([]) : null
-		subtype([]) : null
+		<init>(Entity, Entity) : null
+		toString() : null
+		hashCode() : null
+		equals(Object) : null
+		supertype() : null
+		subtype() : null
 	}
 
 	class Generator{
 		<<INTERFACE>>
-		generate([Parameter[name=PrimitiveClassDesc[boolean], type=boolean], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[Writer], type=Writer]]) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
+		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
 	}
 
 	class MermaidGenerator{
-		<init>([]) : null
-		generate([Parameter[name=PrimitiveClassDesc[boolean], type=boolean], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[Writer], type=Writer]]) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
+		<init>() : null
+		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
 	}
 
 	class PlantUmlGenerator{
-		<init>([]) : null
-		generate([Parameter[name=PrimitiveClassDesc[boolean], type=boolean], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[List], type=List], Parameter[name=ClassDesc[Writer], type=Writer]]) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
+		<init>() : null
+		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
 	}
 
 	class Hello{
-		<init>([]) : null
-		main([Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		lambda$main$0([Parameter[name=ClassDesc[Entity], type=Entity]]) : null
+		<init>() : null
+		main(String[]) : null
+		lambda$main$0(Entity) : null
 	}
 
 	class JarReader_MyVisitor{
 		ArrayList : entities
-		getEntities([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
-		<init>([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		visit([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		visitField([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[Object], type=Object]]) : null
-		getModifiers([Parameter[name=PrimitiveClassDesc[int], type=int]]) : (I)Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
-		getStereotype([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
+		getEntities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		<init>(int) : null
+		visit(int, int, String, String, String, String[]) : null
+		visitField(int, String, String, String, Object) : null
+		getModifiers(int) : (I)Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
+		getStereotype(int) : null
 	}
 
 	class JarReader{
 		String : DEFAULT_DIRECTORY
-		<init>([]) : null
-		isPublic([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		isPrivate([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		isProtected([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		isRecord([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		isInterface([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		isEnum([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		getEntities([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
-		getEntities([Parameter[name=ClassDesc[String], type=String]]) : (Ljava/lang/String;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		<init>() : null
+		isPublic(int) : null
+		isPrivate(int) : null
+		isProtected(int) : null
+		isRecord(int) : null
+		isInterface(int) : null
+		isEnum(int) : null
+		getEntities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		getEntities(String) : (Ljava/lang/String;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 	}
 
 	class Generator{
 		<<INTERFACE>>
-		generate([Parameter[name=ClassDesc[Writer], type=Writer], Parameter[name=ClassDesc[List], type=List]]) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
+		generate(Writer, List) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
 	}
 
 	class MermaidSchemaGenerator_1{
 	}
 
 	class MermaidSchemaGenerator{
-		<init>([]) : null
-		generate([Parameter[name=ClassDesc[Writer], type=Writer], Parameter[name=ClassDesc[List], type=List]]) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
-		generateHeader([Parameter[name=ClassDesc[Writer], type=Writer]]) : null
-		generateEntity([Parameter[name=ClassDesc[Writer], type=Writer], Parameter[name=ClassDesc[Entity], type=Entity]]) : null
-		modifierToString([Parameter[name=ClassDesc[Modifier], type=Modifier]]) : null
+		<init>() : null
+		generate(Writer, List) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
+		generateHeader(Writer) : null
+		generateEntity(Writer, Entity) : null
+		modifierToString(Modifier) : null
 	}
 
 	class PlantUmlSchemaGenerator_1{
 	}
 
 	class PlantUmlSchemaGenerator{
-		<init>([]) : null
-		generate([Parameter[name=ClassDesc[Writer], type=Writer], Parameter[name=ClassDesc[List], type=List]]) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
-		generateEntity([Parameter[name=ClassDesc[Writer], type=Writer], Parameter[name=ClassDesc[Entity], type=Entity]]) : null
-		modifierToString([Parameter[name=ClassDesc[Modifier], type=Modifier]]) : null
+		<init>() : null
+		generate(Writer, List) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
+		generateEntity(Writer, Entity) : null
+		modifierToString(Modifier) : null
 	}
 
 	class Main{
-		<init>([]) : null
-		main([Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		asm([]) : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		<init>() : null
+		main(String[]) : null
+		asm() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 	}
 
 	class Visitor{
 		Entity : entity
-		<init>([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		getEntity([]) : null
-		visit([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		modifier([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		visitRecordComponent([Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String]]) : null
-		visitField([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[Object], type=Object]]) : null
-		visitMethod([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
+		<init>(int) : null
+		getEntity() : null
+		visit(int, int, String, String, String, String[]) : null
+		modifier(int) : null
+		visitRecordComponent(String, String, String) : null
+		visitField(int, String, String, String, Object) : null
+		visitMethod(int, String, String, String, String[]) : null
 	}
 
 	class ExtractMethods{
-		<init>([]) : null
-		getNameFromPath([Parameter[name=ClassDesc[String], type=String]]) : null
-		getStereotype([Parameter[name=ClassDesc[String], type=String]]) : null
+		<init>() : null
+		getNameFromPath(String) : null
+		getStereotype(String) : null
 	}
 
 	class Main_1{
-		modifier([Parameter[name=PrimitiveClassDesc[int], type=int]]) : null
-		visit([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		visitRecordComponent([Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String]]) : null
-		visitField([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[Object], type=Object]]) : null
-		visitMethod([Parameter[name=PrimitiveClassDesc[int], type=int], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String], type=String], Parameter[name=ClassDesc[String[]], type=String[]]]) : null
+		modifier(int) : null
+		visit(int, int, String, String, String, String[]) : null
+		visitRecordComponent(String, String, String) : null
+		visitField(int, String, String, String, Object) : null
+		visitMethod(int, String, String, String, String[]) : null
 	}
 
 	class Main{
-		<init>([]) : null
-		main([Parameter[name=ClassDesc[String[]], type=String[]]]) : null
-		readJarFile([Parameter[name=ClassDesc[Path], type=Path]]) : (Ljava/nio/file/Path;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		<init>() : null
+		main(String[]) : null
+		readJarFile(Path) : (Ljava/nio/file/Path;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 	}
 
 	class MermaidExtract{
-		<init>([]) : null
-		generate([Parameter[name=ClassDesc[List], type=List]]) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
-		init([Parameter[name=ClassDesc[PrintWriter], type=PrintWriter]]) : null
-		end([Parameter[name=ClassDesc[PrintWriter], type=PrintWriter]]) : null
-		displayEntity([Parameter[name=ClassDesc[PrintWriter], type=PrintWriter], Parameter[name=ClassDesc[Entity], type=Entity]]) : null
+		<init>() : null
+		generate(List) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
+		init(PrintWriter) : null
+		end(PrintWriter) : null
+		displayEntity(PrintWriter, Entity) : null
 	}
 
 	class PlantUmlExtract{
-		<init>([]) : null
-		generate([Parameter[name=ClassDesc[List], type=List]]) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
-		init([Parameter[name=ClassDesc[PrintWriter], type=PrintWriter]]) : null
-		end([Parameter[name=ClassDesc[PrintWriter], type=PrintWriter]]) : null
-		displayEntity([Parameter[name=ClassDesc[PrintWriter], type=PrintWriter], Parameter[name=ClassDesc[Entity], type=Entity]]) : null
+		<init>() : null
+		generate(List) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
+		init(PrintWriter) : null
+		end(PrintWriter) : null
+		displayEntity(PrintWriter, Entity) : null
 	}
 
 	class module-info{

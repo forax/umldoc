@@ -154,13 +154,10 @@ public class Main {
 
                 if (modifier(access) != null ) {
                   List<Method.Parameter> parameters = new ArrayList<>();
-                  System.out.println("ici "+MethodTypeDesc.ofDescriptor(desc));
                   for (var met : MethodTypeDesc.ofDescriptor(desc).parameterList()){
-                    Method.Parameter p = new Method.Parameter(met.toString(), met.displayName());
+                    Method.Parameter p = new Method.Parameter(met.displayName(),met.displayName() );
                     parameters.add(p);
                   }
-
-
 
                   Method method = new Method(Set.of(modifier(access)), name, ""+signature, parameters);
                   listOfMethods.add(method);
