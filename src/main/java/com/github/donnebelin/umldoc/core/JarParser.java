@@ -1,86 +1,68 @@
 package com.github.donnebelin.umldoc.core;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
+import java.io.IOException;
+import java.lang.module.ModuleFinder;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
-import java.io.IOException;
-import java.lang.module.ModuleFinder;
-import java.lang.reflect.Modifier;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
+/**
+ * Class to parse a jar file.
+ * This class uses ASM library to recover entities, fields and methods from .class files
+ * of the given jar.
+ */
 public final class JarParser {
-
-//    private static Modifier getModifier(int access) {
-//        if (Modifier.isPublic(access)) {
-//            return Modifier.PUBLIC;
-//        }
-//        if (Modifier.isPrivate(access)) {
-//            return Modifier.PRIVATE;
-//        }
-//        if (Modifier.isProtected(access)) {
-//            return Modifier.PROTECTED;
-//        }
-//        return Modifier.PACKAGE;
-//    }
-
-    private void getASMData(ClassReader classReader, ArrayList<Entity> entities) {
-        classReader.accept(new ClassVisitor(Opcodes.ASM9) {
-//            private static String modifier(int access) {
-//                return getModifier(access);
-//            }
-
-            @Override
-            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                System.err.println("class " + modifier(access) + " " + name + " " + superName + " " + (interfaces != null? Arrays.toString(interfaces): ""));
-                entities.add(new Entity(Set.of(), name, Optional.empty(), List.of(), List.of())); // TODO handle all parameters for entity creation
-            }
-//
-//                            @Override
-//                            public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-//                                System.err.println("  component " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName());
-//                                return null;
-//                            }
-//
-//                            @Override
-//                            public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-//                                System.err.println("  field " + modifier(access) + " " + name + " " + ClassDesc.ofDescriptor(descriptor).displayName() + " " + signature);
-//                                return null;
-//                            }
-//
-//                            @Override
-//                            public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-//                                System.err.println("  method " + modifier(access) + " " + name + " " + MethodTypeDesc.ofDescriptor(descriptor).displayDescriptor() + " " + signature);
-//                                return null;
-//                            }
-        }, 0);
-    }
-
-    private void recoverEntitiesFromJar(ArrayList<Entity> entities) throws IOException {
-        var path = Path.of("target");
-        var finder = ModuleFinder.of(path);
-        for(var moduleReference: finder.findAll()) {
-            try (var reader = moduleReference.open()) {
-                for (var filename : (Iterable<String>) reader.list()::iterator) {
-                    if (!filename.endsWith(".class")) {
-                        continue;
-                    }
-                    try (var inputStream = reader.open(filename).orElseThrow()) {
-                        var classReader = new ClassReader(inputStream);
-                        getASMData(classReader, entities);
-                    }
-                }
-            }
+  private static void populateEntities(ClassReader classReader, HashSet<Entity> entities) {
+    classReader.accept(new ClassVisitor(Opcodes.ASM9) {
+        @Override
+        public void visit(int version, int access, String name, String signature, String superName,
+                          String[] interfaces) {
+          if (name.equals("module-info")) {
+            return;
+          }
+          entities.add(new Entity(
+              Set.of(),
+              name.replace('/', '_').replace('$', '_'),
+              Stereotype.CLASS,
+               List.of(),
+               List.of()));
         }
-    }
+    }, 0);
+  }
 
-    public List<Entity> parse() throws IOException {
-       var entities = new ArrayList<Entity>();
-        recoverEntitiesFromJar(entities);
-        return List.copyOf(entities);
+  private static void recoverEntitiesFromJar(HashSet<Entity> entities) throws IOException {
+    var path = Path.of("target");
+    var finder = ModuleFinder.of(path);
+    for (var moduleReference : finder.findAll()) {
+      try (var reader = moduleReference.open()) {
+        for (var filename : (Iterable<String>) reader.list()::iterator) {
+          if (!filename.endsWith(".class")) {
+            continue;
+          }
+          try (var inputStream = reader.open(filename).orElseThrow()) {
+            var classReader = new ClassReader(inputStream);
+            populateEntities(classReader, entities);
+          }
+        }
+      }
     }
+  }
+
+  /**
+   * Recover all Entities from .class files and put them in a List of entity.
+   *
+   * @return a list of entity from the .class files
+   * @throws IOException if I/O exception occurred during parsing .class files
+   */
+  public static List<Entity> getEntities() throws IOException {
+    var entities = new HashSet<Entity>();
+    recoverEntitiesFromJar(entities);
+    return List.copyOf(entities);
+  }
 }

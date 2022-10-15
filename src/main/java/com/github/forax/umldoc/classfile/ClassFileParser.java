@@ -1,10 +1,10 @@
 package com.github.forax.umldoc.classfile;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -22,7 +22,7 @@ final class ClassFileParser {
     }
 
     public Entity build() {
-      return new Entity(Set.of(), name, Optional.empty(), List.of(), List.of());
+      return new Entity(Set.of(), name, Stereotype.CLASS, List.of(), List.of());
     }
   }
 

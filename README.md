@@ -11,5 +11,6 @@ Sessions
    - extract the entities from a jar and generate the corresponding plantuml/mermaid file
    - write tests and static analysis (CheckStyle: [code convention](https://google.github.io/styleguide/javaguide.html) verifier, Jacoco: test code coverage) 
 3. Implements the hard stuff first
-   - ???
+   - write the code that deal with the associations and fields
+
 

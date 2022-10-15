@@ -1,10 +1,10 @@
 package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -31,7 +31,7 @@ class Visitor extends ClassVisitor {
     name = name.substring(name.lastIndexOf("/") + 1);
     name = name.replace('-', '_');
     name = name.replace('$', ' ');
-    this.entity = new Entity(modif, name, Optional.empty(),
+    this.entity = new Entity(modif, name, Stereotype.CLASS,
             List.of(), List.of());
   }
 

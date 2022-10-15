@@ -1,5 +1,6 @@
 package com.github.forax.umldoc.core;
 
+import com.github.forax.umldoc.core.Entity.Stereotype;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class EntityTest {
         () -> assertEquals("PROTECTED", Modifier.PROTECTED.name()),
         () -> assertEquals("PUBLIC", Modifier.PUBLIC.name()),
         () -> assertEquals("STATIC", Modifier.STATIC.name()),
-        () -> assertEquals("SEALED", Modifier.SEALED.name())
+        () -> assertEquals("FINAL", Modifier.FINAL.name())
     );
   }
 
@@ -71,12 +72,12 @@ public class EntityTest {
   public void entity() {
     var nameField = new Field(Set.of(Modifier.PUBLIC), "name", "java.lang.String");
     var methodToString = new Method(Set.of(Modifier.PUBLIC), "toString", "java.lang.String", List.of());
-    var entity = new Entity(Set.of(Modifier.PUBLIC), "Entity", Optional.empty(),
+    var entity = new Entity(Set.of(Modifier.PUBLIC), "Entity", Stereotype.CLASS,
         List.of(nameField), List.of(methodToString));
     assertAll(
         () -> assertEquals(Set.of(Modifier.PUBLIC), entity.modifiers()),
         () -> assertEquals("Entity", entity.name()),
-        () -> assertTrue(entity.stereotype().isEmpty()),
+        () -> assertEquals(Stereotype.CLASS, entity.stereotype()),
         () -> assertEquals(List.of(nameField), entity.fields()),
         () -> assertEquals(List.of(methodToString), entity.methods())
     );
