@@ -22,16 +22,33 @@ class Visitor extends ClassVisitor {
     return this.entity;
   }
 
+  private Stereotype translateStereotype(String stereotype) {
+    return switch (stereotype) {
+      case "Enum" -> Stereotype.ENUM;
+      case "Record" -> Stereotype.RECORD;
+      case "Interface" -> Stereotype.INTERFACE;
+      default -> Stereotype.CLASS;
+    };
+  }
+
   @Override
   public void visit(int version, int access, String name, String signature,
                     String superName, String[] interfaces) {
 
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
+
     name = name.substring(name.lastIndexOf("/") + 1);
     name = name.replace('-', '_');
     name = name.replace('$', ' ');
-    this.entity = new Entity(modif, name, Stereotype.CLASS,
+
+    var stereotype = Stereotype.CLASS;
+    if(superName != null) {
+      superName = superName.substring(superName.lastIndexOf("/") + 1);
+      stereotype = translateStereotype(superName);
+    }
+
+    this.entity = new Entity(modif, name, stereotype,
             List.of(), List.of());
   }
 
