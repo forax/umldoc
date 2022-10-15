@@ -25,7 +25,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class JarReader {
 
-  private static final String DEFAULT_DIRECTORY = "target";
+  private static final String DEFAULT_DIRECTORY = "target/classes";
 
 
   /**
