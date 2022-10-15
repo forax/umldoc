@@ -41,7 +41,8 @@ public class MermaidSchemaGenerator implements Generator {
             """);
   }
 
-  private void generateEntity(Writer writer, Entity entity, Set<String> entitiesName) throws IOException {
+  private void generateEntity(Writer writer, Entity entity,
+                              Set<String> entitiesName) throws IOException {
     var associations = new ArrayList<String>();
     var stereotype = "";
     String fields;
@@ -72,7 +73,8 @@ public class MermaidSchemaGenerator implements Generator {
     return generateRecordFields(fields);
   }
 
-  private String computeFieldsClass(Entity entity, ArrayList<String> associations, Set<String> entitiesName) {
+  private String computeFieldsClass(Entity entity, ArrayList<String> associations,
+                                    Set<String> entitiesName) {
     var fields = new ArrayList<Field>();
     Pattern pattern = Pattern.compile("<.*>");
 
@@ -100,35 +102,25 @@ public class MermaidSchemaGenerator implements Generator {
   }
 
   private String generateFields(List<Field> fields) {
-    var string = new StringBuilder();
-
-    for (var field : fields) {
-      string
-              .append("\t")
-              .append(modifierToString(field.modifiers().iterator().next()))
-              .append(field.name()).append(" : ")
-              .append(field.type().replace(";", ""))
-              .append("\n");
-    }
-    return string.toString();
+    return fields.stream()
+            .map(field -> "\t"
+                    +modifierToString(field.modifiers().iterator().next())
+                    +field.name()
+                    +" : "
+                    +field.type().replace(";", ""))
+            .collect(Collectors.joining("\n"));
   }
 
   private String generateRecordFields(List<Field> fields) {
-    var string = new StringBuilder();
-
-    for (var field : fields) {
-      string.append("\t").append(field.name()).append("\n");
-    }
-    return string.toString();
+    return fields.stream()
+            .map(field -> "\t"+field.name())
+            .collect(Collectors.joining("\n"));
   }
 
   private String generateAssociations(Entity entity, List<String> associations) {
-    var string = new StringBuilder();
-
-    for (var field : associations) {
-      string.append("\t").append(entity.name()).append(" --> ").append(field).append('\n');
-    }
-    return string.toString();
+    return associations.stream()
+            .map(field -> "\t"+entity.name()+"-->"+field)
+            .collect(Collectors.joining("\n"));
   }
 
   private static String modifierToString(Modifier modifier) {
