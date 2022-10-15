@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -55,14 +54,19 @@ public class MermaidExtract {
     for (Field field : entity.fields()) {
       writer.println("\t\t" + field.type() + " : " + field.name());
     }
-
-
-
     for (Method method : entity.methods()) {
-      writer.println("\t\t" + method.name() + "(" + method.parameters().stream()
-          .map(Method.Parameter::name)
-          .collect(Collectors.joining(", "))
-          + ") : " + method.returnType());
+      var sb = new StringBuilder();
+      sb.append("\t\t")
+          .append(method.name())
+          .append("(");
+      var stream = method.parameters()
+          .stream()
+          .map(e -> e.type())
+          .collect(Collectors.joining(", "));
+      sb.append(stream)
+          .append(") : ")
+          .append(method.returnType());
+      writer.println(sb.toString());
     }
     writer.println("\t}\n");
   }
