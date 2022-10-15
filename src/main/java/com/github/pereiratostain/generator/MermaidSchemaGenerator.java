@@ -104,22 +104,22 @@ public class MermaidSchemaGenerator implements Generator {
   private String generateFields(List<Field> fields) {
     return fields.stream()
             .map(field -> "\t"
-                    +modifierToString(field.modifiers().iterator().next())
-                    +field.name()
-                    +" : "
-                    +field.type().replace(";", ""))
+                    + modifierToString(field.modifiers().iterator().next())
+                    + field.name()
+                    + " : "
+                    + field.type().replace(";", ""))
             .collect(Collectors.joining("\n"));
   }
 
   private String generateRecordFields(List<Field> fields) {
     return fields.stream()
-            .map(field -> "\t"+field.name())
+            .map(field -> "\t" + field.name())
             .collect(Collectors.joining("\n"));
   }
 
   private String generateAssociations(Entity entity, List<String> associations) {
     return associations.stream()
-            .map(field -> "\t"+entity.name()+"-->"+field)
+            .map(field -> "\t" + entity.name() + "-->"+field)
             .collect(Collectors.joining("\n"));
   }
 
