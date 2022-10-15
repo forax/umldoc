@@ -119,7 +119,7 @@ public class MermaidSchemaGenerator implements Generator {
 
   private String generateAssociations(Entity entity, List<String> associations) {
     return associations.stream()
-            .map(field -> "\t" + entity.name() + "-->"+field)
+            .map(field -> "\t" + entity.name() + "-->" + field)
             .collect(Collectors.joining("\n"));
   }
 
