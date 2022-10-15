@@ -45,7 +45,7 @@ class Visitor extends ClassVisitor {
     name = name.replace('$', ' ');
 
     var stereotype = Stereotype.CLASS;
-    if(superName != null) {
+    if (superName != null) {
       superName = superName.substring(superName.lastIndexOf("/") + 1);
       stereotype = translateStereotype(superName);
     }

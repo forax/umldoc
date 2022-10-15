@@ -46,7 +46,7 @@ public class MermaidSchemaGenerator implements Generator {
     var stereotype = "";
     String fields;
 
-    if(entity.stereotype() == Entity.Stereotype.ENUM) {
+    if (entity.stereotype() == Entity.Stereotype.ENUM) {
       fields = computeFieldsEnum(entity);
       stereotype = "\t<<enumeration>>\n";
     } else {
@@ -66,8 +66,8 @@ public class MermaidSchemaGenerator implements Generator {
   private String computeFieldsEnum(Entity entity) {
     var fields = new ArrayList<Field>();
 
-    for(var field: entity.fields()) {
-      if(!field.name().equals("$VALUES")) {
+    for (var field : entity.fields()) {
+      if (!field.name().equals("$VALUES")) {
         fields.add(field);
       }
     }
@@ -78,20 +78,20 @@ public class MermaidSchemaGenerator implements Generator {
     var fields = new ArrayList<Field>();
     Pattern pattern = Pattern.compile("<.*>");
 
-    for(var field: entity.fields()) {
+    for (var field : entity.fields()) {
       var fieldType = field.type();
       fieldType = fieldType.replace(";", "");
 
       Matcher matcher = pattern.matcher(fieldType);
 
-      if(matcher.find()) {
+      if (matcher.find()) {
         var string = matcher.group(0);
         string = string.replace("<", "");
         string = string.replace(">", "");
         fieldType = string;
       }
 
-      if(entitiesName.contains(fieldType)) {
+      if (entitiesName.contains(fieldType)) {
         associations.add(fieldType);
       } else {
         fields.add(field);
@@ -104,8 +104,13 @@ public class MermaidSchemaGenerator implements Generator {
   private String generateFields(List<Field> fields) {
     var string = new StringBuilder();
 
-    for (var field: fields) {
-      string.append("\t").append(modifierToString(field.modifiers().iterator().next())).append(field.name()).append(" : ").append(field.type().replace(";", "")).append("\n");
+    for (var field : fields) {
+      string
+              .append("\t")
+              .append(modifierToString(field.modifiers().iterator().next()))
+              .append(field.name()).append(" : ")
+              .append(field.type().replace(";", ""))
+              .append("\n");
     }
     return string.toString();
   }
@@ -113,7 +118,7 @@ public class MermaidSchemaGenerator implements Generator {
   private String generateRecordFields(List<Field> fields) {
     var string = new StringBuilder();
 
-    for (var field: fields) {
+    for (var field : fields) {
       string.append("\t").append(field.name()).append("\n");
     }
     return string.toString();
@@ -122,7 +127,7 @@ public class MermaidSchemaGenerator implements Generator {
   private String generateAssociations(Entity entity, List<String> associations) {
     var string = new StringBuilder();
 
-    for (var field: associations) {
+    for (var field : associations) {
       string.append("\t").append(entity.name()).append(" --> ").append(field).append('\n');
     }
     return string.toString();
