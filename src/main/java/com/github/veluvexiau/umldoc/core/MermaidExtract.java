@@ -46,15 +46,15 @@ public class MermaidExtract {
 
   private void displayEntity(PrintWriter writer, Entity entity) {
     writer.println("\tclass " + ExtractMethods.getNameFromPath(entity.name()) + "{");
-    var stereo = ExtractMethods.getStereotype(entity.stereotype().toString());
-    if (!stereo.equals("")) {
-      writer.println("\t\t<<" + stereo + ">>");
+
+    if (entity.stereotype() != Entity.Stereotype.CLASS) {
+      writer.println("\t\t<<" + entity.stereotype().toString() + ">>");
     }
     for (Field field : entity.fields()) {
       writer.println("\t\t" + field.type() + " : " + field.name());
     }
     for (Method method : entity.methods()) {
-      writer.println("\t\t" + method.name());
+      writer.println("\t\t" + method.name()+"("+method.parameters()+") : "+method.returnType());
     }
     writer.println("\t}\n");
   }
