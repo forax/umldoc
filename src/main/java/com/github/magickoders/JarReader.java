@@ -99,7 +99,7 @@ public class JarReader {
    */
   private static class MyVisitor extends ClassVisitor {
     // inheritance is dangerous. might be ok because it's an abstract class ?
-   
+
     private final ArrayList<Entity> entities = new ArrayList<>();
 
     private MyVisitor(int api) {
@@ -177,10 +177,19 @@ public class JarReader {
      *         not used here
      */
     @Override
-    public void visit(int version, int access, String name, String signature,
-                      String superName, String[] interfaces) {
-      var entity = new Entity(getModifiers(access), name.replace("/", "."),
-                              getStereotype(access), List.of(), List.of());
+    public void visit(int version, int access, String name, String signature, String superName,
+                      String[] interfaces) {
+      var splitName = name.split("/");
+
+      var modifiers = getModifiers(access);
+      var entityName = splitName[splitName.length - 1];
+      var stereotype = getStereotype(access);
+
+      var entity = new Entity(modifiers,
+                              entityName,
+                              stereotype,
+                              List.of(),
+                              List.of());
       entities.add(entity);
     }
 
