@@ -1,8 +1,12 @@
 package com.github.pereiratostain;
 
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
+import com.github.forax.umldoc.core.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.objectweb.asm.ClassVisitor;
@@ -18,8 +22,21 @@ class Visitor extends ClassVisitor {
     super(api);
   }
 
+  private String removePath(String className) {
+    return className.substring(className.lastIndexOf('/') + 1);
+  }
+
   public Entity getEntity() {
     return this.entity;
+  }
+
+  private Stereotype translateStereotype(String stereotype) {
+    return switch (stereotype) {
+      case "Enum" -> Stereotype.ENUM;
+      case "Record" -> Stereotype.RECORD;
+      case "Interface" -> Stereotype.INTERFACE;
+      default -> Stereotype.CLASS;
+    };
   }
 
   @Override
@@ -28,10 +45,18 @@ class Visitor extends ClassVisitor {
 
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
-    name = name.substring(name.lastIndexOf("/") + 1);
+
+    name = removePath(name);
     name = name.replace('-', '_');
     name = name.replace('$', ' ');
-    this.entity = new Entity(modif, name, Stereotype.CLASS,
+
+    var stereotype = Stereotype.CLASS;
+    if (superName != null) {
+      superName = removePath(superName);
+      stereotype = translateStereotype(superName);
+    }
+
+    this.entity = new Entity(modif, name, stereotype,
             List.of(), List.of());
   }
 
@@ -59,6 +84,24 @@ class Visitor extends ClassVisitor {
   @Override
   public FieldVisitor visitField(int access, String name, String descriptor, String signature,
                                  Object value) {
+    // Check if the field is Synthetic
+    if ((access & ACC_SYNTHETIC) == ACC_SYNTHETIC) {
+      return null;
+    }
+    var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
+    modifier.add(modifier(access));
+    descriptor = removePath(descriptor);
+    if (signature != null) {
+      signature = removePath(signature);
+      signature = signature.substring(0, signature.indexOf(';'));
+      descriptor = descriptor + "<" + signature + ">";
+    }
+    var fields = new ArrayList<>(this.entity.fields());
+    var field = new Field(modifier, name, descriptor);
+
+    fields.add(field);
+    this.entity = new Entity(entity.modifiers(), entity.name(), entity.stereotype(), fields,
+            List.of());
     return null;
   }
 
