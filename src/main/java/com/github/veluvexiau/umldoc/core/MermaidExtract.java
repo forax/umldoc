@@ -33,7 +33,6 @@ public class MermaidExtract {
     end(writer);
   }
 
-
   private void init(PrintWriter writer) {
     writer.println("```mermaid");
     writer.println("%% umldoc");
@@ -69,7 +68,8 @@ public class MermaidExtract {
           .collect(Collectors.joining(", "));
       sb.append(stream)
           .append(") : ")
-          .append(method.returnType());
+          .append(method.returnType())
+              .append("\n");
     }
     return sb.toString();
   }

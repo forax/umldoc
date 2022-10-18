@@ -1,46 +1,6 @@
 ```plantuml
 @startuml
 ' umldoc
-	class module-info{
-	}
-
-	class ExtractMethods{
-		<init>
-		getNameFromPath
-		getStereotype
-	}
-
-	class PlantUmlExtract{
-		<init>
-		generate
-		init
-		end
-		displayEntity
-	}
-
-	class Main{
-		<init>
-		main
-		readJarFile
-	}
-
-	class MermaidExtract{
-		<init>
-		generate
-		init
-		end
-		displayEntity
-		lambda$displayEntity$0
-	}
-
-	class Main_1{
-		modifier
-		visit
-		visitRecordComponent
-		visitField
-		visitMethod
-	}
-
 	class JarParser_1{
 		visit
 	}
@@ -57,12 +17,102 @@
 		getEntities
 	}
 
+	class Main{
+		<init>
+		main
+		asm
+	}
+
+	class MermaidSchemaGenerator_1{
+	}
+
 	class Generator{
 		generate
 	}
 
+	class PlantUmlSchemaGenerator{
+		<init>
+		generate
+		generateEntity
+		modifierToString
+	}
+
+	class PlantUmlSchemaGenerator_1{
+	}
+
+	class MermaidSchemaGenerator{
+		<init>
+		generate
+		generateHeader
+		generateEntity
+		computeFieldsEnum
+		computeFieldsClass
+		generateFields
+		generateRecordFields
+		generateAssociations
+		modifierToString
+		lambda$generateAssociations$2
+		lambda$generateRecordFields$1
+		lambda$generateFields$0
+	}
+
+	class Visitor{
+		Entity : entity
+		<init>
+		removePath
+		getEntity
+		translateStereotype
+		visit
+		modifier
+		visitRecordComponent
+		visitField
+		visitMethod
+	}
+
+	class Main{
+		<init>
+		main
+		readJarFile
+	}
+
+	class ExtractMethods{
+		<init>
+		getNameFromPath
+		getStereotype
+	}
+
+	class MermaidExtract{
+		<init>
+		generate
+		init
+		end
+		displayEntity
+		methodParameters
+		lambda$methodParameters$0
+	}
+
+	class Main_1{
+		modifier
+		visit
+		visitRecordComponent
+		visitField
+		visitMethod
+	}
+
+	class PlantUmlExtract{
+		<init>
+		generate
+		init
+		end
+		displayEntity
+	}
+
 	class MermaidGenerator{
 		<init>
+		generate
+	}
+
+	class Generator{
 		generate
 	}
 
@@ -71,32 +121,49 @@
 		generate
 	}
 
-	class AssociationDependency_Side{
-		Entity : entity
-		Optional : label
-		boolean : navigability
-		AssociationDependency$Cardinality : cardinality
-		<init>
-		toString
-		hashCode
-		equals
-		entity
-		label
-		navigability
-		cardinality
+	class Dependency{
 	}
 
-	class Package{
+	class Method{
+		Set : modifiers
 		String : name
-		List : entities
-		List : dependencies
+		String : returnType
+		List : parameters
 		<init>
 		toString
 		hashCode
 		equals
+		modifiers
 		name
-		entities
-		dependencies
+		returnType
+		parameters
+	}
+
+	class Modifier{
+		Modifier : PRIVATE
+		Modifier : PACKAGE
+		Modifier : PROTECTED
+		Modifier : PUBLIC
+		Modifier : STATIC
+		Modifier : FINAL
+		Modifier[] : $VALUES
+		values
+		valueOf
+		<init>
+		$values
+	}
+
+	class Field{
+		Set : modifiers
+		String : name
+		String : type
+		<init>
+		toString
+		hashCode
+		equals
+		modifiers
+		name
+		type
 	}
 
 	class Method_Parameter{
@@ -121,87 +188,6 @@
 		subtype
 	}
 
-	class AssociationDependency{
-		AssociationDependency$Side : left
-		AssociationDependency$Side : right
-		<init>
-		toString
-		hashCode
-		equals
-		left
-		right
-	}
-
-	class Field{
-		Set : modifiers
-		String : name
-		String : type
-		<init>
-		toString
-		hashCode
-		equals
-		modifiers
-		name
-		type
-	}
-
-	class Modifier{
-		Modifier : PRIVATE
-		Modifier : PACKAGE
-		Modifier : PROTECTED
-		Modifier : PUBLIC
-		Modifier : STATIC
-		Modifier : FINAL
-		Modifier[] : $VALUES
-		values
-		valueOf
-		<init>
-		$values
-	}
-
-	class Entity_Stereotype{
-		Entity$Stereotype : CLASS
-		Entity$Stereotype : INTERFACE
-		Entity$Stereotype : ANNOTATION
-		Entity$Stereotype : ENUM
-		Entity$Stereotype : RECORD
-		Entity$Stereotype : ABSTRACT
-		Entity$Stereotype[] : $VALUES
-		values
-		valueOf
-		<init>
-		$values
-	}
-
-	class Dependency{
-	}
-
-	class Method{
-		Set : modifiers
-		String : name
-		String : returnType
-		List : parameters
-		<init>
-		toString
-		hashCode
-		equals
-		modifiers
-		name
-		returnType
-		parameters
-	}
-
-	class AssociationDependency_Cardinality{
-		AssociationDependency$Cardinality : ONLY_ONE
-		AssociationDependency$Cardinality : ZERO_OR_ONE
-		AssociationDependency$Cardinality : MANY
-		AssociationDependency$Cardinality[] : $VALUES
-		values
-		valueOf
-		<init>
-		$values
-	}
-
 	class Entity{
 		Set : modifiers
 		String : name
@@ -219,6 +205,70 @@
 		methods
 	}
 
+	class Entity_Stereotype{
+		Entity$Stereotype : CLASS
+		Entity$Stereotype : INTERFACE
+		Entity$Stereotype : ANNOTATION
+		Entity$Stereotype : ENUM
+		Entity$Stereotype : RECORD
+		Entity$Stereotype : ABSTRACT
+		Entity$Stereotype[] : $VALUES
+		values
+		valueOf
+		<init>
+		$values
+	}
+
+	class AssociationDependency{
+		AssociationDependency$Side : left
+		AssociationDependency$Side : right
+		<init>
+		toString
+		hashCode
+		equals
+		left
+		right
+	}
+
+	class AssociationDependency_Cardinality{
+		AssociationDependency$Cardinality : ONLY_ONE
+		AssociationDependency$Cardinality : ZERO_OR_ONE
+		AssociationDependency$Cardinality : MANY
+		AssociationDependency$Cardinality[] : $VALUES
+		values
+		valueOf
+		<init>
+		$values
+	}
+
+	class Package{
+		String : name
+		List : entities
+		List : dependencies
+		<init>
+		toString
+		hashCode
+		equals
+		name
+		entities
+		dependencies
+	}
+
+	class AssociationDependency_Side{
+		Entity : entity
+		Optional : label
+		boolean : navigability
+		AssociationDependency$Cardinality : cardinality
+		<init>
+		toString
+		hashCode
+		equals
+		entity
+		label
+		navigability
+		cardinality
+	}
+
 	class ModuleScrapper{
 		<init>
 		packageName
@@ -228,16 +278,16 @@
 		lambda$scrapModule$0
 	}
 
+	class ClassFileParser{
+		<init>
+		parseClass
+	}
+
 	class ClassFileParser_1{
 		visit
 		visitRecordComponent
 		visitField
 		visitMethod
-	}
-
-	class ClassFileParser{
-		<init>
-		parseClass
 	}
 
 	class ClassFileParser_EntityBuilder{
@@ -247,75 +297,76 @@
 		build
 	}
 
+	class Main{
+		<init>
+		exitWithError
+		writeToPath
+		convertFile
+		main
+		mermaid
+		plantUml
+	}
+
 	class JarReader{
-		String : DEFAULT_DIRECTORY
+		Path : DEFAULT_SEARCH_DIRECTORY
 		<init>
 		isPublic
 		isPrivate
 		isProtected
+		isFinal
+		isStatic
+		getVisibility
+		modifiers
 		isRecord
 		isInterface
 		isEnum
+		isAnnotation
+		isAbstract
+		isModule
+		stereotype
+		entityName
 		getEntities
 		getEntities
 	}
 
-	class JarReader_MyVisitor{
-		ArrayList : entities
-		getEntities
+	class Parser{
+		parse
+	}
+
+	class Main_OutputFormat{
+		Main$OutputFormat : MERMAID
+		Main$OutputFormat : PLANT_UML
+		Supplier : parserSupplier
+		Main$OutputFormat[] : $VALUES
+		values
+		valueOf
 		<init>
+		getParser
+		$values
+	}
+
+	class JarReader_1{
 		visit
-		visitField
-		getModifiers
-		getStereotype
-	}
-
-	class Hello{
-		<init>
-		main
-		lambda$main$0
-	}
-
-	class MermaidSchemaGenerator_1{
-	}
-
-	class Generator{
-		generate
-	}
-
-	class PlantUmlSchemaGenerator_1{
-	}
-
-	class MermaidSchemaGenerator{
-		<init>
-		generate
-		generateHeader
-		generateEntity
-		modifierToString
-	}
-
-	class PlantUmlSchemaGenerator{
-		<init>
-		generate
-		generateEntity
-		modifierToString
-	}
-
-	class Main{
-		<init>
-		main
-		asm
-	}
-
-	class Visitor{
-		Entity : entity
-		<init>
-		getEntity
-		visit
-		modifier
 		visitRecordComponent
 		visitField
 		visitMethod
+	}
+
+	class MermaidParser{
+		<init>
+		parseField
+		parseEntity
+		parse
+	}
+
+	class PlantumlParser{
+		<init>
+		parseField
+		parseEntity
+		parse
+	}
+
+	class module-info{
 	}
 
 @enduml
