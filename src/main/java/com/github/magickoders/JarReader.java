@@ -167,6 +167,10 @@ public class JarReader {
       @Override
       public FieldVisitor visitField(int access, String name, String descriptor, String signature,
                                      Object value) {
+        var modifiers = modifiers(access);
+        System.out.println(name);
+        System.out.println(descriptor);
+        System.out.println(signature);
         return null;
       }
 
