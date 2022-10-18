@@ -92,8 +92,7 @@ public final class JarParser {
   /**
    * Supplies a list of all Associations parsed from jar file.
    *
-   * @return A list of AssociationDependency object
-   * with all parsed associations discovered in the jar file.
+   * @return A list of Association object with all parsed associations discovered in the jar file.
    */
   public List<AssociationDependency> getAssociationDependencies() {
     return List.copyOf(associations);
