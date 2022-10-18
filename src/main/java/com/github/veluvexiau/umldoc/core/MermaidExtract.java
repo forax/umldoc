@@ -68,6 +68,7 @@ public class MermaidExtract {
               .stream()
               .map(e -> e.type())
               .collect(Collectors.joining(", "));
+      formatReturnType(method.returnType());
       sb.append(stream)
               // TODO : after that, the return type is the Path of the class.
               // EX : ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>

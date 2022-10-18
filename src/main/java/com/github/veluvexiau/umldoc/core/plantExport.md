@@ -124,6 +124,7 @@
 		end
 		displayEntity
 		methodsAndParameters
+		formatReturnType
 		lambda$methodsAndParameters$0
 	}
 

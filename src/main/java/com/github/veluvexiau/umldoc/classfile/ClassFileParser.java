@@ -67,7 +67,6 @@ public final class ClassFileParser {
                                 String supName,
                                 String[] inter) {
                 Entity entity;
-                System.out.println(access + "here" + name);
                 if (java.lang.reflect.Modifier.isInterface(access)) {
                   entity = new Entity(Set.of(), name,
                           Stereotype.INTERFACE, List.of(), List.of());
@@ -113,10 +112,6 @@ public final class ClassFileParser {
                           oldEntity.methods());
                   entities.set(entities.size() - 1, entity);
                 }
-                System.out.println("  field " + modifier(access) + " " + name
-                        + " " + ClassDesc.ofDescriptor(descriptor).displayName()
-                        + " " + signature);
-
                 return null;
               }
 
@@ -126,15 +121,11 @@ public final class ClassFileParser {
                                                String desc,
                                                String signature,
                                                String[] exceptions) {
-                System.out.println("  method " + modifier(access) + " " + name
-                        + " " + MethodTypeDesc.ofDescriptor(desc).displayDescriptor()
-                        + " " + signature);
                 var oldEntity = entities.get(entities.size() - 1);
                 var listOfMethods = new ArrayList<>(oldEntity.methods());
 
                 if (modifier(access) != null) {
                   List<Method.Parameter> parameters = new ArrayList<>();
-                  System.out.println("ici " + MethodTypeDesc.ofDescriptor(desc));
                   for (var met : MethodTypeDesc.ofDescriptor(desc).parameterList()) {
                     Method.Parameter p = new Method.Parameter(met.toString(), met.displayName());
                     parameters.add(p);
