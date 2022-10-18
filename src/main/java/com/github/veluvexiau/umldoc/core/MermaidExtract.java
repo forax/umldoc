@@ -25,7 +25,7 @@ public class MermaidExtract {
   public void generate(List<Entity> entities) throws IOException {
     Objects.requireNonNull(entities);
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
-    try(PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset())) {
+    try (PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset())) {
       init(writer);
       for (Entity entitie : entities) {
         displayEntity(writer, entitie);

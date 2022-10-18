@@ -1,7 +1,10 @@
-package com.github.veluvexiau.umldoc.classFile;
+package com.github.veluvexiau.umldoc.classfile;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
+import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
@@ -10,10 +13,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import com.github.forax.umldoc.core.Field;
-import com.github.forax.umldoc.core.Method;
-import com.github.forax.umldoc.core.Modifier;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -21,7 +20,18 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
 
+/**
+ * ClassFileParser read a .jar file
+ */
 public final class ClassFileParser {
+
+  /**
+   * Read a jar file given by the parameter Path and return a list of Entity.
+   *
+   * @param path File's path
+   * @return List of Entity List created by the method containing all entities
+   * @throws IOException if the file cannot be opened
+   */
   public static List<Entity> readJarFile(Path path) throws IOException {
     var entities = new ArrayList<Entity>();
     var finder = ModuleFinder.of(path);
