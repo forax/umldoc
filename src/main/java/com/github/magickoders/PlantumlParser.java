@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Converts a Package into as a plantuml formatted String.
  */
-public class PlantumlParser implements Parser {
+public final class PlantumlParser implements Parser {
 
   private String parseField(Field f) {
     return f.type() + "" + f.name();

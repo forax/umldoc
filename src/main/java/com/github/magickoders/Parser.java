@@ -5,6 +5,6 @@ import com.github.forax.umldoc.core.Package;
 /**
  * Abstraction of a parser of Package to String.
  */
-public interface Parser {
+public sealed interface Parser permits MermaidParser, PlantumlParser {
   String parse(Package p);
 }
