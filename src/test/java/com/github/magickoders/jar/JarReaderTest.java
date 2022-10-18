@@ -1,8 +1,9 @@
-package com.github.magickoders;
+package com.github.magickoders.jar;
 
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +15,7 @@ public class JarReaderTest {
 
   @Test
   public void listNotNull() throws IOException {
-    var entities = JarReader.getEntities()
+    var entities = JarReader.getEntities(Path.of("target/classes"))
                             .stream()
                             .filter(entity -> entity.name()
                                                     .contains("Dependency"))
@@ -28,7 +29,7 @@ public class JarReaderTest {
 
   @Test
   public void entitiesOk() throws IOException {
-    var entities = JarReader.getEntities()
+    var entities = JarReader.getEntities(Path.of("target/classes"))
                             .stream()
                             .filter(entity -> entity.name()
                                                     .contains("Entity"))
