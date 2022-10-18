@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Converts a Package into as a mermaid formatted String.
  */
-public class MermaidParser implements Parser {
+public final class MermaidParser implements Parser {
 
   private String parseField(Field f) {
     return f.type() + "" + f.name();
