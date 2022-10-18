@@ -53,7 +53,7 @@ public class MermaidExtract {
     for (Field field : entity.fields()) {
       writer.println("\t\t" + field.type() + " : " + field.name());
     }
-    writer.println(methodsAndParameters(entity));
+    writer.println(methodsAndParameters(entity) + "\n\t}");
   }
 
   // TODO : The type is OK, but if it is Set<> or List<>, the type is only Set and not Set<Type>

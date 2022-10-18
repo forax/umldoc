@@ -7,28 +7,34 @@ classDiagram
 		escapeField(Field) : null
 		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;Ljava/io/Writer;)V
 
+	}
 	class Generator{
 		<<INTERFACE>>
 		fieldAccessor(Set) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;)C
 		fieldToString(Field) : null
 		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;Ljava/io/Writer;)V
 
+	}
 	class PlantUmlGenerator{
 		<init>() : null
 		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;Ljava/io/Writer;)V
 
+	}
 	class Main{
 		<init>() : null
 		main(String[]) : null
 		lambda$main$0(Entity) : null
 
+	}
 	class Helper_1{
 
+	}
 	class JarParser_1{
 		visit(int, int, String, String, String, String[]) : null
 		visitField(int, String, String, String, Object) : null
 		lambda$visitField$0(String) : null
 
+	}
 	class JarParser{
 		HashSet : entities
 		Entity : currentEntity
@@ -44,29 +50,36 @@ classDiagram
 		lambda$addFieldOrAssociation$1(Entity) : null
 		lambda$addFieldOrAssociation$0(String, Entity) : null
 
+	}
 	class Helper{
 		<init>() : null
 		parseCardinalities(AssociationDependency$Cardinality) : null
 
+	}
 	class Main{
 		<init>() : null
 		main(String[]) : null
 		asm() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 
+	}
 	class MermaidSchemaGenerator_1{
 
+	}
 	class Generator{
 		<<INTERFACE>>
 		generate(Writer, List) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
 
+	}
 	class PlantUmlSchemaGenerator{
 		<init>() : null
 		generate(Writer, List) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
 		generateEntity(Writer, Entity) : null
 		modifierToString(Modifier) : null
 
+	}
 	class PlantUmlSchemaGenerator_1{
 
+	}
 	class MermaidSchemaGenerator{
 		<init>() : null
 		generate(Writer, List) : (Ljava/io/Writer;Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
@@ -82,6 +95,7 @@ classDiagram
 		lambda$generateRecordFields$1(Field) : null
 		lambda$generateFields$0(Field) : null
 
+	}
 	class Visitor{
 		Entity : entity
 		<init>(int) : null
@@ -94,15 +108,18 @@ classDiagram
 		visitField(int, String, String, String, Object) : null
 		visitMethod(int, String, String, String, String[]) : null
 
+	}
 	class Main{
 		<init>() : null
 		main(String[]) : null
 
+	}
 	class ExtractMethods{
 		<init>() : null
 		getNameFromPath(String) : null
 		getStereotype(String) : null
 
+	}
 	class MermaidExtract{
 		<init>() : null
 		generate(List) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
@@ -113,6 +130,7 @@ classDiagram
 		formatReturnType(String) : null
 		lambda$methodsAndParameters$0(Method$Parameter) : null
 
+	}
 	class PlantUmlExtract{
 		<init>() : null
 		generate(List) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
@@ -120,10 +138,12 @@ classDiagram
 		end(PrintWriter) : null
 		displayEntity(PrintWriter, Entity) : null
 
+	}
 	class ClassFileParser{
 		<init>() : null
 		readJarFile(Path) : (Ljava/nio/file/Path;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 
+	}
 	class ClassFileParser_1{
 		modifier(int) : null
 		visit(int, int, String, String, String, String[]) : null
@@ -131,21 +151,26 @@ classDiagram
 		visitField(int, String, String, String, Object) : null
 		visitMethod(int, String, String, String, String[]) : null
 
+	}
 	class MermaidGenerator{
 		<init>() : null
 		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
 
+	}
 	class Generator{
 		<<INTERFACE>>
 		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
 
+	}
 	class PlantUmlGenerator{
 		<init>() : null
 		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;Ljava/io/Writer;)V
 
+	}
 	class Dependency{
 		<<INTERFACE>>
 
+	}
 	class Method{
 		<<RECORD>>
 		Set : modifiers
@@ -161,6 +186,7 @@ classDiagram
 		returnType() : null
 		parameters() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;
 
+	}
 	class Modifier{
 		<<ENUM>>
 		Modifier : PRIVATE
@@ -175,6 +201,7 @@ classDiagram
 		<init>(String, int) : ()V
 		$values() : null
 
+	}
 	class Field{
 		<<RECORD>>
 		Set : modifiers
@@ -188,6 +215,7 @@ classDiagram
 		name() : null
 		type() : null
 
+	}
 	class Method_Parameter{
 		<<RECORD>>
 		String : name
@@ -199,6 +227,7 @@ classDiagram
 		name() : null
 		type() : null
 
+	}
 	class SubtypeDependency{
 		<<RECORD>>
 		Entity : supertype
@@ -210,6 +239,7 @@ classDiagram
 		supertype() : null
 		subtype() : null
 
+	}
 	class Entity{
 		<<RECORD>>
 		Set : modifiers
@@ -227,6 +257,7 @@ classDiagram
 		fields() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;
 		methods() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;
 
+	}
 	class Entity_Stereotype{
 		<<ENUM>>
 		Entity$Stereotype : CLASS
@@ -241,6 +272,7 @@ classDiagram
 		<init>(String, int) : ()V
 		$values() : null
 
+	}
 	class AssociationDependency{
 		<<RECORD>>
 		AssociationDependency$Side : left
@@ -252,6 +284,7 @@ classDiagram
 		left() : null
 		right() : null
 
+	}
 	class AssociationDependency_Cardinality{
 		<<ENUM>>
 		AssociationDependency$Cardinality : ONLY_ONE
@@ -263,6 +296,7 @@ classDiagram
 		<init>(String, int) : ()V
 		$values() : null
 
+	}
 	class Package{
 		<<RECORD>>
 		String : name
@@ -276,6 +310,7 @@ classDiagram
 		entities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 		dependencies() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;
 
+	}
 	class AssociationDependency_Side{
 		<<RECORD>>
 		Entity : entity
@@ -291,6 +326,7 @@ classDiagram
 		navigability() : null
 		cardinality() : null
 
+	}
 	class ModuleScrapper{
 		<init>() : null
 		packageName(String) : null
@@ -299,22 +335,26 @@ classDiagram
 		lambda$scrapModule$1(Map$Entry) : null
 		lambda$scrapModule$0(Entity) : null
 
+	}
 	class ClassFileParser{
 		<init>() : null
 		parseClass(InputStream) : null
 
+	}
 	class ClassFileParser_1{
 		visit(int, int, String, String, String, String[]) : null
 		visitRecordComponent(String, String, String) : null
 		visitField(int, String, String, String, Object) : null
 		visitMethod(int, String, String, String, String[]) : null
 
+	}
 	class ClassFileParser_EntityBuilder{
 		String : name
 		<init>() : null
 		name(String) : null
 		build() : null
 
+	}
 	class Main{
 		<init>() : null
 		exitWithError(String) : null
@@ -324,6 +364,7 @@ classDiagram
 		mermaid(String[]) : null
 		plantUml(String[]) : null
 
+	}
 	class JarReader{
 		Path : DEFAULT_SEARCH_DIRECTORY
 		<init>() : null
@@ -345,10 +386,12 @@ classDiagram
 		getEntities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 		getEntities(Path) : (Ljava/nio/file/Path;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 
+	}
 	class Parser{
 		<<INTERFACE>>
 		parse(Package) : null
 
+	}
 	class Main_OutputFormat{
 		<<ENUM>>
 		Main$OutputFormat : MERMAID
@@ -361,24 +404,29 @@ classDiagram
 		getParser() : null
 		$values() : null
 
+	}
 	class JarReader_1{
 		visit(int, int, String, String, String, String[]) : null
 		visitRecordComponent(String, String, String) : null
 		visitField(int, String, String, String, Object) : null
 		visitMethod(int, String, String, String, String[]) : null
 
+	}
 	class MermaidParser{
 		<init>() : null
 		parseField(Field) : null
 		parseEntity(Entity) : null
 		parse(Package) : null
 
+	}
 	class PlantumlParser{
 		<init>() : null
 		parseField(Field) : null
 		parseEntity(Entity) : null
 		parse(Package) : null
 
+	}
 	class module-info{
 
+	}
 ```
