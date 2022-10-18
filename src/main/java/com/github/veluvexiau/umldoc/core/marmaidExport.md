@@ -127,7 +127,6 @@ classDiagram
 		end(PrintWriter) : null
 		displayEntity(PrintWriter, Entity) : null
 		methodsAndParameters(Entity) : null
-		formatReturnType(String) : null
 		lambda$methodsAndParameters$0(Method$Parameter) : null
 
 	}
