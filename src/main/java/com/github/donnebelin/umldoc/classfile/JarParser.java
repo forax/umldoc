@@ -50,12 +50,8 @@ public final class JarParser {
       return Stereotype.ENUM;
     }
 
-    if ((access & Opcodes.ACC_INTERFACE) != 0) {
+    if ((access & Opcodes.ACC_INTERFACE) != 0 || (access & Opcodes.ACC_ANNOTATION) != 0) {
       return Stereotype.INTERFACE;
-    }
-
-    if ((access & Opcodes.ACC_ANNOTATION) != 0) {
-      return Stereotype.ANNOTATION;
     }
 
     if ((access & Opcodes.ACC_ABSTRACT) != 0) {
