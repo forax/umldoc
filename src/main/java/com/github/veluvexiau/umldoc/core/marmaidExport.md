@@ -2,18 +2,51 @@
 %% umldoc
 classDiagram
 	direction TB
-	class JarParser_1{
-		visit(int, int, String, String, String, String[]) : null
+	class MermaidGenerator{
+		<init>() : null
+		escapeField(Field) : null
+		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;Ljava/io/Writer;)V
+
+	class Generator{
+		<<INTERFACE>>
+		fieldAccessor(Set) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;)C
+		fieldToString(Field) : null
+		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;Ljava/io/Writer;)V
+
+	class PlantUmlGenerator{
+		<init>() : null
+		generate(boolean, List, List, Writer) : (ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>;Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;Ljava/io/Writer;)V
 
 	class Main{
 		<init>() : null
 		main(String[]) : null
+		lambda$main$0(Entity) : null
+
+	class Helper_1{
+
+	class JarParser_1{
+		visit(int, int, String, String, String, String[]) : null
+		visitField(int, String, String, String, Object) : null
+		lambda$visitField$0(String) : null
 
 	class JarParser{
+		HashSet : entities
+		Entity : currentEntity
+		ArrayList : associations
 		<init>() : null
-		populateEntities(ClassReader, HashSet) : (Lorg/objectweb/asm/ClassReader;Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Entity;>;)V
-		recoverEntitiesFromJar(HashSet) : (Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Entity;>;)V
-		getEntities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		getAssociationDependencies() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/AssociationDependency;>;
+		entities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+		recoverEntitiesFromJar() : null
+		resolveStereotype(String) : null
+		modifiers(int) : (I)Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
+		addFieldOrAssociation(int, String, String, HashSet) : (ILjava/lang/String;Ljava/lang/String;Ljava/util/HashSet<Lcom/github/forax/umldoc/core/Field;>;)V
+		getAsmData(ClassReader) : null
+		lambda$addFieldOrAssociation$1(Entity) : null
+		lambda$addFieldOrAssociation$0(String, Entity) : null
+
+	class Helper{
+		<init>() : null
+		parseCardinalities(AssociationDependency$Cardinality) : null
 
 	class Main{
 		<init>() : null

@@ -56,22 +56,31 @@ public class MermaidExtract {
     writer.println(methodsAndParameters(entity));
   }
 
+  // TODO : The type is OK, but if it is Set<> or List<>, the type is only Set and not Set<Type>
+  // EX : method(String, Set)
   private String methodsAndParameters(Entity entity) {
     var sb = new StringBuilder();
     for (var method : entity.methods()) {
       sb.append("\t\t")
-          .append(method.name())
-          .append("(");
+              .append(method.name())
+              .append("(");
       var stream = method.parameters()
-          .stream()
-          .map(e -> e.type())
-          .collect(Collectors.joining(", "));
+              .stream()
+              .map(e -> e.type())
+              .collect(Collectors.joining(", "));
       sb.append(stream)
-          .append(") : ")
-          .append(method.returnType())
+              // TODO : after that, the return type is the Path of the class.
+              // EX : ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>
+              .append(") : ")
+              .append(method.returnType())
               .append("\n");
     }
     return sb.toString();
+  }
+
+  private String formatReturnType(String string) {
+    // TODO : replace the path with the correct returnType
+    return "";
   }
 }
 

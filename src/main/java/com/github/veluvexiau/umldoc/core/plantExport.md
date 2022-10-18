@@ -1,20 +1,57 @@
 ```plantuml
 @startuml
 ' umldoc
-	class JarParser_1{
-		visit
+	class MermaidGenerator{
+		<init>
+		escapeField
+		generate
+	}
+
+	class Generator{
+		fieldAccessor
+		fieldToString
+		generate
+	}
+
+	class PlantUmlGenerator{
+		<init>
+		generate
 	}
 
 	class Main{
 		<init>
 		main
+		lambda$main$0
+	}
+
+	class Helper_1{
+	}
+
+	class JarParser_1{
+		visit
+		visitField
+		lambda$visitField$0
 	}
 
 	class JarParser{
+		HashSet : entities
+		Entity : currentEntity
+		ArrayList : associations
 		<init>
-		populateEntities
+		getAssociationDependencies
+		entities
 		recoverEntitiesFromJar
-		getEntities
+		resolveStereotype
+		modifiers
+		addFieldOrAssociation
+		getAsmData
+		lambda$addFieldOrAssociation$1
+		lambda$addFieldOrAssociation$0
+	}
+
+	class Helper{
+		<init>
+		parseCardinalities
 	}
 
 	class Main{
