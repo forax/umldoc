@@ -25,7 +25,6 @@ public class Main {
   public static void main(String[] args)
           throws IOException {
     var parser = new JarParser();
-//    var packages = parser.resolvePackages();
     var entities = parser.entities()
             .stream()
             .filter(entity -> entity.name().contains("forax_umldoc"))
