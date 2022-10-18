@@ -23,13 +23,13 @@ public class PlantUmlExtract {
   public void generate(List<Entity> entities) throws IOException {
     Objects.requireNonNull(entities);
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/plantExport.md";
-    PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
-    init(writer);
-    for (Entity entitie : entities) {
-      displayEntity(writer, entitie);
+    try(PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset())) {
+      init(writer);
+      for (Entity entitie : entities) {
+        displayEntity(writer, entitie);
+      }
+      end(writer);
     }
-    end(writer);
-
   }
 
   private void init(PrintWriter writer) {

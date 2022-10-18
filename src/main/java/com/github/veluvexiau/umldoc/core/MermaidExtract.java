@@ -25,12 +25,13 @@ public class MermaidExtract {
   public void generate(List<Entity> entities) throws IOException {
     Objects.requireNonNull(entities);
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
-    PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset());
-    init(writer);
-    for (Entity entitie : entities) {
-      displayEntity(writer, entitie);
+    try(PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset())) {
+      init(writer);
+      for (Entity entitie : entities) {
+        displayEntity(writer, entitie);
+      }
+      end(writer);
     }
-    end(writer);
   }
 
   private void init(PrintWriter writer) {
@@ -46,17 +47,16 @@ public class MermaidExtract {
 
   private void displayEntity(PrintWriter writer, Entity entity) {
     writer.println("\tclass " + ExtractMethods.getNameFromPath(entity.name()) + "{");
-
     if (entity.stereotype() != Entity.Stereotype.CLASS) {
       writer.println("\t\t<<" + entity.stereotype().toString() + ">>");
     }
     for (Field field : entity.fields()) {
       writer.println("\t\t" + field.type() + " : " + field.name());
     }
-    writer.println(methodParameters(entity));
+    writer.println(methodsAndParameters(entity));
   }
 
-  private String methodParameters(Entity entity) {
+  private String methodsAndParameters(Entity entity) {
     var sb = new StringBuilder();
     for (var method : entity.methods()) {
       sb.append("\t\t")
