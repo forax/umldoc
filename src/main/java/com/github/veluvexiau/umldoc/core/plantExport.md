@@ -72,7 +72,6 @@
 	class Main{
 		<init>
 		main
-		readJarFile
 	}
 
 	class ExtractMethods{
@@ -87,16 +86,8 @@
 		init
 		end
 		displayEntity
-		methodParameters
-		lambda$methodParameters$0
-	}
-
-	class Main_1{
-		modifier
-		visit
-		visitRecordComponent
-		visitField
-		visitMethod
+		methodsAndParameters
+		lambda$methodsAndParameters$0
 	}
 
 	class PlantUmlExtract{
@@ -105,6 +96,19 @@
 		init
 		end
 		displayEntity
+	}
+
+	class ClassFileParser{
+		<init>
+		readJarFile
+	}
+
+	class ClassFileParser_1{
+		modifier
+		visit
+		visitRecordComponent
+		visitField
+		visitMethod
 	}
 
 	class MermaidGenerator{

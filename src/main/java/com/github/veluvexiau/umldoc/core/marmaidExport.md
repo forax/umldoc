@@ -64,7 +64,6 @@ classDiagram
 	class Main{
 		<init>() : null
 		main(String[]) : null
-		readJarFile(Path) : (Ljava/nio/file/Path;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 
 	class ExtractMethods{
 		<init>() : null
@@ -77,15 +76,8 @@ classDiagram
 		init(PrintWriter) : null
 		end(PrintWriter) : null
 		displayEntity(PrintWriter, Entity) : null
-		methodParameters(Entity) : null
-		lambda$methodParameters$0(Method$Parameter) : null
-
-	class Main_1{
-		modifier(int) : null
-		visit(int, int, String, String, String, String[]) : null
-		visitRecordComponent(String, String, String) : null
-		visitField(int, String, String, String, Object) : null
-		visitMethod(int, String, String, String, String[]) : null
+		methodsAndParameters(Entity) : null
+		lambda$methodsAndParameters$0(Method$Parameter) : null
 
 	class PlantUmlExtract{
 		<init>() : null
@@ -93,6 +85,17 @@ classDiagram
 		init(PrintWriter) : null
 		end(PrintWriter) : null
 		displayEntity(PrintWriter, Entity) : null
+
+	class ClassFileParser{
+		<init>() : null
+		readJarFile(Path) : (Ljava/nio/file/Path;)Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
+
+	class ClassFileParser_1{
+		modifier(int) : null
+		visit(int, int, String, String, String, String[]) : null
+		visitRecordComponent(String, String, String) : null
+		visitField(int, String, String, String, Object) : null
+		visitMethod(int, String, String, String, String[]) : null
 
 	class MermaidGenerator{
 		<init>() : null
