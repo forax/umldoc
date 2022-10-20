@@ -1,7 +1,9 @@
 package com.github.magickoders.jar;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
@@ -39,6 +41,7 @@ public class JarReader {
     Objects.requireNonNull(searchDirectory);
 
     var entities = new ArrayList<Entity>();
+    var entityBuilder = new EntityBuilder();
     var myVisitor = new ClassVisitor(Opcodes.ASM9) {
 
       @Override
@@ -49,11 +52,9 @@ public class JarReader {
           return;
         }
 
-        Set<Modifier> modifiers = AccessReader.modifiers(access);
-        var entityName = entityName(name);
-        var stereotype = AccessReader.stereotype(access);
-        var entity = new Entity(modifiers, entityName, stereotype, List.of(), List.of());
-        entities.add(entity);
+        entityBuilder.setModifiers(AccessReader.modifiers(access))
+                     .setTypeInfo(TypeInfo.of(name))
+                     .setStereotype(AccessReader.stereotype(access));
       }
 
       @Override
@@ -74,7 +75,8 @@ public class JarReader {
         System.out.println(descriptor);
         System.out.println(signature);
         System.out.println(modifiers);
-
+        // TODO
+        var field = new Field(modifiers, name, TypeInfo.of("TODO"));
         return null;
       }
 
@@ -82,6 +84,11 @@ public class JarReader {
       public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
                                        String[] exceptions) {
         return null;
+      }
+
+      @Override
+      public void visitEnd() {
+        entities.add(entityBuilder.build());
       }
     };
 
