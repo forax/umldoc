@@ -7,7 +7,6 @@ import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -86,38 +85,32 @@ public class EntityBuilder {
     return this;
   }
 
-
   /**
-   * Resets the builder to its original state by resetting all values to their default. The builder
-   * cannot build entity after being cleared.
-   */
-  private void clear() {
-    modifiers = null;
-    type = null;
-    stereotype = null;
-    methods.clear();
-    fields.clear();
-  }
-
-  /**
-   * Builds the entity with the previously set values. If the entity cannot be built it still clears
-   * the values and returns an empty Optional.
+   * Builds the entity with the previously set values.
    *
-   * @return the built entity wrapped inside an Optional or an empty Optional.
+   * @return the built entity.
+   * @throws NullPointerException
+   *         if a required value was not set
    * @see #setModifiers(Set)
    * @see #setTypeInfo(TypeInfo)
    * @see #setStereotype(Entity.Stereotype)
    * @see #addField(Field)
    * @see #addMethod(Method)
    */
-  public Optional<Entity> build() {
-    if (modifiers == null || type == null || stereotype == null) {
-      clear();
-      return Optional.empty();
-    }
+  public Entity build() {
+    Objects.requireNonNull(modifiers, "No value set for modifiers");
+    Objects.requireNonNull(type, "No value set for type");
+    Objects.requireNonNull(stereotype, "No value set for stereotype");
+
     var entity = new Entity(modifiers, type, stereotype, fields, methods);
-    clear();
-    return Optional.of(entity);
+
+    modifiers = null;
+    type = null;
+    stereotype = null;
+    methods.clear();
+    fields.clear();
+
+    return entity;
   }
 
 }
