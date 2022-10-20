@@ -40,61 +40,7 @@ public class JarReader {
   public static List<Entity> getEntities(Path searchDirectory) throws IOException {
     Objects.requireNonNull(searchDirectory);
 
-    var entities = new ArrayList<Entity>();
-    var entityBuilder = new EntityBuilder();
-    var myVisitor = new ClassVisitor(Opcodes.ASM9) {
-
-      @Override
-      public void visit(int version, int access, String name, String signature, String superName,
-                        String[] interfaces) {
-
-        if (AccessReader.isModule(access)) {
-          return;
-        }
-
-        entityBuilder.setModifiers(AccessReader.modifiers(access))
-                     .setTypeInfo(TypeInfo.of(name))
-                     .setStereotype(AccessReader.stereotype(access));
-      }
-
-      @Override
-      public RecordComponentVisitor visitRecordComponent(String name, String descriptor,
-                                                         String signature) {
-        return null;
-      }
-
-      @Override
-      public FieldVisitor visitField(int access, String name, String descriptor, String signature,
-                                     Object value) {
-
-        if (AccessReader.isSynthetic(access)) {
-          return null;
-        }
-        Set<Modifier> modifiers = AccessReader.modifiers(access);
-        // print used for debugging
-//        System.out.println(name);
-//        System.out.println(descriptor);
-//        System.out.println(signature);
-//        System.out.println(modifiers);
-
-        // FIXME TypeInfo of field is not set properly. need more documentation
-        var field = new Field(modifiers, name, TypeInfo.of("TODO"));
-        entityBuilder.addField(field);
-        return null;
-      }
-
-      @Override
-      public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
-                                       String[] exceptions) {
-        return null;
-      }
-
-      @Override
-      public void visitEnd() {
-        entityBuilder.build()
-                     .ifPresent(entities::add);
-      }
-    };
+    var myVisitor = new EntityListerClassVisitor();
 
     var finder = ModuleFinder.of(searchDirectory);
     for (var moduleReference : finder.findAll()) {
@@ -112,9 +58,73 @@ public class JarReader {
       }
     }
 
-    return entities;
+    return myVisitor.entities;
   }
 
+  private static class EntityListerClassVisitor extends ClassVisitor {
+
+    private final ArrayList<Entity> entities = new ArrayList<>();
+    private final EntityBuilder entityBuilder = new EntityBuilder();
+    private boolean isEntitySkipped = false;
+
+    public EntityListerClassVisitor() {
+      super(Opcodes.ASM9);
+    }
+
+    public List<Entity> entities() {
+      return List.copyOf(entities);
+    }
+
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName,
+                      String[] interfaces) {
+      isEntitySkipped = (AccessReader.isModule(access));
+      if (isEntitySkipped) {
+        return;
+      }
+      entityBuilder.setModifiers(AccessReader.modifiers(access))
+                   .setTypeInfo(TypeInfo.of(name))
+                   .setStereotype(AccessReader.stereotype(access));
+    }
+
+    @Override
+    public RecordComponentVisitor visitRecordComponent(String name, String descriptor,
+                                                       String signature) {
+      return null;
+    }
+
+    @Override
+    public FieldVisitor visitField(int access, String name, String descriptor, String signature,
+                                   Object value) {
+      if (AccessReader.isSynthetic(access)) {
+        return null;
+      }
+      Set<Modifier> modifiers = AccessReader.modifiers(access);
+      // print used for debugging
+//        System.out.println(name);
+//        System.out.println(descriptor);
+//        System.out.println(signature);
+//        System.out.println(modifiers);
+
+      // FIXME TypeInfo of field is not set properly. need more documentation
+      var field = new Field(modifiers, name, TypeInfo.of("TODO"));
+      entityBuilder.addField(field);
+      return null;
+    }
+
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
+                                     String[] exceptions) {
+      return null;
+    }
+
+    @Override
+    public void visitEnd() {
+      if (isEntitySkipped) {
+        entities.add(entityBuilder.build());
+      }
+    }
+  }
 }
 
 
