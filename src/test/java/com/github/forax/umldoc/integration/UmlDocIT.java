@@ -33,51 +33,56 @@ public class UmlDocIT {
     assertEquals(Entity.class.getPackageName(), core.name());
 
     var entities = core.entities().stream()
-        .sorted(Comparator.comparing(Entity::name))
+        .sorted(Comparator.comparing(e -> e.type().name()))
         .toList();
     var writer = new StringWriter();
     new MermaidGenerator().generate(true, entities, List.of(), writer);
-    assertEquals("""
+    assertEquals(
+        """
         classDiagram
             direction TB
-        
+
             class com.github.forax.umldoc.core.AssociationDependency {
             }
-             
+
             class com.github.forax.umldoc.core.AssociationDependency$Cardinality {
             }
-            
+
             class com.github.forax.umldoc.core.AssociationDependency$Side {
             }
-            
+
             class com.github.forax.umldoc.core.Dependency {
             }
-            
+
             class com.github.forax.umldoc.core.Entity {
             }
-            
+
             class com.github.forax.umldoc.core.Entity$Stereotype {
             }
-            
+
             class com.github.forax.umldoc.core.Field {
             }
-            
+
             class com.github.forax.umldoc.core.Method {
             }
-            
+
             class com.github.forax.umldoc.core.Method$Parameter {
             }
-            
+
             class com.github.forax.umldoc.core.Modifier {
             }
-            
+
             class com.github.forax.umldoc.core.Package {
             }
-            
+
             class com.github.forax.umldoc.core.SubtypeDependency {
             }
-        
-        """, writer.toString());
+
+            class com.github.forax.umldoc.core.TypeInfo {
+            }
+
+        """,
+        writer.toString());
   }
 
 
@@ -94,50 +99,55 @@ public class UmlDocIT {
     assertEquals(Entity.class.getPackageName(), core.name());
 
     var entities = core.entities().stream()
-        .sorted(Comparator.comparing(Entity::name))
+        .sorted(Comparator.comparing(e -> e.type().name()))
         .toList();
     var writer = new StringWriter();
     new PlantUmlGenerator().generate(true, entities, List.of(), writer);
-    assertEquals("""
+    assertEquals(
+        """
         @startuml
-        
+
             class com.github.forax.umldoc.core.AssociationDependency {
             }
-            
+
             class com.github.forax.umldoc.core.AssociationDependency$Cardinality {
             }
-            
+
             class com.github.forax.umldoc.core.AssociationDependency$Side {
             }
-            
+
             class com.github.forax.umldoc.core.Dependency {
             }
-            
+
             class com.github.forax.umldoc.core.Entity {
             }
-            
+
             class com.github.forax.umldoc.core.Entity$Stereotype {
             }
-            
+
             class com.github.forax.umldoc.core.Field {
             }
-            
+
             class com.github.forax.umldoc.core.Method {
             }
-            
+
             class com.github.forax.umldoc.core.Method$Parameter {
             }
-            
+
             class com.github.forax.umldoc.core.Modifier {
             }
-            
+
             class com.github.forax.umldoc.core.Package {
             }
-            
+
             class com.github.forax.umldoc.core.SubtypeDependency {
             }
-        
+
+            class com.github.forax.umldoc.core.TypeInfo {
+            }
+
         @enduml
-        """, writer.toString());
+        """,
+        writer.toString());
   }
 }
