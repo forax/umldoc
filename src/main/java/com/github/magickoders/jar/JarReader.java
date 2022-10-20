@@ -69,11 +69,12 @@ public class JarReader {
         if (AccessReader.isSynthetic(access)) {
           return null;
         }
-
         Set<Modifier> modifiers = AccessReader.modifiers(access);
         System.out.println(name);
         System.out.println(descriptor);
         System.out.println(signature);
+        System.out.println(modifiers);
+
         return null;
       }
 
