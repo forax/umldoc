@@ -48,7 +48,7 @@ public class EntityBuilder {
   }
 
   /**
-   * Sets all modifiers of the entity to build.
+   * Sets all modifiers of the entity to build. This value is required to build the entity.
    *
    * @param modifiers
    *         a set of Modifier
@@ -60,7 +60,7 @@ public class EntityBuilder {
   }
 
   /**
-   * Sets the type of the entity to build.
+   * Sets the type of the entity to build. This value is required to build the entity.
    *
    * @param type
    *         a TypeInfo representing the "class" type
@@ -73,7 +73,7 @@ public class EntityBuilder {
   }
 
   /**
-   * Sets the stereotype of the entity to build.
+   * Sets the stereotype of the entity to build. This value is required to build the entity.
    *
    * @param stereotype
    *         an Entity.Stereotype representing the type of the class (e.i. enum, record, ...)
