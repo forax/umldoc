@@ -28,7 +28,7 @@ public class EntityBuilderTest {
     var entityBuilder = new EntityBuilder();
     entityBuilder.setStereotype(Entity.Stereotype.CLASS)
                  .setTypeInfo(new TypeInfo(Optional.empty(), "test", List.of()));
-    assertThrows(IllegalStateException.class, entityBuilder::build);
+    assertThrows(NullPointerException.class, entityBuilder::build);
   }
 
   @Test
@@ -36,7 +36,7 @@ public class EntityBuilderTest {
     var entityBuilder = new EntityBuilder();
     entityBuilder.setStereotype(Entity.Stereotype.CLASS)
                  .setModifiers(Set.of());
-    assertThrows(IllegalStateException.class, entityBuilder::build);
+    assertThrows(NullPointerException.class, entityBuilder::build);
   }
 
   @Test
@@ -44,7 +44,7 @@ public class EntityBuilderTest {
     var entityBuilder = new EntityBuilder();
     entityBuilder.setTypeInfo(new TypeInfo(Optional.empty(), "test", List.of()))
                  .setModifiers(Set.of());
-    assertThrows(IllegalStateException.class, entityBuilder::build);
+    assertThrows(NullPointerException.class, entityBuilder::build);
   }
 
   // TODO test integrity of built entities
