@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Builder for com.github.forax.umldoc.core.Entity. It helps build an entity when you need to add
+ * fields and methods multiple times on the same entity.
+ */
 public class EntityBuilder {
 
   private final ArrayList<Method> methods = new ArrayList<>();
@@ -17,29 +21,64 @@ public class EntityBuilder {
   private Set<Modifier> modifiers = null;
   private Entity.Stereotype stereotype = null;
 
+  /**
+   * Adds a method to the entity to build.
+   *
+   * @param m
+   *         method to add on the buildable entity
+   * @return a reference to this object
+   */
   public EntityBuilder addMethod(Method m) {
     Objects.requireNonNull(m);
     this.methods.add(m);
     return this;
   }
 
+  /**
+   * Adds a field to the entity to build.
+   *
+   * @param f
+   *         field to add on the buildable entity
+   * @return a reference to this object
+   */
   public EntityBuilder addField(Field f) {
     Objects.requireNonNull(f);
     this.fields.add(f);
     return this;
   }
 
+  /**
+   * Sets all modifiers of the entity to build.
+   *
+   * @param modifiers
+   *         a set of Modifier
+   * @return a reference to this object
+   */
   public EntityBuilder setModifiers(Set<Modifier> modifiers) {
     this.modifiers = Set.copyOf(modifiers);
     return this;
   }
 
+  /**
+   * Sets the type of the entity to build.
+   *
+   * @param type
+   *         a TypeInfo representing the "class" type
+   * @return a reference to this object
+   */
   public EntityBuilder setTypeInfo(TypeInfo type) {
     Objects.requireNonNull(type);
     this.type = type;
     return this;
   }
 
+  /**
+   * Sets the stereotype of the entity to build.
+   *
+   * @param stereotype
+   *         an Entity.Stereotype representing the type of the class (e.i. enum, record, ...)
+   * @return a reference to this object
+   */
   public EntityBuilder setStereotype(Entity.Stereotype stereotype) {
     Objects.requireNonNull(stereotype);
     this.stereotype = stereotype;
@@ -54,6 +93,16 @@ public class EntityBuilder {
     fields.clear();
   }
 
+  /**
+   * Builds the entity with the previously set values.
+   *
+   * @return the built entity.
+   * @see #setModifiers(Set)
+   * @see #setTypeInfo(TypeInfo)
+   * @see #setStereotype(Entity.Stereotype)
+   * @see #addField(Field)
+   * @see #addMethod(Method)
+   */
   public Entity build() {
     if (modifiers == null) {
       throw new IllegalStateException("No modifiers was set");
