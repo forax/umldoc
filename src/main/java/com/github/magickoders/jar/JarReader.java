@@ -72,10 +72,10 @@ public class JarReader {
         }
         Set<Modifier> modifiers = AccessReader.modifiers(access);
         // print used for debugging
-        System.out.println(name);
-        System.out.println(descriptor);
-        System.out.println(signature);
-        System.out.println(modifiers);
+//        System.out.println(name);
+//        System.out.println(descriptor);
+//        System.out.println(signature);
+//        System.out.println(modifiers);
 
         // FIXME TypeInfo of field is not set properly. need more documentation
         var field = new Field(modifiers, name, TypeInfo.of("TODO"));
@@ -91,7 +91,8 @@ public class JarReader {
 
       @Override
       public void visitEnd() {
-        entities.add(entityBuilder.build());
+        entityBuilder.build()
+                     .ifPresent(entities::add);
       }
     };
 

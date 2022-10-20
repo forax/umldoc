@@ -7,6 +7,7 @@ import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -94,31 +95,24 @@ public class EntityBuilder {
   }
 
   /**
-   * Builds the entity with the previously set values.
+   * Builds the entity with the previously set values. If the entity cannot be built it still clears
+   * the values and returns an empty Optional.
    *
-   * @return the built entity.
+   * @return the built entity wrapped inside an Optional or an empty Optional.
    * @see #setModifiers(Set)
    * @see #setTypeInfo(TypeInfo)
    * @see #setStereotype(Entity.Stereotype)
    * @see #addField(Field)
    * @see #addMethod(Method)
    */
-  public Entity build() {
-    if (modifiers == null) {
-      throw new IllegalStateException("No modifiers was set");
+  public Optional<Entity> build() {
+    if (modifiers == null || type == null || stereotype == null) {
+      clear();
+      return Optional.empty();
     }
-
-    if (type == null) {
-      throw new IllegalStateException("No type was set");
-    }
-
-    if (stereotype == null) {
-      throw new IllegalStateException("No stereotype was set");
-    }
-
     var entity = new Entity(modifiers, type, stereotype, fields, methods);
     clear();
-    return entity;
+    return Optional.of(entity);
   }
 
 }
