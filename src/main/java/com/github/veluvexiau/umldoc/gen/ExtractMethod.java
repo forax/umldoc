@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Interface to build a mermaid or plant file in Markdown.
  */
-public class ExtractMethods {
+public class ExtractMethod {
 
   /**
    * Get the name from a full path.

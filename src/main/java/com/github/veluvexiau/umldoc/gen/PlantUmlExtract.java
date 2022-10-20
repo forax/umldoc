@@ -45,8 +45,8 @@ public class PlantUmlExtract {
   }
 
   private void displayEntity(PrintWriter writer, Entity entity) {
-    writer.println("\tclass " + ExtractMethods.getNameFromPath(entity.name()) + "{");
-    var stereo = ExtractMethods.getStereotype(entity.stereotype().toString());
+    writer.println("\tclass " + ExtractMethod.getNameFromPath(entity.name()) + "{");
+    var stereo = ExtractMethod.getStereotype(entity.stereotype().toString());
     if (!stereo.equals("")) {
       writer.println("\t\t<<" + stereo + ">>");
     }

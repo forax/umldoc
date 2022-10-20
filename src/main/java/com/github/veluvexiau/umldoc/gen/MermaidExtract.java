@@ -47,7 +47,7 @@ public class MermaidExtract {
   }
 
   private void displayEntity(PrintWriter writer, Entity entity) {
-    writer.println("\tclass " + ExtractMethods.getNameFromPath(entity.name()) + "{");
+    writer.println("\tclass " + ExtractMethod.getNameFromPath(entity.name()) + "{");
     if (entity.stereotype() != Entity.Stereotype.CLASS) {
       writer.println("\t\t<<" + entity.stereotype().toString() + ">>");
     }
