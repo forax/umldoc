@@ -76,7 +76,7 @@ public class EntityBuilder {
    * Sets the stereotype of the entity to build. This value is required to build the entity.
    *
    * @param stereotype
-   *         an Entity.Stereotype representing the type of the class (e.i. enum, record, ...)
+   *         an Entity.Stereotype representing the type of the class (e.g. enum, record, ...)
    * @return a reference to this object
    */
   public EntityBuilder setStereotype(Entity.Stereotype stereotype) {
