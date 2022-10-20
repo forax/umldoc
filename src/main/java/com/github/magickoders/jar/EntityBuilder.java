@@ -102,7 +102,7 @@ public class EntityBuilder {
     Objects.requireNonNull(type, "No value set for type");
     Objects.requireNonNull(stereotype, "No value set for stereotype");
 
-    var entity = new Entity(modifiers, type, stereotype, fields, methods);
+    final var entity = new Entity(modifiers, type, stereotype, fields, methods);
 
     modifiers = null;
     type = null;
