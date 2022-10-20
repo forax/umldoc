@@ -3,7 +3,7 @@ package com.github.magickoders.umldoc.parser;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Modifier;
-import com.github.forax.umldoc.magickoders.MermaidParser;
+import com.github.magickoders.MermaidParser;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ParserTest {
-
+  /*
   @Nested
   public class TestEntity {
     @Test
@@ -30,7 +30,6 @@ public class ParserTest {
     }
   }
 
-  /*
   @Nested
   public class TestField {
     @Test
