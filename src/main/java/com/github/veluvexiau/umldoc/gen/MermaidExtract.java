@@ -63,17 +63,11 @@ public class MermaidExtract {
     var sb = new StringBuilder();
     for (var method : entity.methods()) {
       sb.append("\t\t")
-              .append(method.name())
-              .append("(");
-      var stream = method.parameters()
-              .stream()
-              .map(Method.Parameter::type)
-              .collect(Collectors.joining(", "));
-      sb.append(stream)
+              .append(ExtractMethod.typeOfList(method))
               // TODO : after that, the return type is the Path of the class.
               // EX : ZLjava/util/List<Lcom/github/forax/umldoc/core/Entity;>
-              .append(") : ")
-              .append(method.returnType())
+              .append(" : ")
+              .append(method.returnTypeInfo())
               .append("\n");
     }
     return sb.toString();

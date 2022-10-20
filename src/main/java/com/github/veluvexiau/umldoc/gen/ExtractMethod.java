@@ -1,11 +1,15 @@
 package com.github.veluvexiau.umldoc.gen;
 
+import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.TypeInfo;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
- * Interface to build a mermaid or plant file in Markdown.
+ * Class to share multiple methods to generate the PlantUml or MermaidUml
  */
 public class ExtractMethod {
 
@@ -37,17 +41,48 @@ public class ExtractMethod {
    */
   public static String getStereotype(String entityStereotype) {
     Objects.requireNonNull(entityStereotype);
-    String ster = entityStereotype;
-    int temp = ster.lastIndexOf('/');
-    ster = ster.substring(temp + 1);
+    String stereotype = entityStereotype;
+    int temp = stereotype.lastIndexOf('/');
+    stereotype = stereotype.substring(temp + 1);
 
-    if (ster.contains("Record")) {
+    if (stereotype.contains("Record")) {
       return "Record";
-    } else if (ster.contains("Enum")) {
+    } else if (stereotype.contains("Enum")) {
       return "Enum";
     }
     //TODO find a way to detect difference between Interface and Class, to add Interface as
     // Test result : class will always have <init> as a method, not for the interface
     return "";
+  }
+
+  /**
+   *
+   * Compute the type of the List, Set, etc.
+   * Returns a string containing all the parameter or nothing
+   *
+   * @param method a method
+   * @return nothing or a formatted list of the types
+   */
+  public static String typeOfList(Method method) {
+    Objects.requireNonNull(method);
+    var sb = new StringBuilder();
+    sb.append(method.name())
+            .append(method.parameters()
+                    .stream()
+                    .map(e -> parameterWithType(e.typeInfo()))
+                    .collect(Collectors.joining(", ", "(", ")")));
+    return sb.toString();
+  }
+// TODO : better to do two map instead of doing two methods
+  private static String parameterWithType(TypeInfo info) {
+    var sb = new StringBuilder();
+    sb.append(info.name());
+    var type = info.typeParameters();
+    if (type.size() != 0) {
+      sb.append(type.stream()
+                      .map(e -> e.toString())
+                      .collect(Collectors.joining(", ", "<", ">")));
+    }
+    return sb.toString();
   }
 }

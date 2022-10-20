@@ -106,12 +106,6 @@
 		visitMethod
 	}
 
-	class ExtractMethods{
-		<init>
-		getNameFromPath
-		getStereotype
-	}
-
 	class MermaidExtract{
 		<init>
 		generate
@@ -127,6 +121,16 @@
 		init
 		end
 		displayEntity
+	}
+
+	class ExtractMethod{
+		<init>
+		getNameFromPath
+		getStereotype
+		typeOfList
+		parameterWithType
+		lambda$parameterWithType$1
+		lambda$typeOfList$0
 	}
 
 	class Main{
@@ -167,15 +171,17 @@
 	class Method{
 		Set : modifiers
 		String : name
-		String : returnType
+		TypeInfo : returnTypeInfo
 		List : parameters
 		<init>
+		<init>
+		returnType
 		toString
 		hashCode
 		equals
 		modifiers
 		name
-		returnType
+		returnTypeInfo
 		parameters
 	}
 
@@ -196,25 +202,29 @@
 	class Field{
 		Set : modifiers
 		String : name
-		String : type
+		TypeInfo : typeInfo
 		<init>
+		<init>
+		type
 		toString
 		hashCode
 		equals
 		modifiers
 		name
-		type
+		typeInfo
 	}
 
 	class Method_Parameter{
 		String : name
-		String : type
+		TypeInfo : typeInfo
 		<init>
+		<init>
+		type
 		toString
 		hashCode
 		equals
 		name
-		type
+		typeInfo
 	}
 
 	class SubtypeDependency{
@@ -230,16 +240,18 @@
 
 	class Entity{
 		Set : modifiers
-		String : name
+		TypeInfo : type
 		Entity$Stereotype : stereotype
 		List : fields
 		List : methods
 		<init>
+		<init>
+		name
 		toString
 		hashCode
 		equals
 		modifiers
-		name
+		type
 		stereotype
 		fields
 		methods
@@ -292,6 +304,22 @@
 		name
 		entities
 		dependencies
+	}
+
+	class TypeInfo{
+		Optional : outer
+		String : name
+		List : typeParameters
+		<init>
+		of
+		withTypeParameter
+		toString
+		hashCode
+		equals
+		outer
+		name
+		typeParameters
+		lambda$toString$0
 	}
 
 	class AssociationDependency_Side{
