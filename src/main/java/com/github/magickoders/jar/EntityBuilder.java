@@ -86,6 +86,11 @@ public class EntityBuilder {
     return this;
   }
 
+
+  /**
+   * Resets the builder to its original state by resetting all values to their default. The builder
+   * cannot build entity after being cleared.
+   */
   private void clear() {
     modifiers = null;
     type = null;
