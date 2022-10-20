@@ -2,15 +2,22 @@ package com.github.magickoders.jar;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Modifier;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.objectweb.asm.Opcodes;
 
+
+/**
+ * Utils class used to translate access code to umldoc.core classes.
+ *
+ * @see JarReader#getEntities(Path)
+ */
 public class AccessReader {
 
-  private final static List<ModifierAssociation> modifiers = List.of(
+  private static final List<ModifierAssociation> modifiers = List.of(
           new ModifierAssociation(java.lang.reflect.Modifier.PUBLIC, Modifier.PUBLIC),
           new ModifierAssociation(java.lang.reflect.Modifier.PROTECTED, Modifier.PROTECTED),
           new ModifierAssociation(java.lang.reflect.Modifier.PRIVATE, Modifier.PRIVATE),
@@ -21,7 +28,7 @@ public class AccessReader {
    * The order is very important, an Interface is Abstract and an Annotation is an Interface ! An
    * enumeration can be abstract too.
    */
-  private final static List<StereotypeAssociation> stereotypes = List.of(
+  private static final List<StereotypeAssociation> stereotypes = List.of(
           new StereotypeAssociation(Opcodes.ACC_ENUM, Entity.Stereotype.ENUM),
           new StereotypeAssociation(Opcodes.ACC_RECORD, Entity.Stereotype.RECORD),
           new StereotypeAssociation(Opcodes.ACC_ANNOTATION, Entity.Stereotype.ANNOTATION),
