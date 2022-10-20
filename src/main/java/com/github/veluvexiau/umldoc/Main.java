@@ -2,8 +2,8 @@ package com.github.veluvexiau.umldoc;
 
 import static com.github.veluvexiau.umldoc.classfile.ClassFileParser.readJarFile;
 
-import com.github.veluvexiau.umldoc.core.MermaidExtract;
-import com.github.veluvexiau.umldoc.core.PlantUmlExtract;
+import com.github.veluvexiau.umldoc.gen.MermaidExtract;
+import com.github.veluvexiau.umldoc.gen.PlantUmlExtract;
 import java.io.IOException;
 import java.nio.file.Path;
 

@@ -1,4 +1,4 @@
-package com.github.veluvexiau.umldoc.core;
+package com.github.veluvexiau.umldoc.gen;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;

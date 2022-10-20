@@ -1,8 +1,9 @@
-package com.github.veluvexiau.umldoc.core;
+package com.github.veluvexiau.umldoc.gen;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
@@ -66,7 +67,7 @@ public class MermaidExtract {
               .append("(");
       var stream = method.parameters()
               .stream()
-              .map(e -> e.type())
+              .map(Method.Parameter::type)
               .collect(Collectors.joining(", "));
       sb.append(stream)
               // TODO : after that, the return type is the Path of the class.

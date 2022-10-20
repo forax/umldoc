@@ -1,4 +1,4 @@
-package com.github.veluvexiau.umldoc.core;
+package com.github.veluvexiau.umldoc.gen;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
