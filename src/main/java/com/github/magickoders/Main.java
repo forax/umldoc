@@ -1,6 +1,7 @@
 package com.github.magickoders;
 
 import com.github.forax.umldoc.core.Package;
+import com.github.magickoders.jar.JarReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
