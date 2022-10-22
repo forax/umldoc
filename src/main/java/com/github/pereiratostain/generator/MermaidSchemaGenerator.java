@@ -47,7 +47,7 @@ public class MermaidSchemaGenerator implements Generator {
                   %s
                 }
             """
-            .formatted(entity.name(), entity.stereotype(), fields));
+            .formatted(entity.type().name(), entity.stereotype(), fields));
   }
 
   private String generateFieldsOfEntity(Entity entity) {
@@ -59,8 +59,8 @@ public class MermaidSchemaGenerator implements Generator {
   private void generateAssociation(Writer writer, AssociationDependency association) throws IOException {
     var leftSide = association.left();
     var rightSide = association.right();
-    var leftClass = leftSide.entity().name();
-    var rightClass = rightSide.entity().name();
+    var leftClass = leftSide.entity().type().name();
+    var rightClass = rightSide.entity().type().name();
     var leftCardinality = leftSide.cardinality().name();
     var rightCardinality = rightSide.cardinality().name();
     var arrow = generateArrow(leftSide, rightSide);
