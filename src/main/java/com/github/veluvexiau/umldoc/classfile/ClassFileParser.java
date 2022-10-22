@@ -103,7 +103,6 @@ public final class ClassFileParser {
                 // concatenation of descriptor and signature
                 if (modifier(access) != null) {
                   var type = ClassDesc.ofDescriptor(descriptor).displayName();
-                  System.out.println(ClassDesc.ofDescriptor(descriptor).displayName() + ClassDesc.ofDescriptor(descriptor).componentType());
                   Field field = new Field(Set.of(modifier(access)), name, type);
                   var oldEntity = entities.get(entities.size() - 1);
                   var listOfFields = new ArrayList<>(oldEntity.fields());

@@ -25,8 +25,8 @@ public class PlantUmlExtract {
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/plantExport.md";
     try (PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset())) {
       init(writer);
-      for (Entity entitie : entities) {
-        displayEntity(writer, entitie);
+      for (Entity entity : entities) {
+        displayEntity(writer, entity);
       }
       end(writer);
     }

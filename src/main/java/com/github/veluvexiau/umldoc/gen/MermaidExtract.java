@@ -3,7 +3,6 @@ package com.github.veluvexiau.umldoc.gen;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;

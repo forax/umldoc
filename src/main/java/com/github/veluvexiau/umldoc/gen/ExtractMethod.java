@@ -2,14 +2,13 @@ package com.github.veluvexiau.umldoc.gen;
 
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
-
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Class to share multiple methods to generate the PlantUml or MermaidUml
+ * Class to share multiple methods to generate the PlantUml or MermaidUml.
  */
 public class ExtractMethod {
 
@@ -56,7 +55,6 @@ public class ExtractMethod {
   }
 
   /**
-   *
    * Compute the type of the List, Set, etc.
    * Returns a string containing all the parameter or nothing
    *
@@ -73,7 +71,8 @@ public class ExtractMethod {
                     .collect(Collectors.joining(", ", "(", ")")));
     return sb.toString();
   }
-// TODO : better to do two map instead of doing two methods
+  // TODO : better to do two map instead of doing two methods
+
   private static String parameterWithType(TypeInfo info) {
     var sb = new StringBuilder();
     sb.append(info.name());
