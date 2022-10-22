@@ -63,8 +63,7 @@ public class ExtractMethod {
    */
   public static String typeOfList(Method method) {
     Objects.requireNonNull(method);
-    return method.name() +
-      method.parameters()
+    return method.name() + method.parameters()
         .stream()
         .map(e -> parameterWithType(e.typeInfo()))
         .collect(Collectors.joining(", ", "(", ")"));
