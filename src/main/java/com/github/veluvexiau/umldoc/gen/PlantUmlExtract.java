@@ -45,13 +45,13 @@ public class PlantUmlExtract {
   }
 
   private void displayEntity(PrintWriter writer, Entity entity) {
-    writer.println("\tclass " + ExtractMethod.getNameFromPath(entity.name()) + "{");
+    writer.println("\tclass " + ExtractMethod.getNameFromPath(entity.type().toString()) + "{");
     var stereo = ExtractMethod.getStereotype(entity.stereotype().toString());
     if (!stereo.equals("")) {
       writer.println("\t\t<<" + stereo + ">>");
     }
     for (Field field : entity.fields()) {
-      writer.println("\t\t" + field.type() + " : " + field.name());
+      writer.println("\t\t" + field.typeInfo().toString() + " : " + field.name());
     }
     for (Method method : entity.methods()) {
       writer.println("\t\t" + method.name());

@@ -2,13 +2,11 @@ package com.github.veluvexiau.umldoc.gen;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
-import com.github.forax.umldoc.core.Method;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 /**
@@ -46,12 +44,12 @@ public class MermaidExtract {
   }
 
   private void displayEntity(PrintWriter writer, Entity entity) {
-    writer.println("\tclass " + ExtractMethod.getNameFromPath(entity.name()) + "{");
+    writer.println("\tclass " + ExtractMethod.getNameFromPath(entity.type().toString()) + "{");
     if (entity.stereotype() != Entity.Stereotype.CLASS) {
       writer.println("\t\t<<" + entity.stereotype().toString() + ">>");
     }
     for (Field field : entity.fields()) {
-      writer.println("\t\t" + field.type() + " : " + field.name());
+      writer.println("\t\t" + field.typeInfo().toString() + " : " + field.name());
     }
     writer.println(methodsAndParameters(entity) + "\n\t}");
   }

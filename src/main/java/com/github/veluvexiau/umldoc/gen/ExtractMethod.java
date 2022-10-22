@@ -63,15 +63,14 @@ public class ExtractMethod {
    */
   public static String typeOfList(Method method) {
     Objects.requireNonNull(method);
-    var sb = new StringBuilder();
-    sb.append(method.name())
-            .append(method.parameters()
-                    .stream()
-                    .map(e -> parameterWithType(e.typeInfo()))
-                    .collect(Collectors.joining(", ", "(", ")")));
-    return sb.toString();
+    return method.name() +
+      method.parameters()
+        .stream()
+        .map(e -> parameterWithType(e.typeInfo()))
+        .collect(Collectors.joining(", ", "(", ")"));
   }
-  // TODO : better to do two map instead of doing two methods
+
+  // TODO : Right now the type is ok, but if it is a List or a Set we don't know the type.
 
   private static String parameterWithType(TypeInfo info) {
     var sb = new StringBuilder();
@@ -79,7 +78,7 @@ public class ExtractMethod {
     var type = info.typeParameters();
     if (type.size() != 0) {
       sb.append(type.stream()
-                      .map(e -> e.toString())
+                      .map(TypeInfo::toString)
                       .collect(Collectors.joining(", ", "<", ">")));
     }
     return sb.toString();
