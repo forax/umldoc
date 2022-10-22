@@ -5,6 +5,7 @@ import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
@@ -12,6 +13,7 @@ import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -68,17 +70,29 @@ public final class ClassFileParser {
                                 String[] inter) {
                 Entity entity;
                 if (java.lang.reflect.Modifier.isInterface(access)) {
-                  entity = new Entity(Set.of(), name,
-                          Stereotype.INTERFACE, List.of(), List.of());
+                  entity = new Entity(Set.of(),
+                      new TypeInfo(Optional.empty(), name, List.of()),
+                      Stereotype.INTERFACE,
+                      List.of(),
+                      List.of());
                 } else if ((access & Opcodes.ACC_RECORD) != 0) {
-                  entity = new Entity(Set.of(), name,
-                          Stereotype.RECORD, List.of(), List.of());
+                  entity = new Entity(Set.of(),
+                      new TypeInfo(Optional.empty(), name, List.of()),
+                      Stereotype.RECORD,
+                      List.of(),
+                      List.of());
                 } else if ((access & Opcodes.ACC_ENUM) != 0) {
-                  entity = new Entity(Set.of(), name,
-                          Stereotype.ENUM, List.of(), List.of());
+                  entity = new Entity(Set.of(),
+                      new TypeInfo(Optional.empty(), name, List.of()),
+                      Stereotype.ENUM,
+                      List.of(),
+                      List.of());
                 } else {
-                  entity = new Entity(Set.of(), name,
-                          Stereotype.CLASS, List.of(), List.of());
+                  entity = new Entity(Set.of(),
+                      new TypeInfo(Optional.empty(), name, List.of()),
+                      Stereotype.CLASS,
+                      List.of(),
+                      List.of());
                 }
                 entities.add(entity);
               }
@@ -87,8 +101,8 @@ public final class ClassFileParser {
               public RecordComponentVisitor visitRecordComponent(String name,
                                                                  String desc,
                                                                  String sign) {
-                //TODO check if it is really usefull, because it seams like for records,
-                // fields have exactly the same informations as "recordComponent"
+                //TODO check if it is really useful, because it seams like for records,
+                // fields have exactly the same information as "recordComponent"
                 return null;
               }
 
@@ -102,15 +116,20 @@ public final class ClassFileParser {
                 // (like String, List<String>, Set<Entity> for exemple -->
                 // concatenation of descriptor and signature
                 if (modifier(access) != null) {
-                  var type = ClassDesc.ofDescriptor(descriptor).displayName();
-                  System.out.println(ClassDesc.ofDescriptor(descriptor).displayName() + ClassDesc.ofDescriptor(descriptor).componentType());
-                  Field field = new Field(Set.of(modifier(access)), name, type);
+                  var typeName = ClassDesc.ofDescriptor(descriptor).displayName();
+                  var field = new Field(Set.of(modifier(access)),
+                      name,
+                      new TypeInfo(Optional.empty(),
+                        typeName,
+                        List.of(TypeInfo.of(ClassDesc.ofDescriptor(descriptor).displayName()))));
                   var oldEntity = entities.get(entities.size() - 1);
                   var listOfFields = new ArrayList<>(oldEntity.fields());
                   listOfFields.add(field);
-                  Entity entity = new Entity(oldEntity.modifiers(), oldEntity.name(),
-                          oldEntity.stereotype(), listOfFields,
-                          oldEntity.methods());
+                  var entity = new Entity(oldEntity.modifiers(),
+                      oldEntity.type(),
+                      oldEntity.stereotype(),
+                      listOfFields,
+                      oldEntity.methods());
                   entities.set(entities.size() - 1, entity);
                 }
                 return null;
@@ -128,15 +147,18 @@ public final class ClassFileParser {
                 if (modifier(access) != null) {
                   List<Method.Parameter> parameters = new ArrayList<>();
                   for (var met : MethodTypeDesc.ofDescriptor(desc).parameterList()) {
-                    Method.Parameter p = new Method.Parameter(met.toString(), met.displayName());
+                    Method.Parameter p = new Method.Parameter(met.toString(),
+                        TypeInfo.of(met.displayName()));
                     parameters.add(p);
                   }
-                  Method method = new Method(Set.of(modifier(access)), name, "" + signature,
-                          parameters);
+                  var method = new Method(Set.of(modifier(access)),
+                      name,
+                      TypeInfo.of(((signature == null) ? "" : signature)),
+                      parameters);
                   listOfMethods.add(method);
-                  Entity entity = new Entity(oldEntity.modifiers(), oldEntity.name(),
-                          oldEntity.stereotype(), oldEntity.fields(),
-                          listOfMethods);
+                  var entity = new Entity(oldEntity.modifiers(), oldEntity.type(),
+                      oldEntity.stereotype(), oldEntity.fields(),
+                      listOfMethods);
                   entities.set(entities.size() - 1, entity);
                 }
                 return null;
