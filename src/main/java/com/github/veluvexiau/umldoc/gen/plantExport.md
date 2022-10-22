@@ -106,6 +106,17 @@
 		visitMethod
 	}
 
+	class Main{
+		<init>
+		main
+	}
+
+	class ExtractMethods{
+		<init>
+		getNameFromPath
+		getStereotype
+	}
+
 	class MermaidExtract{
 		<init>
 		generate
@@ -113,6 +124,7 @@
 		end
 		displayEntity
 		methodsAndParameters
+		lambda$methodsAndParameters$0
 	}
 
 	class PlantUmlExtract{
@@ -121,21 +133,6 @@
 		init
 		end
 		displayEntity
-	}
-
-	class ExtractMethod{
-		<init>
-		getNameFromPath
-		getStereotype
-		typeOfList
-		parameterWithType
-		lambda$parameterWithType$1
-		lambda$typeOfList$0
-	}
-
-	class Main{
-		<init>
-		main
 	}
 
 	class ClassFileParser{
@@ -171,17 +168,15 @@
 	class Method{
 		Set : modifiers
 		String : name
-		TypeInfo : returnTypeInfo
+		String : returnType
 		List : parameters
 		<init>
-		<init>
-		returnType
 		toString
 		hashCode
 		equals
 		modifiers
 		name
-		returnTypeInfo
+		returnType
 		parameters
 	}
 
@@ -202,29 +197,25 @@
 	class Field{
 		Set : modifiers
 		String : name
-		TypeInfo : typeInfo
+		String : type
 		<init>
-		<init>
-		type
 		toString
 		hashCode
 		equals
 		modifiers
 		name
-		typeInfo
+		type
 	}
 
 	class Method_Parameter{
 		String : name
-		TypeInfo : typeInfo
+		String : type
 		<init>
-		<init>
-		type
 		toString
 		hashCode
 		equals
 		name
-		typeInfo
+		type
 	}
 
 	class SubtypeDependency{
@@ -240,18 +231,16 @@
 
 	class Entity{
 		Set : modifiers
-		TypeInfo : type
+		String : name
 		Entity$Stereotype : stereotype
 		List : fields
 		List : methods
 		<init>
-		<init>
-		name
 		toString
 		hashCode
 		equals
 		modifiers
-		type
+		name
 		stereotype
 		fields
 		methods
@@ -304,22 +293,6 @@
 		name
 		entities
 		dependencies
-	}
-
-	class TypeInfo{
-		Optional : outer
-		String : name
-		List : typeParameters
-		<init>
-		of
-		withTypeParameter
-		toString
-		hashCode
-		equals
-		outer
-		name
-		typeParameters
-		lambda$toString$0
 	}
 
 	class AssociationDependency_Side{

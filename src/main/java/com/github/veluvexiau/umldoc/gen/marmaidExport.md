@@ -109,6 +109,17 @@ classDiagram
 		visitMethod(int, String, String, String, String[]) : null
 
 	}
+	class Main{
+		<init>() : null
+		main(String[]) : null
+
+	}
+	class ExtractMethods{
+		<init>() : null
+		getNameFromPath(String) : null
+		getStereotype(String) : null
+
+	}
 	class MermaidExtract{
 		<init>() : null
 		generate(List) : (Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;)V
@@ -116,6 +127,7 @@ classDiagram
 		end(PrintWriter) : null
 		displayEntity(PrintWriter, Entity) : null
 		methodsAndParameters(Entity) : null
+		lambda$methodsAndParameters$0(Method$Parameter) : null
 
 	}
 	class PlantUmlExtract{
@@ -124,21 +136,6 @@ classDiagram
 		init(PrintWriter) : null
 		end(PrintWriter) : null
 		displayEntity(PrintWriter, Entity) : null
-
-	}
-	class ExtractMethod{
-		<init>() : null
-		getNameFromPath(String) : null
-		getStereotype(String) : null
-		typeOfList(Method) : null
-		parameterWithType(TypeInfo) : null
-		lambda$parameterWithType$1(TypeInfo) : null
-		lambda$typeOfList$0(Method$Parameter) : null
-
-	}
-	class Main{
-		<init>() : null
-		main(String[]) : null
 
 	}
 	class ClassFileParser{
@@ -177,17 +174,15 @@ classDiagram
 		<<RECORD>>
 		Set : modifiers
 		String : name
-		TypeInfo : returnTypeInfo
+		String : returnType
 		List : parameters
-		<init>(Set, String, TypeInfo, List) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Lcom/github/forax/umldoc/core/TypeInfo;Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;)V
 		<init>(Set, String, String, List) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Ljava/lang/String;Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;)V
-		returnType() : null
 		toString() : null
 		hashCode() : null
 		equals(Object) : null
 		modifiers() : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
 		name() : null
-		returnTypeInfo() : null
+		returnType() : null
 		parameters() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method$Parameter;>;
 
 	}
@@ -210,30 +205,26 @@ classDiagram
 		<<RECORD>>
 		Set : modifiers
 		String : name
-		TypeInfo : typeInfo
-		<init>(Set, String, TypeInfo) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Lcom/github/forax/umldoc/core/TypeInfo;)V
+		String : type
 		<init>(Set, String, String) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Ljava/lang/String;)V
-		type() : null
 		toString() : null
 		hashCode() : null
 		equals(Object) : null
 		modifiers() : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
 		name() : null
-		typeInfo() : null
+		type() : null
 
 	}
 	class Method_Parameter{
 		<<RECORD>>
 		String : name
-		TypeInfo : typeInfo
-		<init>(String, TypeInfo) : null
+		String : type
 		<init>(String, String) : null
-		type() : null
 		toString() : null
 		hashCode() : null
 		equals(Object) : null
 		name() : null
-		typeInfo() : null
+		type() : null
 
 	}
 	class SubtypeDependency{
@@ -251,18 +242,16 @@ classDiagram
 	class Entity{
 		<<RECORD>>
 		Set : modifiers
-		TypeInfo : type
+		String : name
 		Entity$Stereotype : stereotype
 		List : fields
 		List : methods
-		<init>(Set, TypeInfo, Entity$Stereotype, List, List) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Lcom/github/forax/umldoc/core/TypeInfo;Lcom/github/forax/umldoc/core/Entity$Stereotype;Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;)V
 		<init>(Set, String, Entity$Stereotype, List, List) : (Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;Ljava/lang/String;Lcom/github/forax/umldoc/core/Entity$Stereotype;Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;)V
-		name() : null
 		toString() : null
 		hashCode() : null
 		equals(Object) : null
 		modifiers() : ()Ljava/util/Set<Lcom/github/forax/umldoc/core/Modifier;>;
-		type() : null
+		name() : null
 		stereotype() : null
 		fields() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Field;>;
 		methods() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Method;>;
@@ -319,23 +308,6 @@ classDiagram
 		name() : null
 		entities() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Entity;>;
 		dependencies() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/Dependency;>;
-
-	}
-	class TypeInfo{
-		<<RECORD>>
-		Optional : outer
-		String : name
-		List : typeParameters
-		<init>(Optional, String, List) : (Ljava/util/Optional<Lcom/github/forax/umldoc/core/TypeInfo;>;Ljava/lang/String;Ljava/util/List<Lcom/github/forax/umldoc/core/TypeInfo;>;)V
-		of(String) : null
-		withTypeParameter(TypeInfo) : null
-		toString() : null
-		hashCode() : null
-		equals(Object) : null
-		outer() : ()Ljava/util/Optional<Lcom/github/forax/umldoc/core/TypeInfo;>;
-		name() : null
-		typeParameters() : ()Ljava/util/List<Lcom/github/forax/umldoc/core/TypeInfo;>;
-		lambda$toString$0(TypeInfo) : null
 
 	}
 	class AssociationDependency_Side{
