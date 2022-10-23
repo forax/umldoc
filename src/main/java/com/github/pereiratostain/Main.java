@@ -1,6 +1,7 @@
 package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.TypeInfo;
 import com.github.pereiratostain.generator.MermaidSchemaGenerator;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
@@ -26,7 +28,7 @@ public class Main {
     var entities = asm();
     try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
       var generator = new MermaidSchemaGenerator();
-      generator.generate(writer, entities);
+      //generator.generate(writer, entities);
     }
   }
 
