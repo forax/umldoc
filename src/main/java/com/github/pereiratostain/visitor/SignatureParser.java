@@ -6,10 +6,10 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import java.util.List;
 import java.util.Optional;
 
-public class Signature extends SignatureVisitor {
+public class SignatureParser extends SignatureVisitor {
 
     private TypeInfo headInfo;
-    protected Signature(int api) {
+    protected SignatureParser(int api) {
         super(api);
     }
 
@@ -34,7 +34,7 @@ public class Signature extends SignatureVisitor {
 
     @Override
     public void visitClassType(String className) {
-        var name = Visitor.removePath(className);
+        var name = ClassParser.removePath(className);
         if (headInfo == null) {
             headInfo = TypeInfo.of(name);
         } else {

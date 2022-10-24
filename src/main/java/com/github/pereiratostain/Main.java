@@ -1,7 +1,6 @@
 package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
-import com.github.forax.umldoc.core.TypeInfo;
 import com.github.pereiratostain.generator.MermaidSchemaGenerator;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -10,9 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.github.pereiratostain.visitor.Visitor;
+import com.github.pereiratostain.visitor.ClassParser;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
@@ -48,20 +46,20 @@ public class Main {
     var finder = ModuleFinder.of(path);
     for (var moduleReference : finder.findAll()) {
       try (var reader = moduleReference.open()) {
-        var visitors = new ArrayList<Visitor>();
+        var visitors = new ArrayList<ClassParser>();
         for (var filename : (Iterable<String>) reader.list()::iterator) {
           if (!filename.endsWith(".class") || filename.endsWith("$1.class")) {
             continue;
           }
           try (var inputStream = reader.open(filename).orElseThrow()) {
             var classReader = new ClassReader(inputStream);
-            var visitor = new Visitor(Opcodes.ASM9);
+            var visitor = new ClassParser(Opcodes.ASM9);
 
             classReader.accept(visitor, 0);
             visitors.add(visitor);
           }
         }
-        return visitors.stream().map(Visitor::getEntity).toList();
+        return visitors.stream().map(ClassParser::getEntity).toList();
       }
     }
     return List.of();

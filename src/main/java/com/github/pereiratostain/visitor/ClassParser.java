@@ -15,10 +15,10 @@ import org.objectweb.asm.signature.SignatureReader;
 import static org.objectweb.asm.Opcodes.*;
 
 
-public class Visitor extends ClassVisitor {
+public class ClassParser extends ClassVisitor {
   private Entity entity = null;
 
-  public Visitor(int api) {
+  public ClassParser(int api) {
     super(api);
   }
 
@@ -96,7 +96,7 @@ public class Visitor extends ClassVisitor {
     var type = TypeInfo.of(removePath(descriptor).replace(';', ' '));
     if (signature != null) {
       var reader = new SignatureReader(signature);
-      var visitor = new Signature(Opcodes.ASM9);
+      var visitor = new SignatureParser(Opcodes.ASM9);
       reader.acceptType(visitor);
       type = visitor.getInfo();
     }
