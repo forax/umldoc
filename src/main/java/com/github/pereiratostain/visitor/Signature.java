@@ -1,14 +1,11 @@
 package com.github.pereiratostain.visitor;
 
-import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.TypeInfo;
 import org.objectweb.asm.signature.SignatureVisitor;
-
 import java.util.List;
 import java.util.Optional;
 
 public class Signature extends SignatureVisitor {
-    private String name = "";
 
     private TypeInfo headInfo;
     protected Signature(int api) {
@@ -36,33 +33,17 @@ public class Signature extends SignatureVisitor {
 
     @Override
     public void visitClassType(String className) {
-        name = Visitor.removePath(className);
-        if(headInfo == null) {
+        var name = Visitor.removePath(className);
+        if (headInfo == null) {
             headInfo = TypeInfo.of(name);
         } else {
-            var newInfo = new TypeInfo(Optional.of(headInfo), name, List.of());
-            headInfo = newInfo;
+            headInfo = new TypeInfo(Optional.of(headInfo), name, List.of());
         }
-        /*if(cardinality == null) {
-            if (association_type.equals("Optional")) {
-                cardinality = AssociationDependency.Cardinality.ZERO_OR_ONE;
-            } else {
-                cardinality = AssociationDependency.Cardinality.MANY;
-            }
-        }
-        if(name != "") {
-            name = name + "<";
-        }
-        name = name + association_type;*/
-        //System.out.println(name + " " + recursivity_count);
     }
 
     @Override
     public void  visitEnd() {
-        /*if(recursivity_count > 0) {
-            name = name + ">";
-        }*/
-        if(headInfo.outer().isPresent()) {
+        if (headInfo.outer().isPresent()) {
             headInfo = headInfo.outer().get().withTypeParameter(headInfo);
         }
     }
