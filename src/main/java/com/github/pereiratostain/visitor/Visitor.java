@@ -43,9 +43,6 @@ public class Visitor extends ClassVisitor {
   public void visit(int version, int access, String name, String signature,
                     String superName, String[] interfaces) {
 
-    if(name.matches(".*\\$[0-9].*")) {
-    }
-
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
 
