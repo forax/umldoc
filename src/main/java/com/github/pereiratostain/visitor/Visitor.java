@@ -1,7 +1,5 @@
 package com.github.pereiratostain.visitor;
 
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
-
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
@@ -13,6 +11,8 @@ import java.util.List;
 import com.github.forax.umldoc.core.TypeInfo;
 import org.objectweb.asm.*;
 import org.objectweb.asm.signature.SignatureReader;
+
+import static org.objectweb.asm.Opcodes.*;
 
 
 public class Visitor extends ClassVisitor {
@@ -30,13 +30,20 @@ public class Visitor extends ClassVisitor {
     return this.entity;
   }
 
-  private Stereotype translateStereotype(String stereotype) {
-    return switch (stereotype) {
-      case "Enum" -> Stereotype.ENUM;
-      case "Record" -> Stereotype.RECORD;
-      case "Interface" -> Stereotype.INTERFACE;
-      default -> Stereotype.CLASS;
-    };
+  private Stereotype translateStereotype(int flag) {
+    if ((flag & ACC_ENUM) == ACC_ENUM) {
+      return Stereotype.ENUM;
+    } else if ((flag & ACC_RECORD) == ACC_RECORD) {
+      return Stereotype.RECORD;
+    } else if ((flag & ACC_ANNOTATION) == ACC_ANNOTATION) {
+      return Stereotype.ANNOTATION;
+    } else if ((flag & ACC_INTERFACE) == ACC_INTERFACE) {
+      return Stereotype.INTERFACE;
+    } else if ((flag & ACC_ABSTRACT) == ACC_ABSTRACT) {
+      return Stereotype.ABSTRACT;
+    } else {
+      return Stereotype.CLASS;
+    }
   }
 
   @Override
@@ -50,11 +57,7 @@ public class Visitor extends ClassVisitor {
     name = name.replace('-', '_');
     name = name.replace('$', ' ');
 
-    var stereotype = Stereotype.CLASS;
-    if (superName != null) {
-      superName = removePath(superName);
-      stereotype = translateStereotype(superName);
-    }
+    var stereotype = translateStereotype(access);
     this.entity = new Entity(modif, TypeInfo.of(name), stereotype,
             List.of(), List.of());
   }
