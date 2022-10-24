@@ -6,7 +6,6 @@ import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -18,17 +17,25 @@ import java.util.stream.Collectors;
  */
 public class MermaidSchemaGenerator implements Generator {
 
+  private static String cleanName(String name) {
+    name = name.replace('-', '_');
+    name = name.replace('$', ' ');
+    name = name.replace(';', ' ');
+    return name.substring(name.lastIndexOf('/') + 1);
+  }
+
   @Override
-  public void generate(Writer writer, List<Entity> entities, List<AssociationDependency> associations) throws IOException {
+  public void generate(Writer writer, List<Entity> entities,
+                       List<AssociationDependency> associations) throws IOException {
     requireNonNull(writer);
     requireNonNull(entities);
     requireNonNull(associations);
 
     generateHeader(writer);
-    for (var entity: entities) {
+    for (var entity : entities) {
       generateEntity(writer, entity);
     }
-    for (var association: associations) {
+    for (var association : associations) {
       generateAssociation(writer, association);
     }
   }
@@ -44,31 +51,37 @@ public class MermaidSchemaGenerator implements Generator {
   private void generateEntity(Writer writer, Entity entity) throws IOException {
     var fields = generateFieldsOfEntity(entity);
     var stereotype = stereotypeToString(entity.stereotype());
+    var entityName = cleanName(entity.type().name());
     writer.append("""
                 class %s {
                   %s
                   %s
                 }
+            
             """
-            .formatted(entity.type().name(), stereotype, fields));
+            .formatted(entityName, stereotype, fields));
   }
 
   private String generateFieldsOfEntity(Entity entity) {
     return entity.fields().stream()
-            .map(field -> applyModifiersToName(field.modifiers(), field.typeInfo(), field.name()))
+            .map(field -> applyModifiersToName(
+                    field.modifiers(),
+                    field.typeInfo(),
+                    cleanName(field.name())))
             .collect(Collectors.joining("\n      "));
   }
 
-  private void generateAssociation(Writer writer, AssociationDependency association) throws IOException {
+  private void generateAssociation(Writer writer,
+                                   AssociationDependency association) throws IOException {
     var leftSide = association.left();
     var rightSide = association.right();
-    var leftClass = leftSide.entity().type().name();
-    var rightClass = rightSide.entity().type().name();
+    var leftClass = cleanName(leftSide.entity().type().name());
+    var rightClass = cleanName(rightSide.entity().type().name());
     var leftCardinality = cardinalityToString(leftSide.cardinality());
     var rightCardinality = cardinalityToString(rightSide.cardinality());
     var arrow = generateArrow(leftSide, rightSide);
     var label = getAssociationLabel(leftSide, rightSide);
-    writer.append( """
+    writer.append("""
             %s %s %s %s %s %s
           """
           .formatted(leftClass,
@@ -79,7 +92,8 @@ public class MermaidSchemaGenerator implements Generator {
                   label));
   }
 
-  private String generateArrow(AssociationDependency.Side leftSide, AssociationDependency.Side rightSide) {
+  private String generateArrow(AssociationDependency.Side leftSide,
+                               AssociationDependency.Side rightSide) {
     String arrow = "";
     if (leftSide.navigability()) {
       arrow += "<";
@@ -91,7 +105,8 @@ public class MermaidSchemaGenerator implements Generator {
     return arrow;
   }
 
-  private String getAssociationLabel(AssociationDependency.Side leftSide, AssociationDependency.Side rightSide) {
+  private String getAssociationLabel(AssociationDependency.Side leftSide,
+                                     AssociationDependency.Side rightSide) {
     var leftLabel = leftSide.label();
     var rightLabel = rightSide.label();
     if (leftLabel.isPresent() && rightLabel.isPresent()) {
@@ -134,8 +149,9 @@ public class MermaidSchemaGenerator implements Generator {
         case PACKAGE -> prefix = "~";
         case STATIC -> suffix = "$";
         case FINAL -> suffix = "*";
+        default -> throw new AssertionError();
       }
     }
-    return prefix + type + " " +  name + suffix;
+    return prefix + cleanName(type.name()) + " " +  name + suffix;
   }
 }

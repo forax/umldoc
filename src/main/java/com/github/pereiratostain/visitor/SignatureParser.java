@@ -1,107 +1,109 @@
 package com.github.pereiratostain.visitor;
 
 import com.github.forax.umldoc.core.TypeInfo;
-import org.objectweb.asm.signature.SignatureVisitor;
-
 import java.util.List;
 import java.util.Optional;
+import org.objectweb.asm.signature.SignatureVisitor;
 
+/**
+ * Class to parse Class fields and into Field.
+ */
 public class SignatureParser extends SignatureVisitor {
 
-    private TypeInfo headInfo;
-    protected SignatureParser(int api) {
-        super(api);
-    }
+  private TypeInfo headInfo;
 
-    public TypeInfo getInfo() {
-        return headInfo;
-    }
+  protected SignatureParser(int api) {
+    super(api);
+  }
 
-    @Override
-    public SignatureVisitor visitArrayType() {
-        throw new IllegalStateException("Not Implemented : visitArrayType()");
-    }
+  public TypeInfo getInfo() {
+    return headInfo;
+  }
 
-    @Override
-    public void visitBaseType(char descriptor) {
-        throw new IllegalStateException("Not Implemented : visitArrayType()");
-    }
+  @Override
+  public SignatureVisitor visitArrayType() {
+    throw new IllegalStateException("Not Implemented : visitArrayType()");
+  }
 
-    @Override
-    public SignatureVisitor visitClassBound() {
-        throw new IllegalStateException("Not supposed to be here (visitClassBound).");
-    }
+  @Override
+  public void visitBaseType(char descriptor) {
+    throw new IllegalStateException("Not Implemented : visitArrayType()");
+  }
 
-    @Override
-    public void visitClassType(String className) {
-        var name = ClassParser.removePath(className);
-        if (headInfo == null) {
-            headInfo = TypeInfo.of(name);
-        } else {
-            headInfo = new TypeInfo(Optional.of(headInfo), name, List.of());
-        }
-    }
+  @Override
+  public SignatureVisitor visitClassBound() {
+    throw new IllegalStateException("Not supposed to be here (visitClassBound).");
+  }
 
-    @Override
-    public void  visitEnd() {
-        if (headInfo.outer().isPresent()) {
-            headInfo = headInfo.outer().get().withTypeParameter(headInfo);
-        }
+  @Override
+  public void visitClassType(String className) {
+    if (headInfo == null) {
+      headInfo = TypeInfo.of(className);
+    } else {
+      headInfo = new TypeInfo(Optional.of(headInfo), className, List.of());
     }
+  }
 
-    @Override
-    public SignatureVisitor visitExceptionType() {
-        throw new IllegalStateException("Not supposed to be here (visitExceptionType).");
+  @Override
+  public void visitEnd() {
+    if (headInfo.outer().isPresent()) {
+      headInfo = headInfo.outer().get().withTypeParameter(headInfo);
     }
+  }
 
-    @Override
-    public void visitFormalTypeParameter(String name) {
-        throw new IllegalStateException("Not supposed to be here (visitFormalTypeParameter).");
-    }
+  @Override
+  public SignatureVisitor visitExceptionType() {
+    throw new IllegalStateException("Not supposed to be here (visitExceptionType).");
+  }
 
-    @Override
-    public void visitInnerClassType(String name) {
-        throw new IllegalStateException("Not Implemented : visitInnerClassType()");
-    }
+  @Override
+  public void visitFormalTypeParameter(String name) {
+    throw new IllegalStateException("Not supposed to be here (visitFormalTypeParameter).");
+  }
 
-    @Override
-    public SignatureVisitor visitInterface() {
-        throw new IllegalStateException("Not supposed to be here (visitInterface).");
-    }
+  @Override
+  public void visitInnerClassType(String name) {
+    throw new IllegalStateException("Not Implemented : visitInnerClassType()");
+  }
 
-    @Override
-    public SignatureVisitor  visitInterfaceBound() {
-        throw new IllegalStateException("Not supposed to be here (visitInterfaceBound).");
-    }
+  @Override
+  public SignatureVisitor visitInterface() {
+    throw new IllegalStateException("Not supposed to be here (visitInterface).");
+  }
 
-    @Override
-    public SignatureVisitor visitParameterType() {
-        throw new IllegalStateException("Not supposed to be here (visitParameterType).");
-    }
+  @Override
+  public SignatureVisitor visitInterfaceBound() {
+    throw new IllegalStateException("Not supposed to be here (visitInterfaceBound).");
+  }
 
-    @Override
-    public SignatureVisitor visitReturnType() {
-        throw new IllegalStateException("Not supposed to be here (visitReturnType).");
-    }
+  @Override
+  public SignatureVisitor visitParameterType() {
+    throw new IllegalStateException("Not supposed to be here (visitParameterType).");
+  }
 
-    @Override
-    public SignatureVisitor visitSuperclass() {
-        throw new IllegalStateException("Not supposed to be here (visitSuperclass).");
-    }
+  @Override
+  public SignatureVisitor visitReturnType() {
+    throw new IllegalStateException("Not supposed to be here (visitReturnType).");
+  }
 
-    @Override
-    public void visitTypeArgument() {
-        throw new IllegalStateException("Not Implemented : visitTypeArgument()");
-    }
+  @Override
+  public SignatureVisitor visitSuperclass() {
+    throw new IllegalStateException("Not supposed to be here (visitSuperclass).");
+  }
 
-    @Override
-    public SignatureVisitor visitTypeArgument(char wildcard) {
-        return this;
-    }
+  @Override
+  public void visitTypeArgument() {
+    throw new IllegalStateException("Not Implemented : visitTypeArgument()");
+  }
 
-    @Override
-    public void visitTypeVariable(String name) {
-        throw new IllegalStateException("Not Implemented : visitTypeVariable()");
-    }
+  @Override
+  public SignatureVisitor visitTypeArgument(char wildcard) {
+    return this;
+  }
+
+  @Override
+  public void visitTypeVariable(String name) {
+    throw new IllegalStateException("Not Implemented : visitTypeVariable()");
+  }
 }
 

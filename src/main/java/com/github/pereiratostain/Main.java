@@ -2,6 +2,7 @@ package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.pereiratostain.generator.MermaidSchemaGenerator;
+import com.github.pereiratostain.visitor.ClassParser;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.module.ModuleFinder;
@@ -9,8 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.github.pereiratostain.visitor.ClassParser;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
@@ -26,7 +25,6 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
     var entities = asm();
-    //System.out.println(entities.stream().map(Entity::type).map(TypeInfo::name).collect(Collectors.joining("\n")));
     try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
       var associations = new DiagramComputer(entities).buildAssociations();
       var generator = new MermaidSchemaGenerator();

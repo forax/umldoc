@@ -16,7 +16,8 @@ import java.util.List;
 public class PlantUmlSchemaGenerator implements Generator {
 
   @Override
-  public void generate(Writer writer, List<Entity> entities, List<AssociationDependency> associations) throws IOException {
+  public void generate(Writer writer, List<Entity> entities,
+                       List<AssociationDependency> associations) throws IOException {
     requireNonNull(writer);
     requireNonNull(entities);
 

@@ -1,29 +1,36 @@
 package com.github.pereiratostain.visitor;
 
+import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
+import static org.objectweb.asm.Opcodes.ACC_ANNOTATION;
+import static org.objectweb.asm.Opcodes.ACC_ENUM;
+import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
+import static org.objectweb.asm.Opcodes.ACC_RECORD;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import com.github.forax.umldoc.core.TypeInfo;
-import org.objectweb.asm.*;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.signature.SignatureReader;
 
-import static org.objectweb.asm.Opcodes.*;
 
-
+/**
+ * Class use to parse the .class files into Entity.
+ */
 public class ClassParser extends ClassVisitor {
   private Entity entity = null;
 
   public ClassParser(int api) {
     super(api);
-  }
-
-  static String removePath(String className) {
-    return className.substring(className.lastIndexOf('/') + 1);
   }
 
   public Entity getEntity() {
@@ -52,10 +59,6 @@ public class ClassParser extends ClassVisitor {
 
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
-
-    name = removePath(name);
-    name = name.replace('-', '_');
-    name = name.replace('$', ' ');
 
     var stereotype = translateStereotype(access);
     this.entity = new Entity(modif, TypeInfo.of(name), stereotype,
@@ -93,7 +96,7 @@ public class ClassParser extends ClassVisitor {
     var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modifier.add(modifier(access));
 
-    var type = TypeInfo.of(removePath(descriptor).replace(';', ' '));
+    var type = TypeInfo.of(descriptor);
     if (signature != null) {
       var reader = new SignatureReader(signature);
       var visitor = new SignatureParser(Opcodes.ASM9);

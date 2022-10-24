@@ -18,5 +18,6 @@ public interface Generator {
    * @param entities The entities composing the schema
    * @throws IOException if an I/O error occurs
    */
-  void generate(Writer writer, List<Entity> entities, List<AssociationDependency> associations) throws IOException;
+  void generate(Writer writer, List<Entity> entities,
+                List<AssociationDependency> associations) throws IOException;
 }

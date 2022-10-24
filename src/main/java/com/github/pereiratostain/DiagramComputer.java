@@ -26,7 +26,7 @@ public class DiagramComputer {
    */
   public DiagramComputer(List<Entity> entities) {
     Objects.requireNonNull(entities);
-    this.entities = entities;
+    this.entities = List.copyOf(entities);
     this.entitiesName = getEntitiesName(entities);
   }
 
