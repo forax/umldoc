@@ -11,12 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.RecordComponentVisitor;
+
+import org.objectweb.asm.*;
 
 /**
  * An utils class used to retrieve the content of a jar. which returns the entities contained in the
@@ -83,7 +79,7 @@ public class JarReader {
         return;
       }
       entityBuilder.setModifiers(AccessReader.modifiers(access))
-                   .setTypeInfo(TypeInfo.of(name))
+                   .setTypeInfo(TypeInfo.of(name.replace('/', '.')))
                    .setStereotype(AccessReader.stereotype(access));
     }
 
@@ -102,7 +98,14 @@ public class JarReader {
       Set<Modifier> modifiers = AccessReader.modifiers(access);
 
       // FIXME TypeInfo of field is not set properly. need more documentation
-      var field = new Field(modifiers, name, TypeInfo.of("TODO"));
+//      descriptor = descriptor.replace(";", "");
+//      if (descriptor.startsWith("L")) {
+//        descriptor = descriptor.substring(1);
+//      }
+      var type =  Type.getType(descriptor).getInternalName().replace("/", ".");
+//      System.err.println(type);
+
+      var field = new Field(modifiers, name, TypeInfo.of(type));
       entityBuilder.addField(field);
       return null;
     }
@@ -115,7 +118,7 @@ public class JarReader {
 
     @Override
     public void visitEnd() {
-      if (isEntitySkipped) {
+      if (!isEntitySkipped) {
         entities.add(entityBuilder.build());
       }
     }
