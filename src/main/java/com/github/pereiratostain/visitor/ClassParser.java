@@ -1,10 +1,16 @@
-package com.github.pereiratostain;
+package com.github.pereiratostain.visitor;
 
+import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
+import static org.objectweb.asm.Opcodes.ACC_ANNOTATION;
+import static org.objectweb.asm.Opcodes.ACC_ENUM;
+import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
+import static org.objectweb.asm.Opcodes.ACC_RECORD;
 import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,31 +18,39 @@ import java.util.List;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
+import org.objectweb.asm.signature.SignatureReader;
 
 
-class Visitor extends ClassVisitor {
+/**
+ * Class use to parse the .class files into Entity.
+ */
+public class ClassParser extends ClassVisitor {
   private Entity entity = null;
 
-  public Visitor(int api) {
+  public ClassParser(int api) {
     super(api);
-  }
-
-  private String removePath(String className) {
-    return className.substring(className.lastIndexOf('/') + 1);
   }
 
   public Entity getEntity() {
     return this.entity;
   }
 
-  private Stereotype translateStereotype(String stereotype) {
-    return switch (stereotype) {
-      case "Enum" -> Stereotype.ENUM;
-      case "Record" -> Stereotype.RECORD;
-      case "Interface" -> Stereotype.INTERFACE;
-      default -> Stereotype.CLASS;
-    };
+  private Stereotype translateStereotype(int flag) {
+    if ((flag & ACC_ENUM) == ACC_ENUM) {
+      return Stereotype.ENUM;
+    } else if ((flag & ACC_RECORD) == ACC_RECORD) {
+      return Stereotype.RECORD;
+    } else if ((flag & ACC_ANNOTATION) == ACC_ANNOTATION) {
+      return Stereotype.ANNOTATION;
+    } else if ((flag & ACC_INTERFACE) == ACC_INTERFACE) {
+      return Stereotype.INTERFACE;
+    } else if ((flag & ACC_ABSTRACT) == ACC_ABSTRACT) {
+      return Stereotype.ABSTRACT;
+    } else {
+      return Stereotype.CLASS;
+    }
   }
 
   @Override
@@ -46,17 +60,8 @@ class Visitor extends ClassVisitor {
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
 
-    name = removePath(name);
-    name = name.replace('-', '_');
-    name = name.replace('$', ' ');
-
-    var stereotype = Stereotype.CLASS;
-    if (superName != null) {
-      superName = removePath(superName);
-      stereotype = translateStereotype(superName);
-    }
-
-    this.entity = new Entity(modif, name, stereotype,
+    var stereotype = translateStereotype(access);
+    this.entity = new Entity(modif, TypeInfo.of(name), stereotype,
             List.of(), List.of());
   }
 
@@ -90,17 +95,19 @@ class Visitor extends ClassVisitor {
     }
     var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modifier.add(modifier(access));
-    descriptor = removePath(descriptor);
+
+    var type = TypeInfo.of(descriptor);
     if (signature != null) {
-      signature = removePath(signature);
-      signature = signature.substring(0, signature.indexOf(';'));
-      descriptor = descriptor + "<" + signature + ">";
+      var reader = new SignatureReader(signature);
+      var visitor = new SignatureParser(Opcodes.ASM9);
+      reader.acceptType(visitor);
+      type = visitor.getInfo();
     }
     var fields = new ArrayList<>(this.entity.fields());
-    var field = new Field(modifier, name, descriptor);
+    var field = new Field(modifier, name, type);
 
     fields.add(field);
-    this.entity = new Entity(entity.modifiers(), entity.name(), entity.stereotype(), fields,
+    this.entity = new Entity(entity.modifiers(), entity.type(), entity.stereotype(), fields,
             List.of());
     return null;
   }
