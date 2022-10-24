@@ -56,7 +56,7 @@ public class DiagramComputer {
         var left = new AssociationDependency.Side(entity, Optional.empty(),
                 false, cardinality);
         var right = new AssociationDependency.Side(getEntityByName(typeInfo.name()),
-                Optional.empty(), true, cardinality);
+                Optional.of(""), true, cardinality);
         associations.add(new AssociationDependency(left, right));
       }
     }
@@ -81,7 +81,7 @@ public class DiagramComputer {
     if (outer.isPresent()) {
       var outerType = outer.get();
       var typeName = outerType.name();
-      if (typeName.equals(Optional.class.getName())) {
+      if (typeName.equals("Optional")) {
         return AssociationDependency.Cardinality.ZERO_OR_ONE;
       }
       return AssociationDependency.Cardinality.MANY;

@@ -10,7 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.github.pereiratostain.visitor.Visitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
@@ -26,9 +28,11 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
     var entities = asm();
+    //System.out.println(entities.stream().map(Entity::type).map(TypeInfo::name).collect(Collectors.joining("\n")));
     try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
+      var associations = new DiagramComputer(entities).buildAssociations();
       var generator = new MermaidSchemaGenerator();
-      //generator.generate(writer, entities);
+      generator.generate(writer, entities, associations);
     }
   }
 
@@ -46,7 +50,7 @@ public class Main {
       try (var reader = moduleReference.open()) {
         var visitors = new ArrayList<Visitor>();
         for (var filename : (Iterable<String>) reader.list()::iterator) {
-          if (!filename.endsWith(".class")) {
+          if (!filename.endsWith(".class") || filename.endsWith("$1.class")) {
             continue;
           }
           try (var inputStream = reader.open(filename).orElseThrow()) {

@@ -5,8 +5,11 @@ import static java.util.Objects.requireNonNull;
 import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.TypeInfo;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,19 +44,20 @@ public class MermaidSchemaGenerator implements Generator {
 
   private void generateEntity(Writer writer, Entity entity) throws IOException {
     var fields = generateFieldsOfEntity(entity);
+    var stereotype = stereotypeToString(entity.stereotype());
     writer.append("""
                 class %s {
                   %s
                   %s
                 }
             """
-            .formatted(entity.type().name(), entity.stereotype(), fields));
+            .formatted(entity.type().name(), stereotype, fields));
   }
 
   private String generateFieldsOfEntity(Entity entity) {
     return entity.fields().stream()
-            .map(field -> applyModifiersToName(field.modifiers(), field.name()))
-            .collect(Collectors.joining("\n"));
+            .map(field -> applyModifiersToName(field.modifiers(), field.typeInfo(), field.name()))
+            .collect(Collectors.joining("\n      "));
   }
 
   private void generateAssociation(Writer writer, AssociationDependency association) throws IOException {
@@ -61,8 +65,8 @@ public class MermaidSchemaGenerator implements Generator {
     var rightSide = association.right();
     var leftClass = leftSide.entity().type().name();
     var rightClass = rightSide.entity().type().name();
-    var leftCardinality = leftSide.cardinality().name();
-    var rightCardinality = rightSide.cardinality().name();
+    var leftCardinality = cardinalityToString(leftSide.cardinality());
+    var rightCardinality = cardinalityToString(rightSide.cardinality());
     var arrow = generateArrow(leftSide, rightSide);
     var label = getAssociationLabel(leftSide, rightSide);
     writer.append( """
@@ -102,7 +106,25 @@ public class MermaidSchemaGenerator implements Generator {
     });
   }
 
-  private static String applyModifiersToName(Set<Modifier> modifiers, String name) {
+  private String stereotypeToString(Entity.Stereotype stereotype) {
+    return switch (stereotype) {
+      case ENUM -> "<<enumeration>>";
+      case RECORD -> "<<record>>";
+      case INTERFACE -> "<<interface>>";
+      case ABSTRACT -> "<<abstract>>";
+      case ANNOTATION, CLASS -> "";
+    };
+  }
+
+  private static String cardinalityToString(AssociationDependency.Cardinality cardinality) {
+    return switch (cardinality) {
+      case MANY -> "\"*\"";
+      case ONLY_ONE -> "\"1\"";
+      case ZERO_OR_ONE -> "\"0..1\"";
+    };
+  }
+
+  private static String applyModifiersToName(Set<Modifier> modifiers, TypeInfo type, String name) {
     String prefix = "";
     String suffix = "";
     for (var modifier : modifiers) {
@@ -115,6 +137,6 @@ public class MermaidSchemaGenerator implements Generator {
         case FINAL -> suffix = "*";
       }
     }
-    return prefix + name + suffix;
+    return prefix + type + " " +  name + suffix;
   }
 }

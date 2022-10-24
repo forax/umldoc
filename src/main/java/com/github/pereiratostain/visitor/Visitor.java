@@ -1,4 +1,4 @@
-package com.github.pereiratostain;
+package com.github.pereiratostain.visitor;
 
 import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
@@ -9,20 +9,20 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.RecordComponentVisitor;
+
+import com.github.forax.umldoc.core.TypeInfo;
+import org.objectweb.asm.*;
+import org.objectweb.asm.signature.SignatureReader;
 
 
-class Visitor extends ClassVisitor {
+public class Visitor extends ClassVisitor {
   private Entity entity = null;
 
   public Visitor(int api) {
     super(api);
   }
 
-  private String removePath(String className) {
+  static String removePath(String className) {
     return className.substring(className.lastIndexOf('/') + 1);
   }
 
@@ -43,6 +43,9 @@ class Visitor extends ClassVisitor {
   public void visit(int version, int access, String name, String signature,
                     String superName, String[] interfaces) {
 
+    if(name.matches(".*\\$[0-9].*")) {
+    }
+
     var modif = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modif.add(modifier(access));
 
@@ -55,8 +58,7 @@ class Visitor extends ClassVisitor {
       superName = removePath(superName);
       stereotype = translateStereotype(superName);
     }
-
-    this.entity = new Entity(modif, name, stereotype,
+    this.entity = new Entity(modif, TypeInfo.of(name), stereotype,
             List.of(), List.of());
   }
 
@@ -90,17 +92,19 @@ class Visitor extends ClassVisitor {
     }
     var modifier = new HashSet<com.github.forax.umldoc.core.Modifier>();
     modifier.add(modifier(access));
-    descriptor = removePath(descriptor);
+
+    var type = TypeInfo.of(removePath(descriptor).replace(';', ' '));
     if (signature != null) {
-      signature = removePath(signature);
-      signature = signature.substring(0, signature.indexOf(';'));
-      descriptor = descriptor + "<" + signature + ">";
+      var reader = new SignatureReader(signature);
+      var visitor = new Signature(Opcodes.ASM9);
+      reader.acceptType(visitor);
+      type = visitor.getInfo();
     }
     var fields = new ArrayList<>(this.entity.fields());
-    var field = new Field(modifier, name, descriptor);
+    var field = new Field(modifier, name, type);
 
     fields.add(field);
-    this.entity = new Entity(entity.modifiers(), entity.name(), entity.stereotype(), fields,
+    this.entity = new Entity(entity.modifiers(), entity.type(), entity.stereotype(), fields,
             List.of());
     return null;
   }
