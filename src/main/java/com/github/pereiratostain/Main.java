@@ -2,6 +2,7 @@ package com.github.pereiratostain;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.pereiratostain.generator.MermaidSchemaGenerator;
+import com.github.pereiratostain.visitor.ClassParser;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.module.ModuleFinder;
@@ -25,8 +26,9 @@ public class Main {
   public static void main(String[] args) throws IOException {
     var entities = asm();
     try (var writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
+      var associations = new DiagramComputer(entities).buildAssociations();
       var generator = new MermaidSchemaGenerator();
-      generator.generate(writer, entities);
+      generator.generate(writer, entities, associations);
     }
   }
 
@@ -42,20 +44,20 @@ public class Main {
     var finder = ModuleFinder.of(path);
     for (var moduleReference : finder.findAll()) {
       try (var reader = moduleReference.open()) {
-        var visitors = new ArrayList<Visitor>();
+        var visitors = new ArrayList<ClassParser>();
         for (var filename : (Iterable<String>) reader.list()::iterator) {
-          if (!filename.endsWith(".class")) {
+          if (!filename.endsWith(".class") || filename.endsWith("$1.class")) {
             continue;
           }
           try (var inputStream = reader.open(filename).orElseThrow()) {
             var classReader = new ClassReader(inputStream);
-            var visitor = new Visitor(Opcodes.ASM9);
+            var visitor = new ClassParser(Opcodes.ASM9);
 
             classReader.accept(visitor, 0);
             visitors.add(visitor);
           }
         }
-        return visitors.stream().map(Visitor::getEntity).toList();
+        return visitors.stream().map(ClassParser::getEntity).toList();
       }
     }
     return List.of();
