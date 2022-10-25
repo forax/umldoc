@@ -2,16 +2,16 @@ package com.github.donnebelin.umldoc.classfile;
 
 import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
-import com.github.forax.umldoc.core.AssociationDependency;
+import com.github.donnebelin.umldoc.builder.TypeInfoBuilder;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.lang.constant.ClassDesc;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +28,6 @@ import org.objectweb.asm.Opcodes;
  */
 public final class JarParser {
   private final HashSet<Entity> entities = new HashSet<>();
-  private final ArrayList<AssociationDependency> associations = new ArrayList<>();
   private Entity currentEntity = null;
 
   /**
@@ -46,13 +45,18 @@ public final class JarParser {
       return Stereotype.RECORD;
     }
 
+    if ((access & Opcodes.ACC_ANNOTATION) != 0) {
+      return Stereotype.ANNOTATION;
+    }
+
+    if ((access & Opcodes.ACC_INTERFACE) != 0) {
+      return Stereotype.INTERFACE;
+    }
+
     if ((access & Opcodes.ACC_ENUM) != 0) {
       return Stereotype.ENUM;
     }
 
-    if ((access & Opcodes.ACC_INTERFACE) != 0 || (access & Opcodes.ACC_ANNOTATION) != 0) {
-      return Stereotype.INTERFACE;
-    }
 
     if ((access & Opcodes.ACC_ABSTRACT) != 0) {
       return Stereotype.ABSTRACT;
@@ -64,19 +68,19 @@ public final class JarParser {
   private static Set<Modifier> modifiers(int access) {
     var modifiers = new HashSet<Modifier>();
 
-    if (java.lang.reflect.Modifier.isStatic(access)) {
+    if ((access & Opcodes.ACC_STATIC) != 0) {
       modifiers.add(Modifier.STATIC);
     }
 
-    if (java.lang.reflect.Modifier.isFinal(access)) {
+    if ((access & Opcodes.ACC_FINAL) != 0) {
       modifiers.add(Modifier.FINAL);
     }
 
-    if (java.lang.reflect.Modifier.isPublic(access)) {
+    if ((access & Opcodes.ACC_PUBLIC) != 0) {
       modifiers.add(Modifier.PUBLIC);
-    } else if (java.lang.reflect.Modifier.isPrivate(access)) {
+    } else if ((access & Opcodes.ACC_PRIVATE) != 0) {
       modifiers.add(Modifier.PRIVATE);
-    } else if (java.lang.reflect.Modifier.isProtected(access)) {
+    } else if ((access & Opcodes.ACC_PROTECTED) != 0) {
       modifiers.add(Modifier.PROTECTED);
     } else {
       modifiers.add(Modifier.PACKAGE);
@@ -85,13 +89,12 @@ public final class JarParser {
     return modifiers;
   }
 
-  /**
-   * Supplies a list of all Associations parsed from jar file.
-   *
-   * @return A list of Association object with all parsed associations discovered in the jar file.
-   */
-  public List<AssociationDependency> getAssociationDependencies() {
-    return List.copyOf(associations);
+  private static TypeInfo resolveTypeParameter(String typeParameter, String descriptor) {
+    if (typeParameter == null) {
+      return TypeInfo.of(descriptor);
+    }
+
+    return new TypeInfoBuilder().build(typeParameter);
   }
 
   /**
@@ -126,24 +129,24 @@ public final class JarParser {
     }
   }
 
-  private void addEntityAndFields(int access, String name, String type,
+  private void addEntityAndFields(int access, String name, String type, String descriptor,
                                   HashSet<Field> currentFields) {
     currentFields.add(new Field(
             modifiers(access),
             name,
-            type
+            resolveTypeParameter(type, descriptor)
     ));
 
     currentEntity = new Entity(
             currentEntity.modifiers(),
-            currentEntity.name(),
+            currentEntity.type(),
             currentEntity.stereotype(),
             List.copyOf(currentFields),
             currentEntity.methods()
     );
 
     var oldEntity = entities.stream()
-            .filter(entity -> entity.name().equals(currentEntity.name()))
+            .filter(entity -> entity.type().name().equals(currentEntity.type().name()))
             .findFirst();
     oldEntity.ifPresent(entities::remove);
     entities.add(currentEntity);
@@ -164,7 +167,7 @@ public final class JarParser {
         if (!name.equals("module-info")) {
           currentEntity = new Entity(
                   Set.of(),
-                  name,
+                  TypeInfo.of(name),
                   resolveStereotype(access),
                   List.of(),
                   List.of()
@@ -187,6 +190,7 @@ public final class JarParser {
         addEntityAndFields(
                 access,
                 name,
+                signature,
                 ClassDesc.ofDescriptor(descriptor).displayName(),
                 currentFields
         );
