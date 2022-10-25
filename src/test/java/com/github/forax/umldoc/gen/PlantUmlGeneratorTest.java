@@ -2,6 +2,7 @@ package com.github.forax.umldoc.gen;
 
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
+import com.github.forax.umldoc.core.Field;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,10 +22,29 @@ public class PlantUmlGeneratorTest {
     mermaidGenerator.generate(true, List.of(entity), List.of(), writer);
     assertEquals("""
         @startuml
+
+        class Entity {
+        }
+
+        @enduml
+        """, writer.toString());
+  }
+
+  @Test
+  public void generateEnum() throws IOException {
+    var modifier = new Entity(Set.of(), "Modifier", Entity.Stereotype.ENUM,
+                              List.of(new Field(Set.of(), "PUBLIC", "Modifier")),
+                              List.of());
+    var mermaidGenerator = new PlantUmlGenerator();
+    var writer = new StringWriter();
+    mermaidGenerator.generate(true, List.of(modifier), List.of(), writer);
+    assertEquals("""
+        @startuml
         
-            class Entity {
-            }
-        
+        enum Modifier {
+          PUBLIC
+        }
+
         @enduml
         """, writer.toString());
   }
