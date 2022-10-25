@@ -24,15 +24,15 @@ public class MermaidExtract {
     Objects.requireNonNull(entities);
     String pathToString = "./src/main/java/com/github/veluvexiau/umldoc/core/marmaidExport.md";
     try (PrintWriter writer = new PrintWriter(pathToString, Charset.defaultCharset())) {
-      init(writer);
-      for (Entity entitie : entities) {
-        displayEntity(writer, entitie);
+      header(writer);
+      for (Entity entity : entities) {
+        displayEntity(writer, entity);
       }
       end(writer);
     }
   }
 
-  private void init(PrintWriter writer) {
+  private void header(PrintWriter writer) {
     writer.println("```mermaid");
     writer.println("%% umldoc");
     writer.println("classDiagram\n\tdirection TB");

@@ -47,7 +47,7 @@ public class SignatureParser extends SignatureVisitor {
   @Override
   public void visitEnd() {
     if (headInfo.outer().isPresent()) {
-      headInfo = headInfo.outer().get().withTypeParameter(headInfo);
+      headInfo = headInfo.outer().orElseThrow().withTypeParameter(headInfo);
     }
   }
 
