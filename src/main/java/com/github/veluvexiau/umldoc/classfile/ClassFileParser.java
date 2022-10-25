@@ -69,16 +69,6 @@ public final class ClassFileParser {
                                 String supName,
                                 String[] inter) {
                 Entity entity;
-                Stereotype stereotype = getStereotype(access);
-                entity = new Entity(Set.of(),
-                    new TypeInfo(Optional.empty(), name, List.of()),
-                    stereotype,
-                    List.of(),
-                    List.of());
-                entities.add(entity);
-              }
-
-              private Stereotype getStereotype(int access) {
                 Stereotype stereotype;
                 if (java.lang.reflect.Modifier.isInterface(access)) {
                   stereotype = Stereotype.INTERFACE;
@@ -89,7 +79,12 @@ public final class ClassFileParser {
                 } else {
                   stereotype = Stereotype.CLASS;
                 }
-                return stereotype;
+                entity = new Entity(Set.of(),
+                    new TypeInfo(Optional.empty(), name, List.of()),
+                    stereotype,
+                    List.of(),
+                    List.of());
+                entities.add(entity);
               }
 
               @Override
