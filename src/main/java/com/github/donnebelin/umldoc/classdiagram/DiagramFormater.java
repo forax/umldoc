@@ -24,7 +24,7 @@ public class DiagramFormater {
    */
   public DiagramFormater(List<Entity> entities) {
     Objects.requireNonNull(entities);
-    this.entities = entities;
+    this.entities = new ArrayList<>(entities);
 
   }
 
