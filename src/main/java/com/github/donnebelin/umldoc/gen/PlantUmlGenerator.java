@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  */
 public final class PlantUmlGenerator implements Generator {
   private final GeneratorBuilder.PlantBuilder builder = new GeneratorBuilder.PlantBuilder();
+
   @Override
   public void generate(boolean header, List<Entity> entities,
                        List<AssociationDependency> dependencies,
@@ -34,10 +35,12 @@ public final class PlantUmlGenerator implements Generator {
     for (var dependency : dependencies) {
       writer.append("""
               %s "%s" -->  "%s" %s : %s
-              """.formatted(DiagramFormater.getEntityNameWithoutPackage(dependency.left().entity().type().name()),
+              """.formatted(DiagramFormater.getEntityNameWithoutPackage(
+                      dependency.left().entity().type().name()),
               Helper.parseCardinalities(dependency.left().cardinality()),
               Helper.parseCardinalities(dependency.right().cardinality()),
-              DiagramFormater.getEntityNameWithoutPackage(dependency.right().entity().type().name()),
+              DiagramFormater.getEntityNameWithoutPackage(
+                      dependency.right().entity().type().name()),
               dependency.right().label().orElse("Not defined")
       ));
     }

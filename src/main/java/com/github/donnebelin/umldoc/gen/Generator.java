@@ -37,7 +37,8 @@ public sealed interface Generator permits MermaidGenerator, PlantUmlGenerator {
    * @return the String representation of the given field for Plant UML and Mermaid UML
    */
   static String fieldToString(Field field, Builder<String> builder) {
-    return fieldAccessor(field.modifiers()) + field.name() + ": " + builder.build(field.typeInfo().toString()); // -name: String
+    return fieldAccessor(field.modifiers()) + field.name() + ": " + builder.build(
+            field.typeInfo().toString());
   }
 
   /**
