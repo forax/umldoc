@@ -14,7 +14,7 @@ import java.util.Set;
  * @param parameters the parameters
  */
 public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
-                     List<Parameter> parameters) {
+                     List<Parameter> parameters, Call.Group callGroup) {
   /**
    * Creates a method.
    *
@@ -22,12 +22,14 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    * @param name the method name
    * @param returnTypeInfo the return type
    * @param parameters the parameters
+   * @param callGroup the group method calls from the implementation
    */
   public Method {
     modifiers = Set.copyOf(modifiers);
     requireNonNull(name);
     requireNonNull(returnTypeInfo);
     parameters = List.copyOf(parameters);
+    requireNonNull(callGroup);
   }
 
   /**
@@ -38,12 +40,12 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    * @param returnType the return type
    * @param parameters the parameters
    *
-   * @deprecated use {@link #Method(Set, String, TypeInfo, List) instead}
+   * @deprecated use {@link #Method(Set, String, TypeInfo, List, Call.Group) instead}
    */
   @Deprecated
   public Method(Set<Modifier> modifiers, String name, String returnType,
                 List<Parameter> parameters) {
-    this(modifiers, name, TypeInfo.of(returnType), parameters);
+    this(modifiers, name, TypeInfo.of(returnType), parameters, Call.Group.EMPTY_GROUP);
   }
 
   /**

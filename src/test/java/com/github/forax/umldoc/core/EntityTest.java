@@ -2,6 +2,7 @@ package com.github.forax.umldoc.core;
 
 import com.github.forax.umldoc.core.AssociationDependency.Cardinality;
 import com.github.forax.umldoc.core.AssociationDependency.Side;
+import com.github.forax.umldoc.core.Call.Group;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityTest {
@@ -54,7 +56,8 @@ public class EntityTest {
   @Test
   public void method() {
     var method = new Method(Set.of(Modifier.PUBLIC), "println", TypeInfo.of("void"),
-        List.of(new Method.Parameter("object", TypeInfo.of("java.lang.Object"))));
+        List.of(new Method.Parameter("object", TypeInfo.of("java.lang.Object"))),
+        EMPTY_GROUP);
     assertAll(
         () -> assertEquals(Set.of(Modifier.PUBLIC), method.modifiers()),
         () -> assertEquals("println", method.name()),
@@ -62,17 +65,18 @@ public class EntityTest {
         () -> assertEquals(List.of(new Method.Parameter("object", TypeInfo.of("java.lang.Object"))), method.parameters())
     );
     assertAll(
-        () -> assertThrows(NullPointerException.class, () -> new Method(null, "toString", TypeInfo.of("java.lang.String"), List.of())),
-        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), null, TypeInfo.of("java.lang.String"), List.of())),
-        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), "toString", (TypeInfo) null, List.of())),
-        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), "toString", TypeInfo.of("java.lang.String"), null))
+        () -> assertThrows(NullPointerException.class, () -> new Method(null, "toString", TypeInfo.of("java.lang.String"), List.of(), EMPTY_GROUP)),
+        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), null, TypeInfo.of("java.lang.String"), List.of(), EMPTY_GROUP)),
+        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), "toString", (TypeInfo) null, List.of(), EMPTY_GROUP)),
+        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), "toString", TypeInfo.of("java.lang.String"), null, EMPTY_GROUP)),
+        () -> assertThrows(NullPointerException.class, () -> new Method(Set.of(), "toString", TypeInfo.of("java.lang.String"), List.of(), null))
     );
   }
 
   @Test
   public void entity() {
     var nameField = new Field(Set.of(Modifier.PUBLIC), "name", TypeInfo.of("java.lang.String"));
-    var methodToString = new Method(Set.of(Modifier.PUBLIC), "toString", TypeInfo.of("java.lang.String"), List.of());
+    var methodToString = new Method(Set.of(Modifier.PUBLIC), "toString", TypeInfo.of("java.lang.String"), List.of(), EMPTY_GROUP);
     var entity = new Entity(Set.of(Modifier.PUBLIC), TypeInfo.of("Entity"), Stereotype.CLASS,
         List.of(nameField), List.of(methodToString));
     assertAll(

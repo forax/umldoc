@@ -1,5 +1,7 @@
 package com.github.veluvexiau.umldoc.classfile;
 
+import com.github.forax.umldoc.core.Call;
+import com.github.forax.umldoc.core.Call.Group;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
@@ -144,7 +146,8 @@ public final class ClassFileParser {
                   var method = new Method(Set.of(modifier(access)),
                       name,
                       TypeInfo.of(((signature == null) ? "" : signature)),
-                      parameters);
+                      parameters,
+                      Group.EMPTY_GROUP);
                   listOfMethods.add(method);
                   var entity = new Entity(oldEntity.modifiers(), oldEntity.type(),
                       oldEntity.stereotype(), oldEntity.fields(),
