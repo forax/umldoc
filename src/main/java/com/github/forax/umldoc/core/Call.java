@@ -66,7 +66,15 @@ public sealed interface Call {
       /**
        * A group of method calls, called in parallel.
        */
-      PARALLEL
+      PARALLEL,
+      /**
+       * A group of optional (if ...) method calls.
+       */
+      OPTIONAL,
+      /**
+       * A group of alternate (if ... else ...) method calls
+       */
+      ALTERNATE,
     }
   }
 }
