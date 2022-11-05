@@ -7,10 +7,13 @@ import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
 import com.github.forax.umldoc.core.AssociationDependency.Cardinality;
+import com.github.forax.umldoc.core.Call;
+import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,6 +79,20 @@ final class ClassFileParser {
       @Override
       public MethodVisitor visitMethod(int access, String name, String descriptor,
                                        String signature, String[] exceptions) {
+        if (name.equals("<init>")) {
+          return null;
+        }
+        var modifiers = Utils.toModifiers(access);
+        TypeInfo returnType;
+        if (signature != null) {
+          returnType = decodeMethod(signature);
+        } else {
+          returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
+        }
+        var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
+                .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
+                .toList();
+        entityBuilder.addMethod(modifiers, name, returnType, parameters, Call.Group.EMPTY_GROUP);
         return null;
       }
     }, 0);
@@ -86,6 +103,13 @@ final class ClassFileParser {
     var reader = new SignatureReader(signature);
     var visitor = new SignatureVisitorImpl(type -> {});
     reader.acceptType(visitor);
+    return visitor.result;
+  }
+
+  private static TypeInfo decodeMethod(String signature) {
+    var reader = new SignatureReader(signature);
+    var visitor = new SignatureVisitorImpl(type -> {});
+    reader.accept(visitor);
     return visitor.result;
   }
 
