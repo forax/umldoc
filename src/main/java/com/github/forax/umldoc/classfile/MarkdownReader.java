@@ -6,6 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+/**
+ *
+ * Enum to define what type of uml the user wants.
+ *
+ */
 enum UMLType {
   PLANTUML,
   MERMAID
@@ -17,6 +22,8 @@ enum UMLType {
  *
  */
 public final class MarkdownReader implements Reader {
+
+  private int umlAnnotationLineNumber;
 
   /**
    *
@@ -39,7 +46,7 @@ public final class MarkdownReader implements Reader {
 
   /**
    *
-   * Read a md file and detect the annotation umldoc.
+   * Read a md file and detect the annotation for the umldoc.
    *
    * @param path File's path.
    * @throws IOException If the file is not accessible or doesn't exist.
