@@ -19,11 +19,19 @@ public sealed interface Reader permits MarkdownReader{
    * @return Reader A MarkdownReader, a PlantReader or a MermaidReader.
    */
   static Reader checkFileExtension(Path path) {
-
-    var file = path.getFileName().toString();
-    var extension = file.split(".");
-
-    return new MarkdownReader();
+    var fileName = path.getFileName().toString();
+    var lastIndex = fileName.lastIndexOf('.');
+    if (lastIndex < 0) {
+      throw new IllegalArgumentException("Unknown type of file");
+    } else {
+      var extension = fileName.substring(lastIndex + 1);
+      return switch (extension) {
+        case "md" -> new MarkdownReader();
+        case "pu", "plantuml" -> new MarkdownReader(); // TODO : CHANGE TO THE CORRESPONDING CLASS :)
+        case "mmd", "mermaid" -> new MarkdownReader(); // TODO : CHANGE TO THE CORRESPONDING CLASS :)
+        default -> throw new IllegalArgumentException(extension + " is not allowed");
+      };
+    }
   }
 
   /**
