@@ -27,25 +27,6 @@ public final class MarkdownReader implements Reader {
 
   /**
    *
-   * A main class to test.
-   *
-   * @deprecated
-   * NOTE : USED FOR TESTING ONLY (to be removed !).
-   *
-   * @param args Arguments for the main.
-   */
-  @Deprecated
-  public static void main (String[] args) {
-    try {
-      var markdownReader = new MarkdownReader();
-      markdownReader.readFile(Paths.get("YOUR_TEST_FILE.md"));
-    } catch (IOException e) {
-      System.out.println("Be sure that the file is accessible or created !");
-    }
-  }
-
-  /**
-   *
    * Read a md file and detect the annotation for the umldoc.
    *
    * @param path File's path.
