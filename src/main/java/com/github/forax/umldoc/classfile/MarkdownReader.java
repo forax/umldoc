@@ -6,6 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+enum UMLType {
+  PLANTUML,
+  MERMAID
+}
+
 /**
  *
  * A class used to read markdown file.
