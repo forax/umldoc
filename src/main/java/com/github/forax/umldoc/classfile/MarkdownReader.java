@@ -38,7 +38,6 @@ public final class MarkdownReader implements Reader {
    */
   public void readFile() throws IOException {
     try (var file = Files.newBufferedReader(path)) {
-      System.out.println("allo ?");
       // input the (modified) file content to the StringBuilder "input"
       var inputBuffer = new StringBuilder();
       String line;
