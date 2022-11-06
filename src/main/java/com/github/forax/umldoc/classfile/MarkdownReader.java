@@ -2,6 +2,7 @@ package com.github.forax.umldoc.classfile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -13,8 +14,12 @@ enum UMLType {
 
 public class MarkdownReader {
 
-  public static void main (String[] args) throws IOException {
-    readFile(Paths.get("YOUR_TEST_FILE.txt"));
+  public static void main (String[] args) {
+    try {
+      readFile(Paths.get("YOUR_TEST_FILE.txt"));
+    } catch (IOException e) {
+      System.out.println("Be sure that the file is accessible or created !");
+    }
   }
 
   public static void readFile(Path path) throws IOException {
