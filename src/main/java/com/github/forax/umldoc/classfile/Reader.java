@@ -38,7 +38,6 @@ public sealed interface Reader permits MarkdownReader{
    *
    * Used to read the file (.md, .pu, .plantuml, .mms, .mermaid).
    *
-   * @param path File's path
    * @throws IOException If the file is not accessible or doesn't exist
    */
   void readFile() throws IOException;
