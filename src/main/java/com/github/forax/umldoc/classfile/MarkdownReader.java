@@ -3,6 +3,7 @@ package com.github.forax.umldoc.classfile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -21,17 +22,20 @@ enum UMLType {
  *
  */
 public final class MarkdownReader implements Reader {
-
+  private final Path path;
   private int umlAnnotationLineNumber;
 
+  public MarkdownReader(Path path) {
+    Objects.requireNonNull(path);
+    this.path = path;
+  }
   /**
    *
    * Read a md file and detect the annotation for the umldoc.
    *
-   * @param path File's path.
    * @throws IOException If the file is not accessible or doesn't exist.
    */
-  public void readFile(Path path) throws IOException {
+  public void readFile() throws IOException {
     Stream<String> stream = Files.lines(path);
     stream.map(String::trim)
       .filter(l -> !l.isEmpty())

@@ -26,9 +26,9 @@ public sealed interface Reader permits MarkdownReader{
     } else {
       var extension = fileName.substring(lastIndex + 1);
       return switch (extension) {
-        case "md" -> new MarkdownReader();
-        case "pu", "plantuml" -> new MarkdownReader(); // TODO : CHANGE TO THE CORRESPONDING CLASS :)
-        case "mmd", "mermaid" -> new MarkdownReader(); // TODO : CHANGE TO THE CORRESPONDING CLASS :)
+        case "md" -> new MarkdownReader(path);
+        case "pu", "plantuml" -> new MarkdownReader(path); // TODO : CHANGE TO THE CORRESPONDING CLASS :)
+        case "mmd", "mermaid" -> new MarkdownReader(path); // TODO : CHANGE TO THE CORRESPONDING CLASS :)
         default -> throw new IllegalArgumentException(extension + " is not allowed");
       };
     }
@@ -41,6 +41,6 @@ public sealed interface Reader permits MarkdownReader{
    * @param path File's path
    * @throws IOException If the file is not accessible or doesn't exist
    */
-  void readFile(Path path) throws IOException;
+  void readFile() throws IOException;
 
 }
