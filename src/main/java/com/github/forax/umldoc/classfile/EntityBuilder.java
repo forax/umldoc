@@ -2,8 +2,10 @@ package com.github.forax.umldoc.classfile;
 
 import static java.util.Objects.requireNonNull;
 
+import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ final class EntityBuilder {
   private TypeInfo type;
   private Entity.Stereotype stereotype;
   private final ArrayList<Field> fields = new ArrayList<>();
+  private final ArrayList<Method> methods = new ArrayList<>();
 
   public void type(TypeInfo type) {
     requireNonNull(type);
@@ -39,7 +42,17 @@ final class EntityBuilder {
     fields.add(new Field(modifiers, name, type));
   }
 
+  public void addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
+                        List<Method.Parameter> parameters, Call.Group group) {
+    requireNonNull(modifiers);
+    requireNonNull(name);
+    requireNonNull(returnType);
+    requireNonNull(parameters);
+    requireNonNull(group);
+    methods.add(new Method(modifiers, name, returnType, parameters, group));
+  }
+
   public Entity build() {
-    return new Entity(Set.of(), type, stereotype, fields, List.of());
+    return new Entity(Set.of(), type, stereotype, fields, methods);
   }
 }

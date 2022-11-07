@@ -1,7 +1,11 @@
 package com.github.forax.umldoc.classfile;
 
 import com.github.forax.umldoc.classfile.ClassFileParser.ParsingResult;
+import com.github.forax.umldoc.core.Call;
+import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -64,6 +68,50 @@ public class ClassFileParserTest {
             ),
         Set.copyOf(parsingResult.delegations()));
   }*/
+
+  static class Tv {
+    public List<String> getChannel() {
+      return List.of();
+    }
+
+    public boolean changeChannel(String channel) {
+      return true;
+    }
+
+    private static void shutdown() {
+      return;
+    }
+  }
+
+  @Test
+  public void parseTvClass() throws IOException {
+    var parsingResult = parseClass(Tv.class).entityBuilder().build();
+    var methods = List.of(
+            new Method(
+                    Set.of(Modifier.PUBLIC),
+                    "getChannel",
+                    new TypeInfo(Optional.empty(), List.class.getName(),List.of(TypeInfo.of(String.class.getName()))),
+                    List.of(),
+                    Call.Group.EMPTY_GROUP
+            ),
+            new Method(
+                    Set.of(Modifier.PUBLIC),
+                    "changeChannel",
+                    TypeInfo.of(boolean.class.getName()),
+                    List.of(new Method.Parameter("", TypeInfo.of(String.class.getName()))),
+                    Call.Group.EMPTY_GROUP
+            ),
+            new Method(
+                    Set.of(Modifier.PRIVATE, Modifier.STATIC),
+                    "shutdown",
+                    TypeInfo.of(void.class.getName()),
+                    List.of(),
+                    Call.Group.EMPTY_GROUP
+            )
+    );
+    assertEquals(Tv.class.getName(), parsingResult.type().name());
+    assertEquals(methods, parsingResult.methods());
+  }
 
   @Test
   public void canNotBeInstantiated() throws InstantiationException, IllegalAccessException {
