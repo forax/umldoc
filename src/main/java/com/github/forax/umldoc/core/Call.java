@@ -11,7 +11,7 @@ public sealed interface Call {
   /**
    * A method call.
    *
-   * @param type type target type of the methid call
+   * @param type type target type of the method call
    * @param name name of the method call
    * @param returnType return type of the method call
    * @param parameterTypes parameter types of the method call
