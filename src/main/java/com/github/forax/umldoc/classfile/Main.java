@@ -18,8 +18,9 @@ public class Main {
   }
 
   public static void main(String[] args) throws IOException {
-    var file = Reader.checkFileExtension(Paths.get("design/test.md"));
-    file.readFile();
+    var path = Paths.get("design/test.md");
+    var file = Reader.fromFileExtension(getFileExtension(path));
+    file.readFile(path);
   }
   
 }
