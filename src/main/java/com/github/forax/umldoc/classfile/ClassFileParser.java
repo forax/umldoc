@@ -12,10 +12,11 @@ import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.PathMatcher;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -67,8 +68,6 @@ final class ClassFileParser {
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
           return null;
         }
-        //System.out.println("FIELD ::: " + "Access: "+ access + " Name: " + name +  "  Descriptor: " + descriptor +
-         //       " Signature: " + signature);
 
         var fieldType = signature == null ? decodeField(descriptor) : decodeField(signature);
         var delegation = new Delegation(Utils.toModifiers(access), fieldType, name);
@@ -79,6 +78,21 @@ final class ClassFileParser {
       @Override
       public MethodVisitor visitMethod(int access, String name, String descriptor,
                                        String signature, String[] exceptions) {
+        if (name.equals("<init>")) {
+          return null;
+        }
+        var modifiers = Utils.toModifiers(access);
+        TypeInfo returnType;
+        if (signature != null) {
+          returnType = decodeMethod(signature);
+        } else {
+          returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
+        }
+        var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
+                .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
+                .toList();
+        entityBuilder.addMethod(modifiers, name, returnType, parameters, Call.Group.EMPTY_GROUP);
+        return null;
 
         //System.out.println("METHOD ::: " + "Access: "+ access + " Name: " + name +  "  Descriptor: " + descriptor +
        //         " Signature: " + signature);
@@ -148,6 +162,13 @@ final class ClassFileParser {
     var reader = new SignatureReader(signature);
     var visitor = new SignatureVisitorImpl(type -> {});
     reader.acceptType(visitor);
+    return visitor.result;
+  }
+
+  private static TypeInfo decodeMethod(String signature) {
+    var reader = new SignatureReader(signature);
+    var visitor = new SignatureVisitorImpl(type -> {});
+    reader.accept(visitor);
     return visitor.result;
   }
 

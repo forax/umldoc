@@ -2,10 +2,13 @@ package com.github.forax.umldoc.classfile;
 
 import static java.util.Objects.requireNonNull;
 
-import com.github.forax.umldoc.core.*;
-
+import com.github.forax.umldoc.core.Call;
+import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -46,15 +49,10 @@ final class EntityBuilder {
     requireNonNull(returnType);
     requireNonNull(parameters);
     requireNonNull(group);
-    //methods.add(new Method(modifiers, name, returnType, parameters, group));
-  }
-
-  public void addMethodCall(Method parentMethod ){
-    //var call = new Call.MethodCall()
-    //methods.get(methods.size() - 1).callGroup().calls().add()
+    methods.add(new Method(modifiers, name, returnType, parameters, group));
   }
 
   public Entity build() {
-    return new Entity(Set.of(), type, stereotype, fields, List.of());
+    return new Entity(Set.of(), type, stereotype, fields, methods);
   }
 }
