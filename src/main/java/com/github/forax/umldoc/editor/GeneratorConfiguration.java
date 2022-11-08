@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Create a configuration capable of generating an uml class diagram when given a writer.
+ *
  * @param entities
  *         list of entities that will be use for uml generation
  * @param dependencies
@@ -21,6 +23,8 @@ public record GeneratorConfiguration(List<Entity> entities, List<Dependency> dep
                                      Generator generator) {
 
   /**
+   * Create a configuration capable of generating an uml class diagram when given a writer.
+   *
    * @param entities
    *         list of entities that will be use for uml generation
    * @param dependencies
