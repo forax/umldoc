@@ -23,7 +23,7 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
     var reader = Files.newBufferedReader(Path.of("design/test.md"));
-    var writer = Files.newBufferedWriter(Path.of("design/test.md"));
+    var writer = Files.newBufferedWriter(Path.of("design/test_TEMP.md"));
     var config = new HashMap<String, CommandLineParser>();
     config.put("mermaid", new MermaidCommandLineParser());
     config.put("plantuml", new PlantCommandLineParser());

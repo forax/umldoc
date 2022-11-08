@@ -33,7 +33,7 @@ public class Editor {
         // else => write generator result
       }
     }
-    // We write in the file with writer
+
   }
 
 }
