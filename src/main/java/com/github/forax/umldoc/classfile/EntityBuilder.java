@@ -21,7 +21,7 @@ final class EntityBuilder {
   private Entity.Stereotype stereotype;
   private final ArrayList<Field> fields = new ArrayList<>();
   private final ArrayList<Method> methods = new ArrayList<>();
-  private final HashMap<Method, ArrayList<Call.MethodCall>> mappedMethodsToCall= new HashMap<>();
+  private final HashMap<Method, ArrayList<Call.MethodCall>> mappedMethodsToCall = new HashMap<>();
 
   public void type(TypeInfo type) {
     requireNonNull(type);
@@ -55,16 +55,16 @@ final class EntityBuilder {
   }
 
   public void addMethodsCallToMethod(TypeInfo type, String name, TypeInfo returnType,
-                                    List<TypeInfo> parametersType){
+                                    List<TypeInfo> parametersType) {
     requireNonNull(type);
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parametersType);
-    var methodCall = new Call.MethodCall(type,name,returnType,parametersType);
+    var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
     var currentMethod = methods.get(methods.size() - 1);
     var methodCallList = mappedMethodsToCall.getOrDefault(currentMethod, new ArrayList<>());
     methodCallList.add(methodCall);
-    mappedMethodsToCall.put(currentMethod,methodCallList);
+    mappedMethodsToCall.put(currentMethod, methodCallList);
   }
 
   public Entity build() {

@@ -8,7 +8,10 @@ import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -94,7 +97,7 @@ final class ClassFileParser {
                     .map(parameter -> TypeInfo.of(parameter.getClassName()))
                     .toList();
             var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            entityBuilder.addMethodsCallToMethod(type,name,returnType,parametersType);
+            entityBuilder.addMethodsCallToMethod(type, name, returnType, parametersType);
           }
         };
       }
