@@ -6,12 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/*
 /**
 *
 * Enum to define what type of uml the user wants.
 *
-
+ /*
 enum UMLType {
   PLANTUML,
   MERMAID
