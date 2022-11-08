@@ -38,8 +38,8 @@ public record GeneratorConfiguration(List<Entity> entities, List<Dependency> dep
     Objects.requireNonNull(generator);
   }
 
-  public static GeneratorConfiguration fromPackage(Package p, Generator generator) {
-    return new GeneratorConfiguration(p.entities(), p.dependencies(), generator);
+  public static GeneratorConfiguration filterPackage(String packageName, Generator generator) {
+    return new GeneratorConfiguration(null, null, generator);
   }
 
   public void generate(Writer writer) throws IOException {
