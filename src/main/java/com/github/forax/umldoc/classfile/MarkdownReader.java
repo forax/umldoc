@@ -60,22 +60,22 @@ public final class MarkdownReader implements Reader {
     }
 
     line = file.readLine();
-    var diagramme = line;
+    var diagram = line;
 
     line = file.readLine();
     if (!line.equals("@enduml")) {
       throw new IllegalArgumentException("Bad format. ```plantuml must be ended by @enduml");
     }
 
-    inputBuffer.append(diagramme);
+    inputBuffer.append(diagram);
     inputBuffer.append('\n');
   }
 
   private void parseMermaid(BufferedReader file, StringBuilder inputBuffer) throws IOException {
     var line = file.readLine();
-    var diagramme = line;
+    var diagram = line;
 
-    inputBuffer.append(diagramme);
+    inputBuffer.append(diagram);
     inputBuffer.append('\n');
   }
 }
