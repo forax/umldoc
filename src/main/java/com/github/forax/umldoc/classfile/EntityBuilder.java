@@ -44,27 +44,28 @@ final class EntityBuilder {
     fields.add(new Field(modifiers, name, type));
   }
 
-  public void addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
+  public Method addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
                         List<Method.Parameter> parameters, Call.Group group) {
     requireNonNull(modifiers);
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parameters);
     requireNonNull(group);
-    methods.add(new Method(modifiers, name, returnType, parameters, group));
+    var method = new Method(modifiers, name, returnType, parameters, group);
+    methods.add(method);
+    return method;
   }
 
-  public void addMethodsCallToMethod(TypeInfo type, String name, TypeInfo returnType,
-                                    List<TypeInfo> parametersType) {
+  public void addMethodsCall(Method method, TypeInfo type, String name,
+                             TypeInfo returnType, List<TypeInfo> parametersType) {
+    requireNonNull(method);
     requireNonNull(type);
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parametersType);
     var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
-    var currentMethod = methods.get(methods.size() - 1);
-    var methodCallList = mappedMethodsToCall.getOrDefault(currentMethod, new ArrayList<>());
+    var methodCallList = mappedMethodsToCall.computeIfAbsent(method, m -> new ArrayList<>());
     methodCallList.add(methodCall);
-    mappedMethodsToCall.put(currentMethod, methodCallList);
   }
 
   public Entity build() {

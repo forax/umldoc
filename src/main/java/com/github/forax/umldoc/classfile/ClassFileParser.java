@@ -1,9 +1,9 @@
 package com.github.forax.umldoc.classfile;
 
+import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
-import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
@@ -86,7 +86,7 @@ final class ClassFileParser {
         var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
-        entityBuilder.addMethod(modifiers, name, returnType, parameters, Call.Group.EMPTY_GROUP);
+        var method = entityBuilder.addMethod(modifiers, name, returnType, parameters, EMPTY_GROUP);
 
         return new MethodVisitor(ASM9) {
           @Override
@@ -97,7 +97,7 @@ final class ClassFileParser {
                     .map(parameter -> TypeInfo.of(parameter.getClassName()))
                     .toList();
             var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            entityBuilder.addMethodsCallToMethod(type, name, returnType, parametersType);
+            entityBuilder.addMethodsCall(method, type, name, returnType, parametersType);
           }
         };
       }
