@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Editor {
 
@@ -17,22 +18,22 @@ public class Editor {
 
 
   public void edit(BufferedWriter writer, BufferedReader reader) throws IOException {
+    var isInConfiguration = false; // Boolean to see if we are in ```
     var line = "";
+    Optional<CommandLineParser> parser = Optional.empty();
     while ((line = reader.readLine()) != null) {
       if (line.matches("```.*")) {
         var type = line.replace("```", "");
-        var parser = registration.get(type);
-        writer.write(line);
-        if (parser == null) {
-          // TODO : the string after ``` is wrong
-          continue;
+        parser = registration.get(type);
+        if(parser != null) {
+          isInConfiguration = true;
         }
-        var generatorConfiguration = 0;
-        // TODO : Optional<GeneratorConfiguration> line(String) to develop
-        // if (gene == isEmpty) => write line
-        // else => write generator result
-        // TODO : read to the end of the uml (```) and write the uml
+      } else if (isInConfiguration) {
+        // TODO : call the parser to get the generator configuration
+        // if (yes) => line = result
+        // else => do nothing, isInConfiguration = !CommandLineParser.endLine()
       }
+      writer.write(line);
     }
 
   }
