@@ -1,13 +1,9 @@
 package com.github.forax.umldoc.classfile;
 
-import static com.github.forax.umldoc.core.AssociationDependency.Cardinality.MANY;
-import static com.github.forax.umldoc.core.AssociationDependency.Cardinality.ONLY_ONE;
-import static com.github.forax.umldoc.core.AssociationDependency.Cardinality.ZERO_OR_ONE;
+import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
-import com.github.forax.umldoc.core.AssociationDependency.Cardinality;
-import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
@@ -15,10 +11,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -92,8 +86,20 @@ final class ClassFileParser {
         var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
-        entityBuilder.addMethod(modifiers, name, returnType, parameters, Call.Group.EMPTY_GROUP);
-        return null;
+        var method = entityBuilder.addMethod(modifiers, name, returnType, parameters, EMPTY_GROUP);
+
+        return new MethodVisitor(ASM9) {
+          @Override
+          public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
+                                      boolean isInterface) {
+            var type = TypeInfo.of(owner);
+            var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
+                    .map(parameter -> TypeInfo.of(parameter.getClassName()))
+                    .toList();
+            var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
+            entityBuilder.addMethodsCall(method, type, name, returnType, parametersType);
+          }
+        };
       }
     }, 0);
     return new ParsingResult(entityBuilder, delegations);

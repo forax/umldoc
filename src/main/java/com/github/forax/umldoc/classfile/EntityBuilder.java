@@ -9,6 +9,7 @@ import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ final class EntityBuilder {
   private Entity.Stereotype stereotype;
   private final ArrayList<Field> fields = new ArrayList<>();
   private final ArrayList<Method> methods = new ArrayList<>();
+  private final HashMap<Method, ArrayList<Call.MethodCall>> mappedMethodsToCall = new HashMap<>();
 
   public void type(TypeInfo type) {
     requireNonNull(type);
@@ -42,14 +44,28 @@ final class EntityBuilder {
     fields.add(new Field(modifiers, name, type));
   }
 
-  public void addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
+  public Method addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
                         List<Method.Parameter> parameters, Call.Group group) {
     requireNonNull(modifiers);
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parameters);
     requireNonNull(group);
-    methods.add(new Method(modifiers, name, returnType, parameters, group));
+    var method = new Method(modifiers, name, returnType, parameters, group);
+    methods.add(method);
+    return method;
+  }
+
+  public void addMethodsCall(Method method, TypeInfo type, String name,
+                             TypeInfo returnType, List<TypeInfo> parametersType) {
+    requireNonNull(method);
+    requireNonNull(type);
+    requireNonNull(name);
+    requireNonNull(returnType);
+    requireNonNull(parametersType);
+    var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
+    var methodCallList = mappedMethodsToCall.computeIfAbsent(method, m -> new ArrayList<>());
+    methodCallList.add(methodCall);
   }
 
   public Entity build() {
