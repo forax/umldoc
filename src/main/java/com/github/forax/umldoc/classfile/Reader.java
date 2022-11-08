@@ -11,7 +11,7 @@ public sealed interface Reader permits MarkdownReader {
   /**
    * Create a reader to read
    *
-   * @param path
+   * @param extension File's extension
    *         File's path (in absolute or relative)
    * @return Reader A MarkdownReader, a PlantReader or a MermaidReader.
    */
