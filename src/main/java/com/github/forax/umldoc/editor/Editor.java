@@ -31,6 +31,7 @@ public class Editor {
         // TODO : Optional<GeneratorConfiguration> line(String) to develop
         // if (gene == isEmpty) => write line
         // else => write generator result
+        // TODO : read to the end of the uml (```) and write the uml
       }
     }
 
