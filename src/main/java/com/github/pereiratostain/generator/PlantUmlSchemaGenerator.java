@@ -2,6 +2,7 @@ package com.github.pereiratostain.generator;
 
 import static java.util.Objects.requireNonNull;
 
+import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Modifier;
 import java.io.IOException;
@@ -15,7 +16,8 @@ import java.util.List;
 public class PlantUmlSchemaGenerator implements Generator {
 
   @Override
-  public void generate(Writer writer, List<Entity> entities) throws IOException {
+  public void generate(Writer writer, List<Entity> entities,
+                       List<AssociationDependency> associations) throws IOException {
     requireNonNull(writer);
     requireNonNull(entities);
 

@@ -2,17 +2,14 @@ package com.github.pereiratostain.generator;
 
 import static java.util.Objects.requireNonNull;
 
+import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.Entity;
-import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -20,16 +17,26 @@ import java.util.stream.Collectors;
  */
 public class MermaidSchemaGenerator implements Generator {
 
+  private static String cleanName(String name) {
+    name = name.replace('-', '_');
+    name = name.replace('$', ' ');
+    name = name.replace(';', ' ');
+    return name.substring(name.lastIndexOf('/') + 1);
+  }
+
   @Override
-  public void generate(Writer writer, List<Entity> entities) throws IOException {
+  public void generate(Writer writer, List<Entity> entities,
+                       List<AssociationDependency> associations) throws IOException {
     requireNonNull(writer);
     requireNonNull(entities);
-
-    var entitiesName = entities.stream().map(Entity::name).collect(Collectors.toSet());
+    requireNonNull(associations);
 
     generateHeader(writer);
     for (var entity : entities) {
-      generateEntity(writer, entity, entitiesName);
+      generateEntity(writer, entity);
+    }
+    for (var association : associations) {
+      generateAssociation(writer, association);
     }
   }
 
@@ -41,93 +48,110 @@ public class MermaidSchemaGenerator implements Generator {
             """);
   }
 
-  private void generateEntity(Writer writer, Entity entity,
-                              Set<String> entitiesName) throws IOException {
-    var associations = new ArrayList<String>();
-    var stereotype = "";
-    String fields;
-
-    if (entity.stereotype() == Entity.Stereotype.ENUM) {
-      fields = computeFieldsEnum(entity);
-      stereotype = "\t<<enumeration>>\n";
-    } else {
-      fields = computeFieldsClass(entity, associations, entitiesName);
-    }
-
-    writer.append("    class "
-            + entity.name()
-            + " {\n" + stereotype
-            + fields + "\n    }\n"
-            + generateAssociations(entity, associations)
-            + "\n\n");
+  private void generateEntity(Writer writer, Entity entity) throws IOException {
+    var fields = generateFieldsOfEntity(entity);
+    var stereotype = stereotypeToString(entity.stereotype());
+    var entityName = cleanName(entity.type().name());
+    writer.append("""
+                class %s {
+                  %s
+                  %s
+                }
+            
+            """
+            .formatted(entityName, stereotype, fields));
   }
 
-  private String computeFieldsEnum(Entity entity) {
-    var fields = new ArrayList<Field>();
-
-    for (var field : entity.fields()) {
-      fields.add(field);
-    }
-    return generateRecordFields(fields);
+  private String generateFieldsOfEntity(Entity entity) {
+    return entity.fields().stream()
+            .map(field -> applyModifiersToName(
+                    field.modifiers(),
+                    field.typeInfo(),
+                    cleanName(field.name())))
+            .collect(Collectors.joining("\n      "));
   }
 
-  private String computeFieldsClass(Entity entity, ArrayList<String> associations,
-                                    Set<String> entitiesName) {
-    var fields = new ArrayList<Field>();
-    Pattern pattern = Pattern.compile("<.*>");
+  private void generateAssociation(Writer writer,
+                                   AssociationDependency association) throws IOException {
+    var leftSide = association.left();
+    var rightSide = association.right();
+    var leftClass = cleanName(leftSide.entity().type().name());
+    var rightClass = cleanName(rightSide.entity().type().name());
+    var leftCardinality = cardinalityToString(leftSide.cardinality());
+    var rightCardinality = cardinalityToString(rightSide.cardinality());
+    var arrow = generateArrow(leftSide, rightSide);
+    var label = getAssociationLabel(leftSide, rightSide);
+    writer.append("""
+            %s %s %s %s %s %s
+          """
+          .formatted(leftClass,
+                  leftCardinality,
+                  arrow,
+                  rightCardinality,
+                  rightClass,
+                  label));
+  }
 
-    for (var field : entity.fields()) {
-      var fieldType = field.type();
-      fieldType = fieldType.replace(";", "");
+  private String generateArrow(AssociationDependency.Side leftSide,
+                               AssociationDependency.Side rightSide) {
+    String arrow = "";
+    if (leftSide.navigability()) {
+      arrow += "<";
+    }
+    arrow += "--";
+    if (rightSide.navigability()) {
+      arrow += ">";
+    }
+    return arrow;
+  }
 
-      Matcher matcher = pattern.matcher(fieldType);
-
-      if (matcher.find()) {
-        var string = matcher.group(0);
-        string = string.replace("<", "");
-        string = string.replace(">", "");
-        fieldType = string;
+  private String getAssociationLabel(AssociationDependency.Side leftSide,
+                                     AssociationDependency.Side rightSide) {
+    var leftLabel = leftSide.label();
+    var rightLabel = rightSide.label();
+    if (leftLabel.isPresent() && rightLabel.isPresent()) {
+      throw new IllegalStateException("Only one side of the association can hold the label");
+    }
+    return leftLabel.orElseGet(() -> {
+      if (rightLabel.isEmpty()) {
+        return "";
       }
-
-      if (entitiesName.contains(fieldType)) {
-        associations.add(fieldType);
-      } else {
-        fields.add(field);
-      }
-    }
-
-    return generateFields(fields);
+      return rightLabel.get();
+    });
   }
 
-  private String generateFields(List<Field> fields) {
-    return fields.stream()
-            .map(field -> "\t"
-                    + modifierToString(field.modifiers().iterator().next())
-                    + field.name()
-                    + " : "
-                    + field.type().replace(";", ""))
-            .collect(Collectors.joining("\n"));
-  }
-
-  private String generateRecordFields(List<Field> fields) {
-    return fields.stream()
-            .map(field -> "\t" + field.name())
-            .collect(Collectors.joining("\n"));
-  }
-
-  private String generateAssociations(Entity entity, List<String> associations) {
-    return associations.stream()
-            .map(field -> "\t" + entity.name() + "-->" + field)
-            .collect(Collectors.joining("\n"));
-  }
-
-  private static String modifierToString(Modifier modifier) {
-    return switch (modifier) {
-      case PUBLIC -> "+";
-      case PRIVATE -> "-";
-      case PROTECTED -> "#";
-      case PACKAGE -> "~";
-      default -> throw new IllegalArgumentException("This modifier can't be convert to a String");
+  private String stereotypeToString(Entity.Stereotype stereotype) {
+    return switch (stereotype) {
+      case ENUM -> "<<enumeration>>";
+      case RECORD -> "<<record>>";
+      case INTERFACE -> "<<interface>>";
+      case ABSTRACT -> "<<abstract>>";
+      case ANNOTATION, CLASS -> "";
     };
+  }
+
+  private static String cardinalityToString(AssociationDependency.Cardinality cardinality) {
+    return switch (cardinality) {
+      case MANY -> "\"*\"";
+      case ONLY_ONE -> "\"1\"";
+      case ZERO_OR_ONE -> "\"0..1\"";
+    };
+  }
+
+  private static String applyModifiersToName(Set<Modifier> modifiers, TypeInfo type, String name) {
+    String prefix = "";
+    String suffix = "";
+    for (var modifier : modifiers) {
+      switch (modifier) {
+        case PUBLIC -> prefix = "+";
+        case PRIVATE -> prefix = "-";
+        case PROTECTED -> prefix = "#";
+        case PACKAGE -> prefix = "~";
+        case STATIC -> suffix = "$";
+        case FINAL -> suffix = "*";
+        default -> throw new AssertionError();
+      }
+    }
+    return prefix + cleanName(type.name()) + " " +  name + suffix;
   }
 }

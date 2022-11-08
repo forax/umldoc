@@ -1,5 +1,6 @@
 package com.github.donnebelin.umldoc;
 
+import com.github.donnebelin.umldoc.classdiagram.DiagramFormater;
 import com.github.donnebelin.umldoc.classfile.JarParser;
 import com.github.donnebelin.umldoc.gen.MermaidGenerator;
 import com.github.donnebelin.umldoc.gen.PlantUmlGenerator;
@@ -27,9 +28,13 @@ public class Main {
     var parser = new JarParser();
     var entities = parser.entities()
             .stream()
-            .filter(entity -> entity.name().contains("forax_umldoc"))
+            .filter(entity -> entity.type().name().contains("forax/umldoc"))
             .toList();
     var filePath = Path.of(args[0]);
+
+    var diagramFormater = new DiagramFormater(entities);
+    var dependencies = diagramFormater.createAssociationDependencies();
+
     var plantUmlGenerator = new PlantUmlGenerator();
     var mermaidGenerator = new MermaidGenerator();
 
@@ -40,7 +45,7 @@ public class Main {
       plantUmlGenerator.generate(
               true,
               entities,
-              parser.getAssociationDependencies(),
+              dependencies, // depandancies
               writer);
       writer.append('\n')
               .append('\n')
@@ -49,7 +54,7 @@ public class Main {
       mermaidGenerator.generate(
               true,
               entities,
-              parser.getAssociationDependencies(),
+              dependencies, // depandancies
               writer);
       writer.append("```");
     }

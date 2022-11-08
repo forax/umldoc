@@ -21,10 +21,10 @@ public class MermaidGeneratorTest {
     mermaidGenerator.generate(true, List.of(entity), List.of(), writer);
     assertEquals("""
         classDiagram
-            direction TB
+        direction TB
         
-            class Entity {
-            }
+        class Entity {
+        }
         
         """, writer.toString());
   }
