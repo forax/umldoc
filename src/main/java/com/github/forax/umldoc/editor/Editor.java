@@ -12,7 +12,6 @@ import java.util.Optional;
 public class Editor {
 
   private enum State {
-    PARSEOUTPUTTYPE,
     SEARCHCOMMANDLINE,
     READONLY,
     READWRITE
@@ -34,8 +33,8 @@ public class Editor {
    *
    * Can modify a file by calling methods to generate a diagram.
    *
-   * @param writer File writer, used to modify file.
-   * @param reader File reader, read the file.
+   * @param writer Writer, used to modify file.
+   * @param reader BufferedReader, read the file.
    * @throws IOException If the file cannot be opened.
    */
   public void edit(Writer writer, BufferedReader reader) throws IOException {
@@ -44,7 +43,6 @@ public class Editor {
       state = switch (state) {
         case READWRITE -> readWrite(line, writer);
         case SEARCHCOMMANDLINE -> searchCommandLine(line, writer);
-        case PARSEOUTPUTTYPE -> parseOutputType(line, writer);
         case READONLY -> readOnly(line, writer);
       };
     }
@@ -60,8 +58,8 @@ public class Editor {
     throw new IllegalStateException();
   }
 
-  private State readWrite(String line, Writer writer) throws IOException {
-    if (line.matches("```.*")) {
+  State readWrite(String line, Writer writer) throws IOException {
+    if (line.matches("```.+")) {
       var type = line.substring("```".length() + 1);
       parser = registration.get(type);
       if(parser != null) {
@@ -74,15 +72,13 @@ public class Editor {
 
   private State searchCommandLine(String line, Writer writer) {
     // if (parser.isStart(line)) {
-    //
+    // call get Diagram and set state to READONLY
+    // else read until we find the commandLine or backquotes
     return State.SEARCHCOMMANDLINE;
   }
 
-  private State parseOutputType(String line, Writer writer) {
-    return State.PARSEOUTPUTTYPE;
-  }
-
   private State readOnly(String line, Writer writer) {
+    // Read until we see the backquotes and then we set to READWRITE
     return State.READONLY;
   }
 
