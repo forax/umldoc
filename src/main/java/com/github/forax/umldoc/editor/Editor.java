@@ -21,6 +21,7 @@ public class Editor {
   private final HashMap<String, CommandLineParser> registration;
   private final List<Package> module;
   private State state;
+  private CommandLineParser parser;
 
   public Editor(Map<String, CommandLineParser> registration,
                 List<Package> module) {
@@ -38,49 +39,15 @@ public class Editor {
    * @throws IOException If the file cannot be opened.
    */
   public void edit(Writer writer, BufferedReader reader) throws IOException {
-    var isInConfiguration = false; // Boolean to see if we are in ```
     var line = "";
-    var parser = Optional.empty();
     while ((line = reader.readLine()) != null) {
-      switch (state) {
-        case READWRITE :
-          if (line.matches("```.*")) {
-            var type = line.substring("```".length() + 1);
-            parser = registration.get(type);
-            if(parser != null) {
-              state = State.SEARCHCOMMANDLINE;
-              break;
-            }
-          }
-          writer.write(line);
-          break;
-        case SEARCHCOMMANDLINE:
-          // TODO : search the command line
-          break;
-        case PARSEOUTPUTTYPE:
-          // TODO : get the type mermaid or plant
-          break;
-        case READONLY:
-          // TODO : after the diagram, we don't care about next lines until ```
-          break;
-      }
-      if (isInConfiguration) {
-        // TODO : call the parser to get the generator configuration
-        // if (yes) => line = result
-        // else => do nothing, isInConfiguration = !CommandLineParser.endLine()
-        // Give line to parser,if parser isNotEndline we do not write
-        // else isEndLIne, we quit isInConfiguration
-      }
-      if (line.matches("```.*")) {
-        var type = line.substring("```".length() + 1);
-        parser = registration.get(type);
-        if(parser != null) {
-          isInConfiguration = true;
-        }
-      }
-      writer.write(line);
+      state = switch (state) {
+        case READWRITE -> readWrite(line, writer);
+        case SEARCHCOMMANDLINE -> searchCommandLine(line, writer);
+        case PARSEOUTPUTTYPE -> parseOutputType(line, writer);
+        case READONLY -> readOnly(line, writer);
+      };
     }
-    // MOVE FINAL FILE
   }
 
   private Package getScope(List<Package> packages) {
@@ -91,6 +58,32 @@ public class Editor {
   private void getDiagram(Writer writer) {
     // TODO : call Generator method to create the diagram according to the scope
     throw new IllegalStateException();
+  }
+
+  private State readWrite(String line, Writer writer) throws IOException {
+    if (line.matches("```.*")) {
+      var type = line.substring("```".length() + 1);
+      parser = registration.get(type);
+      if(parser != null) {
+        return State.SEARCHCOMMANDLINE;
+      }
+    }
+    writer.write(line);
+    return State.READWRITE;
+  }
+
+  private State searchCommandLine(String line, Writer writer) {
+    // if (parser.isStart(line)) {
+    //
+    return State.SEARCHCOMMANDLINE;
+  }
+
+  private State parseOutputType(String line, Writer writer) {
+    return State.PARSEOUTPUTTYPE;
+  }
+
+  private State readOnly(String line, Writer writer) {
+    return State.READONLY;
   }
 
 }
