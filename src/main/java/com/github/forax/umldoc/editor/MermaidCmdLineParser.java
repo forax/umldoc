@@ -10,7 +10,6 @@ import picocli.CommandLine.Option;
  *
  */
 public class MermaidCmdLineParser implements CommandLineParser {
-  private boolean hasGenerationStarted = false;
 
   /**
    * This class is used to filter the options given in the command line.
@@ -39,7 +38,7 @@ public class MermaidCmdLineParser implements CommandLineParser {
    */
   public Optional<GeneratorConfiguration> parseLine(String line) {
     if (isStartingLine(line)) {
-      this.hasGenerationStarted = true;
+
 
       var options = new OptionsCmd();
       var args = line.substring("%% umldoc ".length()).split(" ");
@@ -53,17 +52,17 @@ public class MermaidCmdLineParser implements CommandLineParser {
 
 
   public boolean endline(String line) {
-    return line.equals("```") && hasGenerationStarted; //to replace with "@enduml" for PlantUML
+    return line.equals("```"); //to replace with "@enduml" for PlantUML
   }
 
   private boolean isStartingLine(String line) {
     return line.startsWith("%% umldoc");
   }
-  /*
+
   public static void main(String[] args) {
     var test = new MermaidCmdLineParser();
     test.parseLine("%% umldoc -p nameThomas -t test");
-  }*/
+  }
 
 
 }
