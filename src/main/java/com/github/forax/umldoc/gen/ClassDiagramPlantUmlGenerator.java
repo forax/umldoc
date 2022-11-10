@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Generate a class diagram using the plantuml format.
  */
-public final class PlantUmlGenerator implements Generator {
+public final class ClassDiagramPlantUmlGenerator implements Generator {
   private static String cardinality(Cardinality cardinality) {
     return switch (cardinality) {
       case ONLY_ONE -> "1";
@@ -96,24 +96,15 @@ public final class PlantUmlGenerator implements Generator {
 
   @Override
   public void generate(boolean header, List<Entity> entities, List<Dependency> dependencies,
-                       Writer writer) throws IOException {
+                                   Writer writer) throws IOException {
     requireNonNull(entities);
     requireNonNull(dependencies);
     requireNonNull(writer);
-    if (header) {
-      writer.append("""
-          @startuml
-          
-          """);
-    }
+    Generator.addHeader(header, writer);
 
     generateEntities(entities, writer);
     generateDependencies(dependencies, writer);
 
-    if (header) {
-      writer.append("""
-          @enduml
-          """);
-    }
+    Generator.addFooter(header, writer);
   }
 }

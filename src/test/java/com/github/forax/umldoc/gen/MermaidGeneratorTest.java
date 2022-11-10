@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +15,7 @@ public class MermaidGeneratorTest {
   @Test
   public void generate() throws IOException {
     var entity = new Entity(Set.of(), "Entity", Stereotype.CLASS, List.of(), List.of());
-    var mermaidGenerator = new MermaidGenerator();
+    var mermaidGenerator = new ClassDiagramMermaidGenerator();
     var writer = new StringWriter();
     mermaidGenerator.generate(true, List.of(entity), List.of(), writer);
     assertEquals("""

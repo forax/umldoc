@@ -8,6 +8,7 @@ import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
@@ -17,7 +18,7 @@ import java.util.Locale;
 /**
  * Generate a class diagram using the mermaid format.
  */
-public final class MermaidGenerator implements Generator {
+public final class ClassDiagramMermaidGenerator implements Generator {
 
   private static String shortName(String name) {
     var index = name.lastIndexOf('.');
