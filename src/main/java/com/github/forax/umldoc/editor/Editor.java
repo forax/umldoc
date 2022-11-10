@@ -70,15 +70,27 @@ public class Editor {
     return State.READWRITE;
   }
 
-  private State searchCommandLine(String line, Writer writer) {
+  State searchCommandLine(String line, Writer writer) throws IOException {
     // if (parser.isStart(line)) {
     // call get Diagram and set state to READONLY
     // else read until we find the commandLine or backquotes
+    // Placeholder
+    if (true) {
+      getDiagram(writer);
+      return State.READONLY;
+    }
+    if (false) { // if is ending ```
+      return State.READWRITE;
+    }
+    writer.write(line);
     return State.SEARCHCOMMANDLINE;
   }
 
-  private State readOnly(String line, Writer writer) {
+  State readOnly(String line, Writer writer) {
     // Read until we see the backquotes and then we set to READWRITE
+    if (true) { // if is ending ```
+      return State.READWRITE;
+    }
     return State.READONLY;
   }
 
