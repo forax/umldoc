@@ -1,8 +1,6 @@
 package com.github.forax.umldoc.editor;
 
 import com.github.forax.umldoc.gen.MermaidGenerator;
-
-import java.util.Arrays;
 import java.util.Optional;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
