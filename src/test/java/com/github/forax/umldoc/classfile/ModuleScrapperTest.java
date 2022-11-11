@@ -82,7 +82,7 @@ public class ModuleScrapperTest {
     var testInterface = new Entity(Set.of(), TypeInfo.of("TestInterface"), Entity.Stereotype.INTERFACE, List.of(), List.of());
     var entity = new Entity(Set.of(), TypeInfo.of("Test"), Entity.Stereotype.CLASS, List.of(), List.of());
     var subtypeInfoDependencies = new HashMap<Entity, List<String>>();
-    subtypeInfoDependencies.put(entity, List.of("TestInterface"));
+    subtypeInfoDependencies.put(entity, List.of("TestInterface", "java.lang.Iterable"));
     var entityMap = new HashMap<String, Entity>();
     entityMap.put("TestInterface", testInterface);
     entityMap.put("Test", entity);
