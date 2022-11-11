@@ -122,7 +122,15 @@ public final class ModuleScrapper {
                   a.cardinality));
         });
 
-    var subtypeDependenciesStream = subtypeInfoDependencies.entrySet().stream()
+    var subtypeDependenciesStream = getSubtypeDependencies(subtypeInfoDependencies, entityMap);
+    var dependencies = Stream.concat(associationsStream, subtypeDependenciesStream).toList();
+    return new Package(packageName, List.copyOf(entityMap.values()), dependencies);
+  }
+
+  //package private for testing
+  static Stream<Dependency> getSubtypeDependencies(Map<Entity, List<String>> subtypeInfoDependencies,
+                                                   Map<String, Entity> entityMap) {
+    return subtypeInfoDependencies.entrySet().stream()
             .map(entry -> {
               var superType = entry.getKey();
               var subtypes = entry.getValue().stream()
@@ -136,9 +144,6 @@ public final class ModuleScrapper {
               return subtypeDependencies;
             })
             .flatMap(ArrayList::stream);
-
-    var dependencies = Stream.concat(associationsStream, subtypeDependenciesStream).toList();
-    return new Package(packageName, List.copyOf(entityMap.values()), dependencies);
   }
 
 
