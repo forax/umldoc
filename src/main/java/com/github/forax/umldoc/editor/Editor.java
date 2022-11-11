@@ -1,27 +1,37 @@
 package com.github.forax.umldoc.editor;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
+/**
+ * The class Editor is able to read a file and write lines.
+ */
 public class Editor {
 
+  /**
+   * The enum State corresponds to the type of state the Editor can be
+   * while reading lines.
+   */
   private enum State {
     SEARCHCOMMANDLINE,
     READONLY,
     READWRITE
   }
 
-  private final HashMap<String, CommandLineParser> registration;
+  private final Map<String, CommandLineParser> registration;
   private final List<Package> module;
   private State state;
   private CommandLineParser parser;
 
+  /**
+   * The constructor of Editor.
+   *
+   * @param registration Map, register a String with a CommandLineParser.
+   * @param module List, a list of package.
+   */
   public Editor(Map<String, CommandLineParser> registration,
                 List<Package> module) {
     this.registration = Map.copyOf(registration);
@@ -30,7 +40,6 @@ public class Editor {
   }
 
   /**
-   *
    * Can modify a file by calling methods to generate a diagram.
    *
    * @param writer Writer, used to modify file.
@@ -58,11 +67,21 @@ public class Editor {
     throw new IllegalStateException();
   }
 
+  /**
+   * Method to read and write every line given.
+   * <br>If it is the start of the umldoc command "```..."
+   * then we change state.
+   *
+   * @param line String, it is one line of a file.
+   * @param writer Writer, write in a temporary file.
+   * @return State, SEARCHCOMMANDLINE or READWRITE.
+   * @throws IOException If the file couldn't be opened.
+   */
   State readWrite(String line, Writer writer) throws IOException {
     if (line.matches("```.+")) {
       var type = line.substring("```".length() + 1);
       parser = registration.get(type);
-      if(parser != null) {
+      if (parser != null) {
         return State.SEARCHCOMMANDLINE;
       }
     }
@@ -70,6 +89,15 @@ public class Editor {
     return State.READWRITE;
   }
 
+  /**
+   * Method to search the command line.
+   * <br>Example : "%% umldoc ..." or "` umldoc ...".
+   *
+   * @param line String, it is one line of a file.
+   * @param writer Writer, write in a temporary file.
+   * @return State, READONLY, READWRITE or SEARCHCOMMANDLINE.
+   * @throws IOException If the file couldn't be opened.
+   */
   State searchCommandLine(String line, Writer writer) throws IOException {
     // if (parser.isStart(line)) {
     // call get Diagram and set state to READONLY
@@ -86,6 +114,14 @@ public class Editor {
     return State.SEARCHCOMMANDLINE;
   }
 
+  /**
+   * Method to read and not write until we find the end.
+   * <br>Example : "```".
+   *
+   * @param line String, it is one line of a file.
+   * @param writer Writer, write in a temporary file.
+   * @return State, READWRITE or READONLY.
+   */
   State readOnly(String line, Writer writer) {
     // Read until we see the backquotes and then we set to READWRITE
     if (true) { // if is ending ```
