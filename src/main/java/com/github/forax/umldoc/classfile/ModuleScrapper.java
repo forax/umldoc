@@ -18,7 +18,6 @@ import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.module.ModuleReference;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -101,7 +99,7 @@ public final class ModuleScrapper {
       var entity = entityBuilder.build();
       entityMap.put(javaClassName(entity.type()), entity);
 
-      var interfacesAsJavaclassname = parsingResult.interfaces().stream()
+      var interfacesAsJavaclassname = parsingResult.superTypes().stream()
               .map(TypeInfo::name)
               .toList();
       if (!interfacesAsJavaclassname.isEmpty()) {
