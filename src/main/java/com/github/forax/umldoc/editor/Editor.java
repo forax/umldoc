@@ -15,7 +15,7 @@ public class Editor {
    * The enum State corresponds to the type of state the Editor can be
    * while reading lines.
    */
-  private enum State {
+  enum State {
     SEARCHCOMMANDLINE,
     READONLY,
     READWRITE
@@ -79,7 +79,7 @@ public class Editor {
    */
   State readWrite(String line, Writer writer) throws IOException {
     if (line.matches("```.+")) {
-      var type = line.substring("```".length() + 1);
+      var type = line.substring("```".length());
       parser = registration.get(type);
       if (parser != null) {
         return State.SEARCHCOMMANDLINE;
@@ -99,15 +99,13 @@ public class Editor {
    * @throws IOException If the file couldn't be opened.
    */
   State searchCommandLine(String line, Writer writer) throws IOException {
-    // if (parser.isStart(line)) {
-    // call get Diagram and set state to READONLY
-    // else read until we find the commandLine or backquotes
-    // Placeholder
-    if (true) {
+    var optional = parser.parseLine(line);
+    if (optional.isPresent()) {
+      // TODO : create getDiagram
       getDiagram(writer);
       return State.READONLY;
     }
-    if (false) { // if is ending ```
+    if (parser.endline(line)) { // if is ending ```
       return State.READWRITE;
     }
     writer.write(line);
@@ -123,8 +121,7 @@ public class Editor {
    * @return State, READWRITE or READONLY.
    */
   State readOnly(String line, Writer writer) {
-    // Read until we see the backquotes and then we set to READWRITE
-    if (true) { // if is ending ```
+    if (parser.endline(line)) {
       return State.READWRITE;
     }
     return State.READONLY;
