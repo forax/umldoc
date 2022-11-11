@@ -105,7 +105,7 @@ public class Editor {
       getDiagram(writer);
       return State.READONLY;
     }
-    if (parser.endline(line)) { // if is ending ```
+    if (parser.endline(line)) {
       return State.READWRITE;
     }
     writer.write(line);
