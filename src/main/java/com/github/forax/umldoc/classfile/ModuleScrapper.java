@@ -132,12 +132,12 @@ public final class ModuleScrapper {
                                                    Map<String, Entity> entityMap) {
     return subtypeInfoDependencies.entrySet().stream()
             .map(entry -> {
-              var superType = entry.getKey();
-              var subtypes = entry.getValue().stream()
+              var subtype = entry.getKey();
+              var superTypes = entry.getValue().stream()
                       .map(entityMap::get)
                       .toList();
               var subtypeDependencies = new ArrayList<Dependency>();
-              for (var subtype : subtypes) {
+              for (var superType : superTypes) {
                 var subtypeDependency = new SubtypeDependency(superType, subtype);
                 subtypeDependencies.add(subtypeDependency);
               }
