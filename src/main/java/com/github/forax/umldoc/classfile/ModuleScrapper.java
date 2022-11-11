@@ -18,7 +18,6 @@ import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.module.ModuleReference;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -77,7 +76,7 @@ public final class ModuleScrapper {
     At this stage, every entity are still under entity builder or entity name form.
     We can't build SubtypeDependency object yet since it takes two Entity.
     */
-    var subtypeInfoDependencies = new HashMap<Entity, List<String>>();
+    var entityInterfacesMap = new HashMap<Entity, List<String>>();
     for (var parsingResult : parsingResults) {
       var entityBuilder = parsingResult.entityBuilder();
       for (var delegation : parsingResult.delegations()) {
@@ -100,11 +99,11 @@ public final class ModuleScrapper {
       var entity = entityBuilder.build();
       entityMap.put(javaClassName(entity.type()), entity);
 
-      var interfacesAsJavaclassname = parsingResult.interfaces().stream()
+      var interfacesAsJavaclassname = parsingResult.superTypes().stream()
               .map(TypeInfo::name)
               .toList();
       if (!interfacesAsJavaclassname.isEmpty()) {
-        subtypeInfoDependencies.put(entity, interfacesAsJavaclassname);
+        entityInterfacesMap.put(entity, interfacesAsJavaclassname);
       }
     }
 
@@ -122,23 +121,29 @@ public final class ModuleScrapper {
                   a.cardinality));
         });
 
-    var subtypeDependenciesStream = subtypeInfoDependencies.entrySet().stream()
+    var subtypeDependenciesStream = getSubtypeDependencies(entityInterfacesMap, entityMap);
+    var dependencies = Stream.concat(associationsStream, subtypeDependenciesStream).toList();
+    return new Package(packageName, List.copyOf(entityMap.values()), dependencies);
+  }
+
+  //package private for testing
+  static Stream<Dependency> getSubtypeDependencies(Map<Entity, List<String>> entityInterfacesMap,
+                                                   Map<String, Entity> entityMap) {
+    return entityInterfacesMap.entrySet().stream()
             .map(entry -> {
-              var superType = entry.getKey();
-              var subtypes = entry.getValue().stream()
+              var subtype = entry.getKey();
+              var superTypes = entry.getValue().stream()
                       .map(entityMap::get)
+                      .filter(entity -> entity != null)
                       .toList();
               var subtypeDependencies = new ArrayList<Dependency>();
-              for (var subtype : subtypes) {
+              for (var superType : superTypes) {
                 var subtypeDependency = new SubtypeDependency(superType, subtype);
                 subtypeDependencies.add(subtypeDependency);
               }
               return subtypeDependencies;
             })
             .flatMap(ArrayList::stream);
-
-    var dependencies = Stream.concat(associationsStream, subtypeDependenciesStream).toList();
-    return new Package(packageName, List.copyOf(entityMap.values()), dependencies);
   }
 
 

@@ -7,6 +7,8 @@ import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.SubtypeDependency;
 import com.github.forax.umldoc.core.TypeInfo;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -73,6 +75,19 @@ public class ModuleScrapperTest {
     } catch (InvocationTargetException e) {
       assertInstanceOf(AssertionError.class, e.getCause());
     }
+  }
+
+  @Test
+  public void testGetSubtypeDependencies() {
+    var testInterface = new Entity(Set.of(), TypeInfo.of("TestInterface"), Entity.Stereotype.INTERFACE, List.of(), List.of());
+    var entity = new Entity(Set.of(), TypeInfo.of("Test"), Entity.Stereotype.CLASS, List.of(), List.of());
+    var subtypeInfoDependencies = new HashMap<Entity, List<String>>();
+    subtypeInfoDependencies.put(entity, List.of("TestInterface", "java.lang.Iterable"));
+    var entityMap = new HashMap<String, Entity>();
+    entityMap.put("TestInterface", testInterface);
+    entityMap.put("Test", entity);
+    var subtypeDependencies = Stream.of(new SubtypeDependency(testInterface, entity));
+    assertEquals(ModuleScrapper.getSubtypeDependencies(subtypeInfoDependencies, entityMap).toList(), subtypeDependencies.toList());
   }
 
   @Test
