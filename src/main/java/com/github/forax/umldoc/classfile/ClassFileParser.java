@@ -4,16 +4,13 @@ import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
-import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
-import com.github.forax.umldoc.core.SubtypeDependency;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
@@ -31,11 +28,11 @@ final class ClassFileParser {
    * Result of a call to {@link ClassFileParser#parseClass(InputStream)}.
    */
   record ParsingResult(EntityBuilder entityBuilder, List<Delegation> delegations,
-                       List<TypeInfo> interfaces) {
+                       List<TypeInfo> superTypes) {
     ParsingResult {
       requireNonNull(entityBuilder);
       requireNonNull(delegations);
-      requireNonNull(interfaces);
+      requireNonNull(superTypes);
     }
   }
 
@@ -46,7 +43,7 @@ final class ClassFileParser {
   public static ParsingResult parseClass(InputStream inputStream) throws IOException {
     var entityBuilder = new EntityBuilder();
     var delegations = new ArrayList<Delegation>();
-    var interfacesList = new ArrayList<TypeInfo>();
+    var superTypes = new ArrayList<TypeInfo>();
     var classReader = new ClassReader(inputStream);
     classReader.accept(new ClassVisitor(ASM9) {
       @Override
@@ -54,9 +51,12 @@ final class ClassFileParser {
                         String superName, String[] interfaces) {
         entityBuilder.stereotype(Utils.toStereotype(access));
         entityBuilder.type(TypeInfo.of(name.replace('/', '.')));
+        if (superName != null) {
+          superTypes.add(TypeInfo.of(superName.replace('/', '.')));
+        }
         for (var anInterface : interfaces) {
           var typeInfo = TypeInfo.of(anInterface.replace('/', '.'));
-          interfacesList.add(typeInfo);
+          superTypes.add(typeInfo);
         }
       }
 
@@ -112,7 +112,7 @@ final class ClassFileParser {
         };
       }
     }, 0);
-    return new ParsingResult(entityBuilder, delegations, interfacesList);
+    return new ParsingResult(entityBuilder, delegations, superTypes);
   }
 
   private static TypeInfo decodeField(String signature) {
