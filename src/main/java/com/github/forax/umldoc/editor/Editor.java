@@ -22,7 +22,7 @@ public class Editor {
   }
 
   private final Map<String, CommandLineParser> registration;
-  private final List<Package> module;
+  private final List<com.github.forax.umldoc.core.Package> module;
   private State state;
   private CommandLineParser parser;
 
@@ -33,7 +33,7 @@ public class Editor {
    * @param module List, a list of package.
    */
   public Editor(Map<String, CommandLineParser> registration,
-                List<Package> module) {
+                List<com.github.forax.umldoc.core.Package> module) {
     this.registration = Map.copyOf(registration);
     this.module = List.copyOf(module);
     this.state = State.READWRITE;
