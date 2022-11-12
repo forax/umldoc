@@ -27,10 +27,12 @@ final class ClassFileParser {
   /**
    * Result of a call to {@link ClassFileParser#parseClass(InputStream)}.
    */
-  record ParsingResult(EntityBuilder entityBuilder, List<Delegation> delegations) {
+  record ParsingResult(EntityBuilder entityBuilder, List<Delegation> delegations,
+                       List<TypeInfo> superTypes) {
     ParsingResult {
       requireNonNull(entityBuilder);
       requireNonNull(delegations);
+      requireNonNull(superTypes);
     }
   }
 
@@ -41,6 +43,7 @@ final class ClassFileParser {
   public static ParsingResult parseClass(InputStream inputStream) throws IOException {
     var entityBuilder = new EntityBuilder();
     var delegations = new ArrayList<Delegation>();
+    var superTypes = new ArrayList<TypeInfo>();
     var classReader = new ClassReader(inputStream);
     classReader.accept(new ClassVisitor(ASM9) {
       @Override
@@ -48,6 +51,13 @@ final class ClassFileParser {
                         String superName, String[] interfaces) {
         entityBuilder.stereotype(Utils.toStereotype(access));
         entityBuilder.type(TypeInfo.of(name.replace('/', '.')));
+        if (superName != null) {
+          superTypes.add(TypeInfo.of(superName.replace('/', '.')));
+        }
+        for (var anInterface : interfaces) {
+          var typeInfo = TypeInfo.of(anInterface.replace('/', '.'));
+          superTypes.add(typeInfo);
+        }
       }
 
       @Override
@@ -102,7 +112,7 @@ final class ClassFileParser {
         };
       }
     }, 0);
-    return new ParsingResult(entityBuilder, delegations);
+    return new ParsingResult(entityBuilder, delegations, superTypes);
   }
 
   private static TypeInfo decodeField(String signature) {
