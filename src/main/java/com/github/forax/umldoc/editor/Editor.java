@@ -1,5 +1,6 @@
 package com.github.forax.umldoc.editor;
 
+import com.github.forax.umldoc.core.Package;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
@@ -126,5 +127,4 @@ public class Editor {
     }
     return State.READONLY;
   }
-
 }
