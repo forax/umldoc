@@ -15,7 +15,7 @@ class Main {
         if (args.length != 1) {
             throw new IllegalArgumentException("Usage : java .java path_of_markdown");
         }
-        var finder = ModuleFinder.of(Path.of("src/main/java/"));
+        var finder = ModuleFinder.of(Path.of("target"));
         var module = finder.find("com.github.forax.umldoc");
         if(module.isEmpty()) {
             System.err.println("Couldn't find the Module");
@@ -23,7 +23,6 @@ class Main {
         }
         var packages = ModuleScrapper.scrapModule(module.get());
 
-        // "design/test.md"
         var path = Path.of(args[0]);
         try (
                 var reader = Files.newBufferedReader(path);
@@ -32,10 +31,6 @@ class Main {
             var config = new HashMap<String, CommandLineParser>();
             config.put("mermaid", new MermaidCmdLineParser());
             //config.put("plantuml", new PlantCmdLineParser());
-
-            /*var entities = com.github.pereiratostain.Main.asm();
-            var dependencies = new DiagramComputer(entities).buildAssociations();
-            var packages = List.of(new Package("testPackage", entities, dependencies));*/
 
             var editor = new Editor(config, packages);
             editor.edit(writer, reader);
