@@ -5,59 +5,53 @@ import static java.util.Objects.requireNonNull;
 import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Method;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SequenceDiagramPlantUmlGenerator implements Generator {
-  private static String groupKind(Call.Group.Kind groupKind) {
-    return switch (groupKind) {
-      case LOOP -> "loop";
-      case OPTIONAL -> "opt";
-      case ALTERNATE -> "alt";
-      case NONE, PARALLEL -> "group";
-    };
-  }
+//  private static String groupKind(Call.Group.Kind groupKind) {
+//    return switch (groupKind) {
+//      case LOOP -> "loop";
+//      case OPTIONAL -> "opt";
+//      case ALTERNATE -> "alt";
+//      case NONE, PARALLEL -> "group";
+//    };
+//  }
 
-  private static void generateMethodCalls(List<Call.MethodCall> methodCalls, Writer writer)
+  private static void generateMethodCallForEntity(Entity sourceEntity, Call.MethodCall methodCall, Writer writer)
           throws IOException {
-//    System.out.println(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
-//    System.out.println("source : " + source.type().name());
-//    System.out.println("dest : " + methodCall.type().name());
 
-    for(var i = 0; i < methodCalls.size() - 1; i++) {
-      var source = methodCalls.get(i);
-      var dest = methodCalls.get(i + 1);
-      writer.append(source.type().name())
-              .append(" -> ")
-              .append(dest.type().name())
-              .append(": ")
-              .append(source.name());
-    }
-
+    writer.append(sourceEntity.type().name())
+            .append(" -> ")
+            .append(methodCall.type().name())
+            .append(": ")
+            .append(methodCall.name())
+            .append("()")
+            .append('\n');
 
     // Alice -> Bob: method name
-    // TODO activate Bob
+    // activate Bob
 
     // Bob -> Alice: method name
-    // TODO deactivate Bob
+    // deactivate Bob
   }
 
-  private static void generateCall(Call.Group group, Writer writer) throws IOException {
-    var methods = new ArrayList<Call.MethodCall>();
-    for(var call: group.calls()) {
-      switch (call) {
-        case Call.MethodCall methodCall -> methods.add(methodCall);
-        default -> {}
-//        case Call.Group groupCall -> {
-//          writer.append(groupKind(group.kind())).append('\n');
-//          generateCall(source, groupCall, writer);
-//          writer.append('\n').append("end");
-//        }
+  private static void generateCallsForEntity(Entity sourceEntity, List<Method> methods, Writer writer) throws IOException {
+    for(var method: methods) {
+      for(var call: method.callGroup().calls()) {
+        if(call instanceof Call.MethodCall methodCall && !methodCall.type().equals(sourceEntity.type())) {
+          generateMethodCallForEntity(sourceEntity, methodCall, writer);
+        } // else if(call instanceof Call.Group groupCall) {
+//        writer.append(groupKind(group.kind())).append('\n');
+//        generateCall(source, groupCall, writer);
+//        writer.append('\n').append("end");
+//      } else {
+//        throw new IllegalStateException();
+//      }
       }
     }
-    generateMethodCalls(methods, writer);
 
 
     //    writer.append("""
@@ -75,9 +69,7 @@ public class SequenceDiagramPlantUmlGenerator implements Generator {
     Generator.addHeader(header, writer);
 
     for(var entity: entities) {
-      for(var method: entity.methods()) {
-        generateCall(method.callGroup(), writer);
-      }
+      generateCallsForEntity(entity, entity.methods(), writer);
     }
 
     Generator.addFooter(header, writer);

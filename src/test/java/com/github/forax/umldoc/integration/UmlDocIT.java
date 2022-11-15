@@ -4,8 +4,8 @@ import com.github.forax.umldoc.classfile.ModuleScrapper;
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Package;
-import com.github.forax.umldoc.gen.MermaidGenerator;
-import com.github.forax.umldoc.gen.PlantUmlGenerator;
+import com.github.forax.umldoc.gen.ClassDiagramMermaidGenerator;
+import com.github.forax.umldoc.gen.ClassDiagramPlantUmlGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class UmlDocIT {
         .sorted(Comparator.comparing(Dependency::toString))  // FIXME
         .toList();
     var writer = new StringWriter();
-    new MermaidGenerator().generate(true, entities, dependencies, writer);
+    new ClassDiagramMermaidGenerator().generate(true, entities, dependencies, writer);
     assertEquals(
         """
         classDiagram
@@ -163,7 +163,7 @@ public class UmlDocIT {
         .sorted(Comparator.comparing(Dependency::toString))  // FIXME
         .toList();
     var writer = new StringWriter();
-    new PlantUmlGenerator().generate(true, entities, dependencies, writer);
+    new ClassDiagramPlantUmlGenerator().generate(true, entities, dependencies, writer);
     assertEquals(
         """
         @startuml
