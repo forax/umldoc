@@ -56,16 +56,11 @@ public class Editor {
         case READONLY -> readOnly(line, writer);
       };
     }
+    // Move to final file
   }
 
-  private Package getScope(List<Package> packages) {
-    // TODO : call GeneratorConfig method to get the scope
-    throw new IllegalStateException();
-  }
-
-  private void getDiagram(Writer writer) {
-    // TODO : call Generator method to create the diagram according to the scope
-    throw new IllegalStateException();
+  private void getDiagram(GeneratorConfiguration generatorConfiguration, Writer writer) throws IOException {
+    generatorConfiguration.generate(writer, module);
   }
 
   /**
@@ -102,8 +97,7 @@ public class Editor {
   State searchCommandLine(String line, Writer writer) throws IOException {
     var optional = parser.parseLine(line);
     if (optional.isPresent()) {
-      // TODO : create getDiagram
-      getDiagram(writer);
+      getDiagram(optional.get(), writer);
       return State.READONLY;
     }
     if (parser.endline(line)) {
