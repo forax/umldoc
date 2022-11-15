@@ -59,7 +59,8 @@ public class Editor {
     // Move to final file
   }
 
-  private void getDiagram(GeneratorConfiguration generatorConfiguration, Writer writer) throws IOException {
+  private void getDiagram(GeneratorConfiguration generatorConfiguration,
+                          Writer writer) throws IOException {
     generatorConfiguration.generate(writer, module);
   }
 
