@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -127,16 +128,17 @@ public final class ModuleScrapper {
   }
 
   //package private for testing
-  static Stream<Dependency> getSubtypeDependencies(Map<Entity, List<String>> entityInterfacesMap,
-                                                   Map<String, Entity> entityMap) {
+  static Stream<SubtypeDependency> getSubtypeDependencies(
+          Map<Entity, List<String>> entityInterfacesMap,
+          Map<String, Entity> entityMap) {
     return entityInterfacesMap.entrySet().stream()
             .map(entry -> {
               var subtype = entry.getKey();
               var superTypes = entry.getValue().stream()
                       .map(entityMap::get)
-                      .filter(entity -> entity != null)
+                      .filter(Objects::nonNull)
                       .toList();
-              var subtypeDependencies = new ArrayList<Dependency>();
+              var subtypeDependencies = new ArrayList<SubtypeDependency>();
               for (var superType : superTypes) {
                 var subtypeDependency = new SubtypeDependency(superType, subtype);
                 subtypeDependencies.add(subtypeDependency);
