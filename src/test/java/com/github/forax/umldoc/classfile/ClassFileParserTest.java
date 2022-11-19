@@ -123,11 +123,8 @@ public class ClassFileParserTest {
     assertEquals(Tv.class.getName(), parsingResult.type().name());
 
     var tvMethods = parsingResult.methods().stream()
-            .peek(System.out::println)
             .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), method.callGroup().getRelevantCallsFromSet(
-                            Set.of(Tv.class.getName(), Remote.class.getName())
-                    ))))
+                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(Set.of(Tv.class.getName(), Remote.class.getName())).calls())))
             .toList();
 
     assertEquals(methods, tvMethods);
@@ -137,7 +134,6 @@ public class ClassFileParserTest {
 
   @Test
   public void parseRemote() throws IOException {
-    parseClass(Tv.class).entityBuilder().build();
     var parsingResult = parseClass(Remote.class).entityBuilder().build();
     var methods = List.of(
             new Method(
@@ -169,15 +165,13 @@ public class ClassFileParserTest {
     );
     assertEquals(Remote.class.getName(), parsingResult.type().name());
 
-    var tvMethods = parsingResult.methods().stream()
-            .peek(System.out::println)
+    var remoteMethods = parsingResult.methods().stream()
             .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), method.callGroup().getRelevantCallsFromSet(
-                            Set.of(Tv.class.getName(), Remote.class.getName())
-                    ))))
+                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(Set.of(Tv.class.getName(), Remote.class.getName())).calls())
+            ))
             .toList();
 
-    assertEquals(methods, tvMethods);
+    assertEquals(methods, remoteMethods);
   }
 
   @Test

@@ -140,7 +140,7 @@ public final class PlantUmlGenerator implements Generator {
     // deactivate Bob
   }
 
-  private void generateCalls(Set<String> entities, Call.Group group, Writer writer)
+  private void generateCalls(Call.Group group, Writer writer)
           throws IOException {
     if (group.equals(Call.Group.EMPTY_GROUP)) {
       return;
@@ -150,12 +150,12 @@ public final class PlantUmlGenerator implements Generator {
       writer.append(groupKind(group.kind())).append('\n');
     }
 
-    for (var call : group.getRelevantCallsFromSet(entities)) {
+    for (var call : group.calls()) {
       if (call instanceof Call.MethodCall methodCall) {
         generateMethodCall(methodCall, writer);
         currentEntity = methodCall.type();
       } else if (call instanceof Call.Group groupCall) {
-        generateCalls(entities, groupCall, writer);
+        generateCalls(groupCall, writer);
       } else {
         throw new IllegalStateException();
       }
@@ -206,7 +206,7 @@ public final class PlantUmlGenerator implements Generator {
       addHeader(writer);
     }
     currentEntity = entryEntity.type();
-    generateCalls(entities, entryPoint.callGroup(), writer);
+    generateCalls(entryPoint.relevantCallsGroup(entities), writer);
 
     if (header) {
       addFooter(writer);
