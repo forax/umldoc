@@ -1,5 +1,6 @@
 package com.github.forax.umldoc;
 
+import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.classfile.ModuleScrapper;
 import com.github.forax.umldoc.editor.CommandLineParser;
 import com.github.forax.umldoc.editor.Editor;
@@ -8,14 +9,25 @@ import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Contain the main method.
+ */
 public class Main {
-
-  public static void main(String[] args) throws IOException {
+  /**
+   * The main method.
+   *
+   * @param args Contain the path of the jar file from which
+   *             the module will be looked after and the
+   *             path of the markdown file.
+   */
+  public static void main(String[] args) {
     if (args.length != 2) {
-      throw new IllegalArgumentException("Usage : java -jar path_of_jar"
+      System.err.println("Usage : java -jar path_of_jar"
               + " path_of_jar path_of_markdown");
+      return;
     }
     var finder = ModuleFinder.of(Path.of(args[0]));
     var module = finder.find("com.github.forax.umldoc");
@@ -24,7 +36,13 @@ public class Main {
       System.err.println("Couldn't find the Module");
       return;
     }
-    var packages = ModuleScrapper.scrapModule(module.get());
+    List<Package> packages;
+    try {
+      packages = ModuleScrapper.scrapModule(module.get());
+    } catch (IOException e) {
+      System.err.println("Couldn't get the list of Packages"+e.getMessage());
+      return;
+    }
 
     try (
             var reader = Files.newBufferedReader(Path.of(args[1]));
@@ -35,6 +53,8 @@ public class Main {
 
       var editor = new Editor(config, packages);
       editor.edit(writer, reader);
+    } catch (IOException e) {
+      System.err.println("Couldn't read or write in the file"+e.getMessage());
     }
   }
 }
