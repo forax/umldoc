@@ -13,6 +13,7 @@ import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Generate a class diagram using the plantuml format.
@@ -139,7 +140,8 @@ public final class PlantUmlGenerator implements Generator {
     // deactivate Bob
   }
 
-  private void generateCalls(Call.Group group, Writer writer) throws IOException {
+  private void generateCalls(Set<String> entities, Call.Group group, Writer writer)
+          throws IOException {
     if (group.equals(Call.Group.EMPTY_GROUP)) {
       return;
     }
@@ -148,12 +150,12 @@ public final class PlantUmlGenerator implements Generator {
       writer.append(groupKind(group.kind())).append('\n');
     }
 
-    for (var call : group.calls()) {
+    for (var call : group.getRelevantCallsFromSet(entities)) {
       if (call instanceof Call.MethodCall methodCall) {
         generateMethodCall(methodCall, writer);
         currentEntity = methodCall.type();
       } else if (call instanceof Call.Group groupCall) {
-        generateCalls(groupCall, writer);
+        generateCalls(entities, groupCall, writer);
       } else {
         throw new IllegalStateException();
       }
@@ -191,7 +193,7 @@ public final class PlantUmlGenerator implements Generator {
 
   @Override
   public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                                      Writer writer) throws IOException {
+                                      Set<String> entities, Writer writer) throws IOException {
     requireNonNull(entryEntity);
     requireNonNull(entryPoint);
     requireNonNull(writer);
@@ -204,7 +206,7 @@ public final class PlantUmlGenerator implements Generator {
       addHeader(writer);
     }
     currentEntity = entryEntity.type();
-    generateCalls(entryPoint.callGroup(), writer);
+    generateCalls(entities, entryPoint.callGroup(), writer);
 
     if (header) {
       addFooter(writer);

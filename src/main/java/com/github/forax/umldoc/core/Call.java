@@ -3,6 +3,7 @@ package com.github.forax.umldoc.core;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Either a method call or a group of method calls.
@@ -43,13 +44,31 @@ public sealed interface Call {
      */
     public Group {
       requireNonNull(kind);
-      calls = List.copyOf(calls);
+      //      calls = List.copyOf(calls);
     }
 
     /**
      * An empty group of calls.
      */
     public static final Group EMPTY_GROUP = new Group(Kind.NONE, List.of());
+
+    /**
+     * A method which returns the list of relevant calls for the sequence diagram.
+     * A call is relevant if its target is one of our entity.
+     *
+     * @param entitiesNames a {@link Set} containing every entity name
+     * @return the list of relevant Call
+     */
+    public List<Call> getRelevantCallsFromSet(Set<String> entitiesNames) {
+      return calls.stream()
+              .filter(call -> {
+                if (call instanceof MethodCall methodCall) {
+                  return entitiesNames.contains(methodCall.type.name());
+                }
+                return true;
+              })
+              .toList();
+    }
 
     /**
      * The kind of group.

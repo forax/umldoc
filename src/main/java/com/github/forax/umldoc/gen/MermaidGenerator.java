@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Generate a class diagram using the mermaid format.
@@ -133,7 +134,7 @@ public final class MermaidGenerator implements Generator {
 
   @Override
   public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                                      Writer writer) throws IOException {
+                                      Set<String> entities, Writer writer) throws IOException {
     throw new UnsupportedOperationException("TODO");
   }
 }

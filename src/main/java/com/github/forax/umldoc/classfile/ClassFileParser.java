@@ -4,6 +4,7 @@ import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
+import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
@@ -96,18 +97,26 @@ final class ClassFileParser {
         var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
-        var method = entityBuilder.addMethod(modifiers, name, returnType, parameters, EMPTY_GROUP);
+
+        var methodBuilder = entityBuilder.addMethod(modifiers, name, returnType,
+                parameters);
+
 
         return new MethodVisitor(ASM9) {
           @Override
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
                                       boolean isInterface) {
-            var type = TypeInfo.of(owner);
+
+            var ownerOfMethod = TypeInfo.of(owner.replace("/", "."));
+            var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
             var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
                     .map(parameter -> TypeInfo.of(parameter.getClassName()))
                     .toList();
-            var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            entityBuilder.addMethodsCall(method, type, name, returnType, parametersType);
+
+            Call.MethodCall call = new Call.MethodCall(ownerOfMethod, name,
+                    returnType, parametersType);
+
+            methodBuilder.addCallToGroup(call);
           }
         };
       }

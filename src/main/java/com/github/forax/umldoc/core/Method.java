@@ -32,6 +32,16 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
     requireNonNull(callGroup);
   }
 
+//  @Override
+//  public Call.Group callGroup() {
+//
+//    var toto = this.callGroup().getRelevantCallsFromSet(
+//            Set.of("Tv", "Remote", "Alice", "Bob")
+//    );
+//
+//    return new Call.Group(callGroup.kind(), toto);
+//  }
+
   /**
    * Creates a method.
    *

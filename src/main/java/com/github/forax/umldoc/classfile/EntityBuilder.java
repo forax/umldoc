@@ -9,7 +9,6 @@ import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +19,7 @@ final class EntityBuilder {
   private TypeInfo type;
   private Entity.Stereotype stereotype;
   private final ArrayList<Field> fields = new ArrayList<>();
-  private final ArrayList<Method> methods = new ArrayList<>();
-  private final HashMap<Method, ArrayList<Call.MethodCall>> mappedMethodsToCall = new HashMap<>();
+  private final ArrayList<MethodBuilder> methodBuilders = new ArrayList<>();
 
   public void type(TypeInfo type) {
     requireNonNull(type);
@@ -44,31 +42,19 @@ final class EntityBuilder {
     fields.add(new Field(modifiers, name, type));
   }
 
-  public Method addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
-                        List<Method.Parameter> parameters, Call.Group group) {
+  public MethodBuilder addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
+                        List<Method.Parameter> parameters) {
     requireNonNull(modifiers);
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parameters);
-    requireNonNull(group);
-    var method = new Method(modifiers, name, returnType, parameters, group);
-    methods.add(method);
-    return method;
-  }
-
-  public void addMethodsCall(Method method, TypeInfo type, String name,
-                             TypeInfo returnType, List<TypeInfo> parametersType) {
-    requireNonNull(method);
-    requireNonNull(type);
-    requireNonNull(name);
-    requireNonNull(returnType);
-    requireNonNull(parametersType);
-    var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
-    var methodCallList = mappedMethodsToCall.computeIfAbsent(method, m -> new ArrayList<>());
-    methodCallList.add(methodCall);
+    var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters);
+    methodBuilders.add(methodBuilder);
+    return methodBuilder;
   }
 
   public Entity build() {
+    var methods = methodBuilders.stream().map(MethodBuilder::build).toList();
     return new Entity(Set.of(), type, stereotype, fields, methods);
   }
 }
