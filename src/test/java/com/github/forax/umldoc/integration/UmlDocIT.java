@@ -6,7 +6,6 @@ import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.gen.MermaidGenerator;
 import com.github.forax.umldoc.gen.PlantUmlGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -22,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UmlDocIT {
   @Test
-  @Disabled
   public void generateMermaid() throws IOException {
     var path = Path.of("target/classes");
     var finder = ModuleFinder.of(path);
@@ -146,7 +144,6 @@ public class UmlDocIT {
         writer.toString());
   }
 
-  @Disabled
   @Test
   public void generatePlantUml() throws IOException {
     var path = Path.of("target/classes");
