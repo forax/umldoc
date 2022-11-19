@@ -54,12 +54,12 @@ public final class MermaidGenerator implements Generator {
         continue;
       }
       if (dependency instanceof SubtypeDependency subtype) {
-         writer.append("""
+        writer.append("""
              %s --|> %s
              """.formatted(
              subtype.subtype().type().name(),
              subtype.supertype().type().name()));
-         continue;
+        continue;
       }
       throw new AssertionError("unknown dependency");
     }
