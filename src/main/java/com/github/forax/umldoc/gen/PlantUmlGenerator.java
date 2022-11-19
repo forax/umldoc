@@ -13,6 +13,7 @@ import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Generate a class diagram using the plantuml format.
@@ -190,7 +191,8 @@ public final class PlantUmlGenerator implements Generator {
   }
 
   @Override
-  public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
+  public void generateSequenceDiagram(boolean header, Entity entryEntity,
+                                      Method entryPoint, Set<? super String> entities,
                                       Writer writer) throws IOException {
     requireNonNull(entryEntity);
     requireNonNull(entryPoint);
@@ -204,7 +206,7 @@ public final class PlantUmlGenerator implements Generator {
       addHeader(writer);
     }
     currentEntity = entryEntity.type();
-    generateCalls(entryPoint.callGroup(), writer);
+    generateCalls(entryPoint.relevantCallsGroup(entities), writer);
 
     if (header) {
       addFooter(writer);

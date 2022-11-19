@@ -6,6 +6,7 @@ import com.github.forax.umldoc.core.Method;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Convert a list of entities and a list of dependencies to a textual representation.
@@ -36,5 +37,5 @@ public interface Generator {
    * @throws IOException if an I/O exception occurs
    */
   void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                               Writer writer) throws IOException;
+                               Set<? super String> entities, Writer writer) throws IOException;
 }

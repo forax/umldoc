@@ -101,7 +101,7 @@ public class PlantUmlGeneratorTest {
 
     var writer = new StringWriter();
     var generator = new PlantUmlGenerator();
-    generator.generateSequenceDiagram(true, alice, main, writer);
+    generator.generateSequenceDiagram(true, alice, main, Set.of("Alice", "Bob"), writer);
     assertEquals("""
         @startuml
         

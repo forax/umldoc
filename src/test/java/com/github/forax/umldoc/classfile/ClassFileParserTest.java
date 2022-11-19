@@ -83,6 +83,17 @@ public class ClassFileParserTest {
     }
   }
 
+  static class Remote {
+    public void changeChannel(Tv tv) {
+      tv.changeChannel("toto");
+    }
+
+    public int countChannel(Tv tv) {
+      var channels = tv.getChannel();
+      return channels.size();
+    }
+  }
+
   @Test
   public void parseTvClass() throws IOException {
     var parsingResult = parseClass(Tv.class).entityBuilder().build();
@@ -110,7 +121,57 @@ public class ClassFileParserTest {
             )
     );
     assertEquals(Tv.class.getName(), parsingResult.type().name());
-    assertEquals(methods, parsingResult.methods());
+
+    var tvMethods = parsingResult.methods().stream()
+            .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
+                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(Set.of(Tv.class.getName(), Remote.class.getName())).calls())))
+            .toList();
+
+    assertEquals(methods, tvMethods);
+
+//    assertEquals(methods, parsingResult.methods());
+  }
+
+  @Test
+  public void parseRemote() throws IOException {
+    var parsingResult = parseClass(Remote.class).entityBuilder().build();
+    var methods = List.of(
+            new Method(
+                    Set.of(Modifier.PUBLIC),
+                    "changeChannel",
+                    TypeInfo.of(void.class.getName()),
+                    List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
+                    new Call.Group(Call.Group.Kind.NONE,
+                            List.of(new Call.MethodCall(
+                                    TypeInfo.of(Tv.class.getName()),
+                                    "changeChannel",
+                                    TypeInfo.of(boolean.class.getName()),
+                                    List.of(TypeInfo.of(String.class.getName()))
+                            )))
+            ),
+            new Method(
+                    Set.of(Modifier.PUBLIC),
+                    "countChannel",
+                    TypeInfo.of(int.class.getName()),
+                    List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
+                    new Call.Group(Call.Group.Kind.NONE,
+                            List.of(new Call.MethodCall(
+                                    TypeInfo.of(Tv.class.getName()),
+                                    "getChannel",
+                                    new TypeInfo(Optional.empty(), List.class.getName(), List.of()),
+                                    List.of()
+                            )))
+            )
+    );
+    assertEquals(Remote.class.getName(), parsingResult.type().name());
+
+    var remoteMethods = parsingResult.methods().stream()
+            .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
+                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(Set.of(Tv.class.getName(), Remote.class.getName())).calls())
+            ))
+            .toList();
+
+    assertEquals(methods, remoteMethods);
   }
 
   @Test

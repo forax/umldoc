@@ -5,24 +5,26 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Set;
 
+
 /**
  * A method of an {@link Entity}.
  *
- * @param modifiers the method modifier
- * @param name the method name
+ * @param modifiers      the method modifier
+ * @param name           the method name
  * @param returnTypeInfo the return type
- * @param parameters the parameters
+ * @param parameters     the parameters
  */
 public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
                      List<Parameter> parameters, Call.Group callGroup) {
+
   /**
    * Creates a method.
    *
-   * @param modifiers the method modifier
-   * @param name the method name
+   * @param modifiers      the method modifier
+   * @param name           the method name
    * @param returnTypeInfo the return type
-   * @param parameters the parameters
-   * @param callGroup the group method calls from the implementation
+   * @param parameters     the parameters
+   * @param callGroup      the group method calls from the implementation
    */
   public Method {
     modifiers = Set.copyOf(modifiers);
@@ -32,14 +34,18 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
     requireNonNull(callGroup);
   }
 
+  public Call.Group relevantCallsGroup(Set<? super String> entities) {
+    var relevantCalls = callGroup.getRelevantCallsFromSet(entities);
+    return new Call.Group(callGroup.kind(), relevantCalls);
+  }
+
   /**
    * Creates a method.
    *
-   * @param modifiers the method modifier
-   * @param name the method name
+   * @param modifiers  the method modifier
+   * @param name       the method name
    * @param returnType the return type
    * @param parameters the parameters
-   *
    * @deprecated use {@link #Method(Set, String, TypeInfo, List, Call.Group) instead}
    */
   @Deprecated
@@ -52,7 +58,6 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    * Returns the return type as a string.
    *
    * @return the return type as a string.
-   *
    * @deprecated use {@link #returnTypeInfo() instead}
    */
   @Deprecated
@@ -63,10 +68,11 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
   /**
    * A parameter of a method.
    *
-   * @param name the parameter name
+   * @param name     the parameter name
    * @param typeInfo the parameter type
    */
   public record Parameter(String name, TypeInfo typeInfo) {
+
     public Parameter {
       requireNonNull(name);
       requireNonNull(typeInfo);
@@ -77,7 +83,6 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
      *
      * @param name the parameter name
      * @param type the parameter type as a string
-     *
      * @deprecated use {@link #Parameter(String, TypeInfo) instead}
      */
     @Deprecated
@@ -89,7 +94,6 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
      * Returns the type as a string.
      *
      * @return the type as a string.
-     *
      * @deprecated use {@link #returnTypeInfo() instead}
      */
     @Deprecated
