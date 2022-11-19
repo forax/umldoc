@@ -23,7 +23,7 @@ public class Editor {
   }
 
   private final Map<String, CommandLineParser> registration;
-  private final List<com.github.forax.umldoc.core.Package> module;
+  private final List<Package> module;
   private State state;
   private CommandLineParser parser;
 
