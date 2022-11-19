@@ -13,10 +13,11 @@ import java.util.HashMap;
 class Main {
 
   public static void main(String[] args) throws IOException {
-    if (args.length != 1) {
-      throw new IllegalArgumentException("Usage : java -jar path_of_jar path_of_markdown");
+    if (args.length != 2) {
+      throw new IllegalArgumentException("Usage : java -jar path_of_jar"
+              + " path_of_jar path_of_markdown");
     }
-    var finder = ModuleFinder.of(Path.of("target"));
+    var finder = ModuleFinder.of(Path.of(args[0]));
     var module = finder.find("com.github.forax.umldoc");
 
     if (module.isEmpty()) {
@@ -26,8 +27,8 @@ class Main {
     var packages = ModuleScrapper.scrapModule(module.get());
 
     try (
-            var reader = Files.newBufferedReader(Path.of(args[0]));
-            var writer = Files.newBufferedWriter(Path.of("design/resultFile.md"))
+            var reader = Files.newBufferedReader(Path.of(args[1]));
+            var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
     ) {
       var config = new HashMap<String, CommandLineParser>();
       config.put("mermaid", new MermaidCmdLineParser());
