@@ -4,7 +4,6 @@ import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -17,7 +16,7 @@ public class MethodBuilder {
   private final String name;
   private final TypeInfo returnTypeInfo;
   private final List<Method.Parameter> parameters;
-  private final Call.Group callGroup = new Call.Group(Call.Group.Kind.NONE, new ArrayList<>());
+  private final CallGroupBuilder callGroupBuilder = new CallGroupBuilder(Call.Group.Kind.NONE);
 
   /**
    * Constructor of MethodBuilder.
@@ -47,12 +46,12 @@ public class MethodBuilder {
    */
   public MethodBuilder addCallToGroup(Call call) {
     Objects.requireNonNull(call);
-    this.callGroup.calls().add(call);
+    this.callGroupBuilder.add(call);
     return this;
   }
 
   public Method build() {
 
-    return new Method(modifiers, name, returnTypeInfo, parameters, callGroup);
+    return new Method(modifiers, name, returnTypeInfo, parameters, callGroupBuilder.build());
   }
 }
