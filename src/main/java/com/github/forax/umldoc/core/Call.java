@@ -44,7 +44,7 @@ public sealed interface Call {
      */
     public Group {
       requireNonNull(kind);
-      //      calls = List.copyOf(calls);
+      calls = List.copyOf(calls);
     }
 
     /**

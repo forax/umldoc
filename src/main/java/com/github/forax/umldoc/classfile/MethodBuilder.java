@@ -13,11 +13,11 @@ import java.util.Set;
  * A builder for a {@link Method}.
  */
 public class MethodBuilder {
-  private Set<Modifier> modifiers;
-  private String name;
-  private TypeInfo returnTypeInfo;
-  private List<Method.Parameter> parameters;
-  private Call.Group callGroup = new Call.Group(Call.Group.Kind.NONE, new ArrayList<>());
+  private final Set<Modifier> modifiers;
+  private final String name;
+  private final TypeInfo returnTypeInfo;
+  private final List<Method.Parameter> parameters;
+  private final Call.Group callGroup = new Call.Group(Call.Group.Kind.NONE, new ArrayList<>());
 
   /**
    * Constructor of MethodBuilder.
@@ -33,10 +33,10 @@ public class MethodBuilder {
     Objects.requireNonNull(name);
     Objects.requireNonNull(returnTypeInfo);
     Objects.requireNonNull(parameters);
-    this.modifiers = modifiers;
+    this.modifiers = Set.copyOf(modifiers);
     this.name = name;
     this.returnTypeInfo = returnTypeInfo;
-    this.parameters = parameters;
+    this.parameters = List.copyOf(parameters);
   }
 
   /**
