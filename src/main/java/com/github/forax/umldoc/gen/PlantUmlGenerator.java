@@ -9,6 +9,7 @@ import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.SubtypeDependency;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
@@ -43,10 +44,14 @@ public final class PlantUmlGenerator implements Generator {
                 association.right().label().orElse("")));
         continue;
       }
-      //if (dependency instanceof SubtypeDependency subtype) {
-      //   // TODO
-      // continue;
-      //}
+      if (dependency instanceof SubtypeDependency subtype) {
+        writer.append("""
+             %s --|> %s
+             """.formatted(
+                subtype.subtype().type().name(),
+                subtype.supertype().type().name()));
+        continue;
+      }
       throw new AssertionError("unknown dependency");
     }
   }
