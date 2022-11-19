@@ -1,7 +1,7 @@
 package com.github.forax.umldoc;
 
-import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.classfile.ModuleScrapper;
+import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.editor.CommandLineParser;
 import com.github.forax.umldoc.editor.Editor;
 import com.github.forax.umldoc.editor.MermaidCmdLineParser;
@@ -40,7 +40,7 @@ public class Main {
     try {
       packages = ModuleScrapper.scrapModule(module.get());
     } catch (IOException e) {
-      System.err.println("Couldn't get the list of Packages"+e.getMessage());
+      System.err.println("Couldn't get the list of Packages : " + e.getMessage());
       return;
     }
 
@@ -54,7 +54,7 @@ public class Main {
       var editor = new Editor(config, packages);
       editor.edit(writer, reader);
     } catch (IOException e) {
-      System.err.println("Couldn't read or write in the file"+e.getMessage());
+      System.err.println("Couldn't read or write in the file : " + e.getMessage());
     }
   }
 }
