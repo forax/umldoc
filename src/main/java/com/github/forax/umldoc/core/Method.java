@@ -1,7 +1,7 @@
 package com.github.forax.umldoc.core;
 
 import java.util.List;
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -26,10 +26,10 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    */
   public Method {
     modifiers = Set.copyOf(modifiers);
-    requireNonNull(name);
-    requireNonNull(returnTypeInfo);
+    Objects.requireNonNull(name);
+    Objects.requireNonNull(returnTypeInfo);
     parameters = List.copyOf(parameters);
-    requireNonNull(callGroup);
+    Objects.requireNonNull(callGroup);
   }
 
   public Call.Group relevantCallsGroup(Set<String> entities) {
@@ -72,8 +72,8 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
   public record Parameter(String name, TypeInfo typeInfo) {
 
     public Parameter {
-      requireNonNull(name);
-      requireNonNull(typeInfo);
+      Objects.requireNonNull(name);
+      Objects.requireNonNull(typeInfo);
     }
 
     /**
