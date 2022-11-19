@@ -157,6 +157,10 @@ public final class PlantUmlGenerator implements Generator {
     }
 
     for (var call : group.calls()) {
+      if (call instanceof Call.Group groupCall) {
+        generateCalls(groupCall, writer);
+      }
+
       if (call instanceof Call.MethodCall methodCall) {
         generateMethodCall(methodCall, writer);
         currentEntityName = methodCall.ownerName();
@@ -164,18 +168,16 @@ public final class PlantUmlGenerator implements Generator {
         generateCalls(groupCall, writer);
       } else {
         throw new AssertionError();
+        currentEntity = methodCall.type();
+        if (!activatedLifeLinesForEntities.contains(currentEntity)) {
+          activateLifeLine(writer);
+        }
       }
     }
 
     if (!group.kind().equals(Call.Group.Kind.NONE)) {
       writer.append('\n').append("end");
     }
-
-    //    writer.append("""
-    //            %s
-    //                %s
-    //            end
-    //            """.formatted(groupKind(group.kind()), generateMethodCall(methodCall)));
   }
 
   @Override
@@ -231,7 +233,7 @@ public final class PlantUmlGenerator implements Generator {
     requireNonNull(entryPoint);
     requireNonNull(writer);
 
-    if (!entryEntity.methods().contains(entryPoint)) {
+    if (!entities.contains(entryEntity.type().name())) {
       throw new IllegalStateException();
     }
 

@@ -53,6 +53,36 @@ public class PlantUmlGeneratorTest {
         """, writer.toString());
   }
 
+  /*
+      class Alice {
+        void main() {
+            var bob = new Bob();
+
+          first group : None
+            bob.helloBob();
+            bob.toto();
+        }
+
+        void helloAlice() {
+          empty group
+            println("hello");
+        }
+      }
+
+      class Bob {
+        void helloBob() {
+          var alice = new Alice();
+
+          group : None
+            alice.helloAlice();
+        }
+
+        void toto() {
+          empty group
+            println("toto");
+        }
+      }
+   */
   @Test
   public void generateSequenceDiagramMethodsPlantUml() throws IOException {
     var helloGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
