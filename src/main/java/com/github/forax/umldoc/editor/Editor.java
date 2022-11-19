@@ -98,6 +98,7 @@ public class Editor {
   State searchCommandLine(String line, Writer writer) throws IOException {
     var optional = parser.parseLine(line);
     if (optional.isPresent()) {
+      System.out.println("found umldoc");
       getDiagram(optional.get(), writer);
       return State.READONLY;
     }

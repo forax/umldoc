@@ -43,7 +43,8 @@ public class MermaidCmdLineParser implements CommandLineParser {
       var options = new OptionsCmd();
       var args = line.substring("%% umldoc".length() + 1).split(" ");
       new CommandLine(options).execute(args);
-      var generator = GeneratorConfiguration.filterPackage(options.packageName, new MermaidGenerator());
+      var generator = GeneratorConfiguration
+              .filterPackage(options.packageName, new MermaidGenerator());
       return Optional.of(generator);
     }
 
