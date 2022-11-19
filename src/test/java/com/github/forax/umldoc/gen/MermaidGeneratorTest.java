@@ -15,7 +15,7 @@ public class MermaidGeneratorTest {
   @Test
   public void generate() throws IOException {
     var entity = new Entity(Set.of(), "Entity", Stereotype.CLASS, List.of(), List.of());
-    var mermaidGenerator = new ClassDiagramMermaidGenerator();
+    var mermaidGenerator = new MermaidGenerator();
     var writer = new StringWriter();
     mermaidGenerator.generate(true, List.of(entity), List.of(), writer);
     assertEquals("""

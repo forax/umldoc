@@ -6,7 +6,6 @@ import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
-import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ public class PlantUmlGeneratorTest {
   @Test
   public void generate() throws IOException {
     var entity = new Entity(Set.of(), "Entity", Stereotype.CLASS, List.of(), List.of());
-    var mermaidGenerator = new ClassDiagramPlantUmlGenerator();
+    var mermaidGenerator = new PlantUmlGenerator();
     var writer = new StringWriter();
     mermaidGenerator.generate(true, List.of(entity), List.of(), writer);
     assertEquals("""
@@ -40,7 +39,7 @@ public class PlantUmlGeneratorTest {
     var modifier = new Entity(Set.of(), "Modifier", Entity.Stereotype.ENUM,
                               List.of(new Field(Set.of(), "PUBLIC", "Modifier")),
                               List.of());
-    var mermaidGenerator = new ClassDiagramPlantUmlGenerator();
+    var mermaidGenerator = new PlantUmlGenerator();
     var writer = new StringWriter();
     mermaidGenerator.generate(true, List.of(modifier), List.of(), writer);
     assertEquals("""
@@ -57,18 +56,18 @@ public class PlantUmlGeneratorTest {
   @Test
   public void generateSequenceDiagramMethodsPlantUml() throws IOException {
     var helloGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Alice",
-                            List.of()
-                    ),
-                    "helloAlice",
+            new Call.MethodCall(new TypeInfo(
+                    Optional.empty(),
+                    "Alice",
+                    List.of()
+            ),
+                    "main",
                     new TypeInfo(
                             Optional.empty(),
                             "void",
                             List.of()),
                     List.of()
-            ),
+                    ),
             new Call.MethodCall(
                     new TypeInfo(Optional.empty(),
                             "Bob",
@@ -80,22 +79,35 @@ public class PlantUmlGeneratorTest {
                             "void",
                             List.of()),
                     List.of()
+            ),
+            new Call.MethodCall(
+                    new TypeInfo(Optional.empty(),
+                            "Alice",
+                            List.of()
+                    ),
+                    "helloAlice",
+                    new TypeInfo(
+                            Optional.empty(),
+                            "void",
+                            List.of()),
+                    List.of()
             )
     ));
-    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
+    var main = new Method(Set.of(Modifier.PUBLIC), "main", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
+//    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
     var helloBob = new Method(Set.of(Modifier.PUBLIC), "helloBob", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
-    var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(), List.of(helloBob));
-    var bob = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Bob", List.of()), Stereotype.CLASS, List.of(), List.of(helloAlice));
+    var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(), List.of(main, helloBob));
+//    var bob = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Bob", List.of()), Stereotype.CLASS, List.of(), List.of(helloAlice));
 
     var writer = new StringWriter();
-    var generator = new SequenceDiagramPlantUmlGenerator();
-    generator.generate(true, List.of(alice, bob), List.of(), writer);
+    var generator = new PlantUmlGenerator();
+    generator.generateSequenceDiagram(true, alice, main, writer);
     assertEquals("""
         @startuml
         
+        Alice -> Alice: main()
         Alice -> Bob: helloBob()
         Bob -> Alice: helloAlice()
-
         @enduml
         """, writer.toString());
   }

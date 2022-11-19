@@ -2,6 +2,7 @@ package com.github.forax.umldoc.editor;
 
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
+import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.gen.Generator;
 import java.io.IOException;
@@ -30,5 +31,9 @@ public class GeneratorConfigurationTest {
     @Override
     public void generate(boolean header, List<Entity> entities, List<Dependency> dependencies,
                          Writer writer) throws IOException {}
+
+    @Override
+    public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
+                                        Writer writer) throws IOException {}
   }
 }
