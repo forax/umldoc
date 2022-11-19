@@ -8,6 +8,7 @@ import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
+import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
@@ -128,5 +129,11 @@ public final class MermaidGenerator implements Generator {
 
     generateEntities(entities, writer);
     generateDependencies(dependencies, writer);
+  }
+
+  @Override
+  public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
+                                      Writer writer) throws IOException {
+    throw new UnsupportedOperationException("TODO");
   }
 }

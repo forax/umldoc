@@ -1,5 +1,6 @@
 package com.github.forax.umldoc.editor;
 
+import com.github.forax.umldoc.core.Package;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
@@ -55,16 +56,12 @@ public class Editor {
         case READONLY -> readOnly(line, writer);
       };
     }
+    // Move to final file
   }
 
-  private Package getScope(List<Package> packages) {
-    // TODO : call GeneratorConfig method to get the scope
-    throw new IllegalStateException();
-  }
-
-  private void getDiagram(Writer writer) {
-    // TODO : call Generator method to create the diagram according to the scope
-    throw new IllegalStateException();
+  private void getDiagram(GeneratorConfiguration generatorConfiguration,
+                          Writer writer) throws IOException {
+    generatorConfiguration.generate(writer, module);
   }
 
   /**
@@ -101,8 +98,7 @@ public class Editor {
   State searchCommandLine(String line, Writer writer) throws IOException {
     var optional = parser.parseLine(line);
     if (optional.isPresent()) {
-      // TODO : create getDiagram
-      getDiagram(writer);
+      getDiagram(optional.get(), writer);
       return State.READONLY;
     }
     if (parser.endline(line)) {
@@ -126,5 +122,4 @@ public class Editor {
     }
     return State.READONLY;
   }
-
 }
