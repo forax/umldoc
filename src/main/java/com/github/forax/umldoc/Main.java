@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
@@ -30,8 +30,7 @@ public class Main {
             var reader = Files.newBufferedReader(Path.of(args[1]));
             var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
     ) {
-      var config = new HashMap<String, CommandLineParser>();
-      config.put("mermaid", new MermaidCmdLineParser());
+      Map<String, CommandLineParser> config = Map.of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
 
       var editor = new Editor(config, packages);
