@@ -1,6 +1,9 @@
-package com.github.forax.umldoc.editor;
+package com.github.forax.umldoc;
 
 import com.github.forax.umldoc.classfile.ModuleScrapper;
+import com.github.forax.umldoc.editor.CommandLineParser;
+import com.github.forax.umldoc.editor.Editor;
+import com.github.forax.umldoc.editor.MermaidCmdLineParser;
 
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -10,6 +13,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 class Main {
+    int test1 = 0;
+    int test2 = 4545;
+    double test5 = 056.57899445;
+
     public static void main(String[] args) throws IOException {
         System.out.println(Arrays.toString(args));
         if (args.length != 1) {
@@ -26,7 +33,7 @@ class Main {
         var path = Path.of(args[0]);
         try (
                 var reader = Files.newBufferedReader(path);
-                var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
+                var writer = Files.newBufferedWriter(Path.of("design/resultFile.md"))
         ) {
             var config = new HashMap<String, CommandLineParser>();
             config.put("mermaid", new MermaidCmdLineParser());
