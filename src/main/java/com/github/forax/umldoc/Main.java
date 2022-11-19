@@ -48,7 +48,7 @@ public class Main {
             var reader = Files.newBufferedReader(Path.of(args[1]));
             var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
     ) {
-      Map<String, CommandLineParser> config = Map.of("mermaid", new MermaidCmdLineParser());
+      var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
 
       var editor = new Editor(config, packages);
