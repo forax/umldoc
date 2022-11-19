@@ -59,7 +59,7 @@ public sealed interface Call {
      * @param entitiesNames a {@link Set} containing every entity name
      * @return the list of relevant Call
      */
-    public List<Call> getRelevantCallsFromSet(Set<String> entitiesNames) {
+    public List<Call> getRelevantCallsFromSet(Set<? super String> entitiesNames) {
       return calls.stream()
               .filter(call -> {
                 if (call instanceof MethodCall methodCall) {

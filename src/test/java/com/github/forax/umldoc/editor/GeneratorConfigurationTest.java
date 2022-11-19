@@ -35,6 +35,6 @@ public class GeneratorConfigurationTest {
 
     @Override
     public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                                        Set<String> entities, Writer writer) throws IOException {}
+                                        Set<? super String> entities, Writer writer) throws IOException {}
   }
 }

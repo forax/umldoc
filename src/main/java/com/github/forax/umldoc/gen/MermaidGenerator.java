@@ -133,8 +133,9 @@ public final class MermaidGenerator implements Generator {
   }
 
   @Override
-  public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                                      Set<String> entities, Writer writer) throws IOException {
+  public void generateSequenceDiagram(boolean header, Entity entryEntity,
+                                      Method entryPoint, Set<? super String> entities,
+                                      Writer writer) throws IOException {
     throw new UnsupportedOperationException("TODO");
   }
 }

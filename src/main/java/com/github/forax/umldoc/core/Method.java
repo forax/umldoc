@@ -1,8 +1,10 @@
 package com.github.forax.umldoc.core;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+
 
 /**
  * A method of an {@link Entity}.
@@ -26,13 +28,13 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    */
   public Method {
     modifiers = Set.copyOf(modifiers);
-    Objects.requireNonNull(name);
-    Objects.requireNonNull(returnTypeInfo);
+    requireNonNull(name);
+    requireNonNull(returnTypeInfo);
     parameters = List.copyOf(parameters);
-    Objects.requireNonNull(callGroup);
+    requireNonNull(callGroup);
   }
 
-  public Call.Group relevantCallsGroup(Set<String> entities) {
+  public Call.Group relevantCallsGroup(Set<? super String> entities) {
     var relevantCalls = callGroup.getRelevantCallsFromSet(entities);
     return new Call.Group(callGroup.kind(), relevantCalls);
   }
@@ -72,8 +74,8 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
   public record Parameter(String name, TypeInfo typeInfo) {
 
     public Parameter {
-      Objects.requireNonNull(name);
-      Objects.requireNonNull(typeInfo);
+      requireNonNull(name);
+      requireNonNull(typeInfo);
     }
 
     /**

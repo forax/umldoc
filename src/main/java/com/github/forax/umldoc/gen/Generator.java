@@ -37,5 +37,5 @@ public interface Generator {
    * @throws IOException if an I/O exception occurs
    */
   void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                               Set<String> entities, Writer writer) throws IOException;
+                               Set<? super String> entities, Writer writer) throws IOException;
 }

@@ -140,8 +140,7 @@ public final class PlantUmlGenerator implements Generator {
     // deactivate Bob
   }
 
-  private void generateCalls(Call.Group group, Writer writer)
-          throws IOException {
+  private void generateCalls(Call.Group group, Writer writer) throws IOException {
     if (group.equals(Call.Group.EMPTY_GROUP)) {
       return;
     }
@@ -192,8 +191,9 @@ public final class PlantUmlGenerator implements Generator {
   }
 
   @Override
-  public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                                      Set<String> entities, Writer writer) throws IOException {
+  public void generateSequenceDiagram(boolean header, Entity entryEntity,
+                                      Method entryPoint, Set<? super String> entities,
+                                      Writer writer) throws IOException {
     requireNonNull(entryEntity);
     requireNonNull(entryPoint);
     requireNonNull(writer);
