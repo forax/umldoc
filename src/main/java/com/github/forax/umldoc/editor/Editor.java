@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The class Editor is able to read a file and write lines.
@@ -44,17 +45,15 @@ public class Editor {
    * @param registration Map, register a String with a CommandLineParser.
    * @param module List, a list of package.
    */
-  public Editor(String extension, Map<String, CommandLineParser> registration,
+  public Editor(Extension extension, Map<String, CommandLineParser> registration,
                 List<Package> module) {
+    Objects.requireNonNull(extension);
+    Objects.requireNonNull(registration);
+    Objects.requireNonNull(module);
     this.registration = Map.copyOf(registration);
     this.module = List.copyOf(module);
     this.state = State.READWRITE;
-    switch (extension) {
-      case "md" -> this.extension = Extension.MARKDOWN;
-      case "pu" -> this.extension = Extension.PLANTUML;
-      case "mmd" -> this.extension = Extension.MERMAID;
-      default -> throw new IllegalArgumentException("unsupported file type");
-    }
+    this.extension = extension;
   }
 
   /**
@@ -65,6 +64,8 @@ public class Editor {
    * @throws IOException If the file cannot be opened.
    */
   public void edit(Writer writer, BufferedReader reader) throws IOException {
+    Objects.requireNonNull(writer);
+    Objects.requireNonNull(reader);
     var line = "";
     while ((line = reader.readLine()) != null) {
       state = switch (state) {

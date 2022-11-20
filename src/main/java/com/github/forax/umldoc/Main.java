@@ -7,6 +7,7 @@ import com.github.forax.umldoc.classfile.ModuleScrapper;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.editor.CommandLineParser;
 import com.github.forax.umldoc.editor.Editor;
+import com.github.forax.umldoc.editor.Editor.Extension;
 import com.github.forax.umldoc.editor.MermaidCmdLineParser;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -65,7 +66,7 @@ public class Main {
       var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
 
-      var editor = new Editor(extension, config, packages);
+      var editor = new Editor(getExtension(extension), config, packages);
       editor.edit(writer, reader);
       Files.move(outputPath, inputPath, REPLACE_EXISTING, ATOMIC_MOVE);
     } catch (IOException e) {
@@ -76,4 +77,14 @@ public class Main {
       System.exit(-1);
     }
   }
+
+  private static Extension getExtension(String extension) {
+    return switch (extension) {
+      case "md" -> Extension.MARKDOWN;
+      case "pu" -> Extension.PLANTUML;
+      case "mmd" -> Extension.MERMAID;
+      default -> throw new IllegalArgumentException("unsupported file type");
+    };
+  }
+
 }
