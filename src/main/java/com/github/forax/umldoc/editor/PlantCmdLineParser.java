@@ -1,9 +1,8 @@
 package com.github.forax.umldoc.editor;
 
-import com.github.forax.umldoc.gen.MermaidGenerator;
+import com.github.forax.umldoc.gen.PlantUmlGenerator;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
-
 import java.util.Optional;
 
 /**
@@ -41,15 +40,15 @@ public class PlantCmdLineParser implements CommandLineParser {
    * @return an Optional of GeneratorConfiguration.
    */
   public Optional<GeneratorConfiguration> parseLine(String line) {
-    isStartUmlAnnotationPresent = isStartAnnotationPresent(line);
+    if (!isStartUmlAnnotationPresent) {
+      isStartUmlAnnotationPresent = isStartAnnotationPresent(line);
+    }
     if (isStartingLine(line) && isStartUmlAnnotationPresent) {
-
-
       var options = new OptionsCmd();
       var args = line.substring("` umldoc".length() + 1).split(" ");
       new CommandLine(options).execute(args);
       var generator = GeneratorConfiguration
-              .filterPackage(options.packageName, new MermaidGenerator());
+              .filterPackage(options.packageName, new PlantUmlGenerator());
       return Optional.of(generator);
     }
 
@@ -58,7 +57,7 @@ public class PlantCmdLineParser implements CommandLineParser {
 
 
   public boolean endline(String line) {
-    return line.equals("```");
+    return line.equals("@enduml");
   }
 
   private boolean isStartingLine(String line) {
