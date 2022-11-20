@@ -19,8 +19,10 @@ import java.util.Map;
  * Contain the main method.
  */
 public class Main {
+
   /**
    * The main method.
+   * <br>
    *
    * @param args Contain the path of the jar file from which
    *             the module will be looked after and the
@@ -30,27 +32,27 @@ public class Main {
     if (args.length != 2) {
       System.err.println("Usage : java -jar path_of_jar"
               + " path_of_jar path_of_markdown");
-      return;
+      System.exit(-1);
     }
     var finder = ModuleFinder.of(Path.of(args[0]));
     var modules = finder.findAll().iterator();
 
     if (!modules.hasNext()) {
       System.err.println("Couldn't find a Module");
-      return;
+      System.exit(-1);
     }
-    List<Package> packages;
+    var packages = List.<Package>of();
     try {
       packages = ModuleScrapper.scrapModule(modules.next());
     } catch (IOException e) {
       System.err.println("Couldn't get the list of Packages : " + e.getMessage());
-      return;
+      System.exit(-1);
     }
 
     var index = args[1].lastIndexOf(".");
     if (index == -1) {
       System.err.println("Couldn't find an extension in " + args[1]);
-      return;
+      System.exit(-1);
     }
     var fileName = "resultFile.md";
     var inputPath = Path.of(args[1]);
@@ -68,8 +70,10 @@ public class Main {
       Files.move(outputPath, inputPath, REPLACE_EXISTING, ATOMIC_MOVE);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
+      System.exit(-1);
     } catch (IllegalArgumentException e) {
       System.err.println(e + " - Supported file type : pu, mmd, md");
+      System.exit(-1);
     }
   }
 }
