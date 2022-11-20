@@ -8,7 +8,9 @@ import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.objectweb.asm.Type;
 
 /**
  * Class that compute the execution path (method calls and subsequent method calls).
@@ -50,8 +52,7 @@ public class ExecutionPathResolver {
                                                   List<Entity> entities) {
     var callExecution = new ArrayList<ExecutionItem>();
     if (call instanceof Call.MethodCall methodCall) {
-      var targetType = methodCall.type();
-      var targetEntity = findEntity(targetType, entities);
+      var targetEntity = findEntity(methodCall.ownerName(), entities);
       var targetMethod = findMethodInEntity(methodCall, targetEntity);
       var executionItem = new ExecutionItem(sourceEntity, targetEntity, targetMethod);
       callExecution.add(executionItem);
@@ -71,17 +72,20 @@ public class ExecutionPathResolver {
     return callExecution;
   }
 
-  private static Entity findEntity(TypeInfo entityType, List<Entity> entities) {
+  private static Entity findEntity(String entityName, List<Entity> entities) {
     return entities.stream()
-            .filter(entity -> entity.type().equals(entityType))
+            .filter(entity -> entity.type().name().equals(entityName))
             .findFirst()
             .orElseThrow();
   }
 
   private static Method findMethodInEntity(Call.MethodCall methodCall, Entity entity) {
-    var methodReturnType = methodCall.returnType();
+    var descriptor = methodCall.descriptor();
+    var methodReturnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
     var methodName = methodCall.name();
-    var methodParametersType = methodCall.parameterTypes();
+    var methodParametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
+            .map(parameter -> TypeInfo.of(parameter.getClassName()))
+            .toList();
     var methods = entity.methods();
     return methods.stream().filter(method -> {
       var returnType = method.returnTypeInfo();
