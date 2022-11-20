@@ -102,24 +102,31 @@ public class ClassFileParserTest {
     var parsingResult = parseClass(Tv.class).entityBuilder().build();
     var methods = List.of(
             new Method(
-                    Set.of(Modifier.PUBLIC),
-                    "getChannel",
-                    new TypeInfo(Optional.empty(), List.class.getName(),List.of(TypeInfo.of(String.class.getName()))),
-                    List.of(),
+                    new Method.Signature(
+                            Set.of(Modifier.PUBLIC),
+                            "getChannel",
+                            new TypeInfo(Optional.empty(), List.class.getName(),List.of(TypeInfo.of(String.class.getName()))),
+                            List.of()
+                    ),
                     Call.Group.EMPTY_GROUP
             ),
             new Method(
-                    Set.of(Modifier.PUBLIC),
-                    "changeChannel",
-                    TypeInfo.of(boolean.class.getName()),
-                    List.of(new Method.Parameter("", TypeInfo.of(String.class.getName()))),
+                    new Method.Signature(
+                            Set.of(Modifier.PUBLIC),
+                            "changeChannel",
+                            TypeInfo.of(boolean.class.getName()),
+                            List.of(new Method.Parameter("", TypeInfo.of(String.class.getName())))
+                    ),
                     Call.Group.EMPTY_GROUP
+
             ),
             new Method(
-                    Set.of(Modifier.PRIVATE, Modifier.STATIC),
-                    "shutdown",
-                    TypeInfo.of(void.class.getName()),
-                    List.of(),
+                    new Method.Signature(
+                            Set.of(Modifier.PRIVATE, Modifier.STATIC),
+                            "shutdown",
+                            TypeInfo.of(void.class.getName()),
+                            List.of()
+                    ),
                     Call.Group.EMPTY_GROUP
             )
     );
@@ -127,7 +134,7 @@ public class ClassFileParserTest {
     var p = new Package(Tv.class.getPackageName(), List.of(), List.of());
 
     var tvMethods = parsingResult.methods().stream()
-            .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
+            .map(method -> new Method(method.signature(),
                     new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(p).calls())))
             .toList();
 
@@ -142,10 +149,12 @@ public class ClassFileParserTest {
     var parsingResult = parseClass(Remote.class).entityBuilder().build();
     var methods = List.of(
             new Method(
-                    Set.of(Modifier.PUBLIC),
-                    "changeChannel",
-                    TypeInfo.of(void.class.getName()),
-                    List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
+                    new Method.Signature(
+                            Set.of(Modifier.PUBLIC),
+                            "changeChannel",
+                            TypeInfo.of(void.class.getName()),
+                            List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName())))
+                    ),
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
                                     TypeInfo.of(Tv.class.getName()),
@@ -155,10 +164,12 @@ public class ClassFileParserTest {
                             )))
             ),
             new Method(
-                    Set.of(Modifier.PUBLIC),
-                    "countChannel",
-                    TypeInfo.of(int.class.getName()),
-                    List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
+                    new Method.Signature(
+                            Set.of(Modifier.PUBLIC),
+                            "countChannel",
+                            TypeInfo.of(int.class.getName()),
+                            List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName())))
+                    ),
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
                                     TypeInfo.of(Tv.class.getName()),
@@ -172,7 +183,7 @@ public class ClassFileParserTest {
 
     var p = new Package(Remote.class.getPackageName(), List.of(), List.of());
     var remoteMethods = parsingResult.methods().stream()
-            .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
+            .map(method -> new Method(method.signature(),
                     new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(p).calls())
             ))
             .toList();
