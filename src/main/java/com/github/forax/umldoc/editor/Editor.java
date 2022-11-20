@@ -26,7 +26,7 @@ public class Editor {
    * The enum Extension corresponds to the type of the file.
    * <br>Mermaid, PlantUML and Markdown.
    */
-  enum Extension {
+  public enum Extension {
     MARKDOWN,
     PLANTUML,
     MERMAID
