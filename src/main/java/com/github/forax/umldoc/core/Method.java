@@ -18,35 +18,6 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
                      List<Parameter> parameters, Call.Group callGroup) {
 
   /**
-   * A method signature.
-   *
-   * @param modifiers      the method modifier
-   * @param name           the method name
-   * @param returnTypeInfo the return type
-   * @param parameters     the parameters
-   */
-  public record Signature(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
-                          List<Parameter> parameters) {
-
-
-
-    /**
-     * Creates a method signature.
-     *
-     * @param modifiers      the method modifier
-     * @param name           the method name
-     * @param returnTypeInfo the return type
-     * @param parameters     the parameters
-     */
-    public Signature {
-      requireNonNull(modifiers);
-      requireNonNull(name);
-      requireNonNull(returnTypeInfo);
-      requireNonNull(parameters);
-    }
-  }
-
-  /**
    * Creates a method.
    *
    * @param modifiers      the method modifier
