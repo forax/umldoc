@@ -56,7 +56,6 @@ public class Editor {
         case READONLY -> readOnly(line, writer);
       };
     }
-    // Move to final file
   }
 
   private void getDiagram(GeneratorConfiguration generatorConfiguration,
