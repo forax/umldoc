@@ -22,6 +22,10 @@ public class Editor {
     READWRITE
   }
 
+  /**
+   * The enum Extension corresponds to the type of the file.
+   * <br>Mermaid, PlantUML and Markdown.
+   */
   enum Extension {
     MARKDOWN,
     PLANTUML,
