@@ -32,7 +32,7 @@ public class Editor {
   private final List<Package> module;
   private State state;
   private CommandLineParser parser;
-  private Extension extension;
+  private final Extension extension;
 
   /**
    * The constructor of Editor.
