@@ -1,21 +1,21 @@
 package com.github.forax.umldoc.gen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.TypeInfo;
-import java.util.Optional;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 public class PlantUmlGeneratorTest {
   @Test
@@ -101,7 +101,8 @@ public class PlantUmlGeneratorTest {
 
     var writer = new StringWriter();
     var generator = new PlantUmlGenerator();
-    generator.generateSequenceDiagram(true, alice, main, Set.of("Alice", "Bob"), writer);
+    var p = new Package("", List.of(), List.of());
+    generator.generateSequenceDiagram(true, alice, main, p, writer);
     assertEquals("""
         @startuml
         
