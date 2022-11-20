@@ -11,23 +11,20 @@ public sealed interface Call {
   /**
    * A method call.
    *
-   * @param type type target type of the method call
+   * @param ownerName ownerName target ownerName of the method call
    * @param name name of the method call
-   * @param returnType return type of the method call
-   * @param parameterTypes parameter types of the method call
+   * @param descriptor descriptor of the method call
    */
-  record MethodCall(TypeInfo type, String name, TypeInfo returnType,
-                    List<TypeInfo> parameterTypes)
+  record MethodCall(String ownerName, String name, String descriptor)
       implements Call {
 
     /**
      * Creates a method call.
      */
     public MethodCall {
-      requireNonNull(type);
+      requireNonNull(ownerName);
       requireNonNull(name);
-      requireNonNull(returnType);
-      parameterTypes = List.copyOf(parameterTypes);
+      requireNonNull(descriptor);
     }
   }
 
@@ -50,24 +47,6 @@ public sealed interface Call {
      * An empty group of calls.
      */
     public static final Group EMPTY_GROUP = new Group(Kind.NONE, List.of());
-
-    /**
-     * A method which returns the list of relevant calls for the sequence diagram.
-     * A call is relevant if its target is one of our entity.
-     *
-     * @param p the {@link Package} which we are interested in
-     * @return the list of relevant calls
-     */
-    public List<Call> getCallsFromPackage(Package p) {
-      return calls.stream()
-              .filter(call -> {
-                if (call instanceof MethodCall methodCall) {
-                  return methodCall.type.name().startsWith(p.name());
-                }
-                return true;
-              })
-              .toList();
-    }
 
     /**
      * The kind of group.

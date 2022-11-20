@@ -56,42 +56,9 @@ public class PlantUmlGeneratorTest {
   @Test
   public void generateSequenceDiagramMethodsPlantUml() throws IOException {
     var helloGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(new TypeInfo(
-                    Optional.empty(),
-                    "Alice",
-                    List.of()
-            ),
-                    "main",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-                    ),
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Bob",
-                            List.of()
-                    ),
-                    "helloBob",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-            ),
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Alice",
-                            List.of()
-                    ),
-                    "helloAlice",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-            )
+            new Call.MethodCall("Alice", "main", "()V"),
+            new Call.MethodCall("Bob", "helloBob", "()V"),
+            new Call.MethodCall("Alice", "helloAlice","()V")
     ));
     var main = new Method(Set.of(Modifier.PUBLIC), "main", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
 //    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
