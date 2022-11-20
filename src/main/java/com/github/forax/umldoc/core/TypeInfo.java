@@ -1,6 +1,7 @@
 package com.github.forax.umldoc.core;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.joining;
 
 import java.util.List;

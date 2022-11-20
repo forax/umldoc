@@ -98,7 +98,7 @@ final class ClassFileParser {
                 .toList();
 
         var methodBuilder = entityBuilder.addMethod(modifiers, name, returnType,
-                parameters);
+                parameters, descriptor);
 
 
         return new MethodVisitor(ASM9) {

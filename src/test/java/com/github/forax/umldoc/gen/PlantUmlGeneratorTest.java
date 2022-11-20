@@ -60,9 +60,10 @@ public class PlantUmlGeneratorTest {
             new Call.MethodCall("Bob", "helloBob", "()V"),
             new Call.MethodCall("Alice", "helloAlice","()V")
     ));
-    var main = new Method(Set.of(Modifier.PUBLIC), "main", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
-//    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
-    var helloBob = new Method(Set.of(Modifier.PUBLIC), "helloBob", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), helloGroup);
+    var voidType = new TypeInfo(Optional.empty(), "void", List.of());
+    var main = new Method(Set.of(Modifier.PUBLIC), "main", voidType, List.of(), "()V", helloGroup);
+//    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", voidType, List.of(), "()V", helloGroup);
+    var helloBob = new Method(Set.of(Modifier.PUBLIC), "helloBob", voidType, List.of(), "()V", helloGroup);
     var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(), List.of(main, helloBob));
 //    var bob = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Bob", List.of()), Stereotype.CLASS, List.of(), List.of(helloAlice));
 
