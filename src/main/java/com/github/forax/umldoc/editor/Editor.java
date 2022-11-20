@@ -34,7 +34,7 @@ public class Editor {
    * @param module List, a list of package.
    */
   public Editor(Map<String, CommandLineParser> registration,
-                List<com.github.forax.umldoc.core.Package> module) {
+                List<Package> module) {
     this.registration = Map.copyOf(registration);
     this.module = List.copyOf(module);
     this.state = State.READWRITE;
