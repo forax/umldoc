@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 /**
  * Contain the main method.
  */
@@ -44,15 +46,19 @@ public class Main {
       return;
     }
 
+    var fileName = "resultFile.md";
+    var inputPath = Path.of(args[1]);
+    var outputPath = Path.of(fileName);
     try (
-            var reader = Files.newBufferedReader(Path.of(args[1]));
-            var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
+            var reader = Files.newBufferedReader(inputPath);
+            var writer = Files.newBufferedWriter(outputPath)
     ) {
       var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
 
       var editor = new Editor(config, packages);
       editor.edit(writer, reader);
+      Files.move(outputPath, inputPath, REPLACE_EXISTING);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
     }
