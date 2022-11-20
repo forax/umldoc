@@ -104,7 +104,7 @@ public final class ClassFileParser {
                                              String descriptor,
                                              String signature,
                                              Object value) {
-                //TODO create method to get the full type
+                //TODO create method to get the full ownerName
                 // (like String, List<String>, Set<Entity> for exemple -->
                 // concatenation of descriptor and signature
                 if (modifier(access) != null) {

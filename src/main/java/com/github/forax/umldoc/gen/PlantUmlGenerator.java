@@ -21,7 +21,8 @@ import java.util.List;
  * Generate a class diagram using the plantuml format.
  */
 public final class PlantUmlGenerator implements Generator {
-  private TypeInfo currentEntity;
+  // FIXME !!!, a generator should not have fields ! otherwise, it is not thread safe
+  private String currentEntityName;
 
   private static String cardinality(Cardinality cardinality) {
     return switch (cardinality) {
@@ -131,9 +132,9 @@ public final class PlantUmlGenerator implements Generator {
   private void generateMethodCall(Call.MethodCall methodCall, Writer writer)
           throws IOException {
 
-    writer.append(currentEntity.name())
+    writer.append(currentEntityName)
             .append(" -> ")
-            .append(methodCall.type().name())
+            .append(methodCall.ownerName())
             .append(": ")
             .append(methodCall.name())
             .append("()")
@@ -158,11 +159,11 @@ public final class PlantUmlGenerator implements Generator {
     for (var call : group.calls()) {
       if (call instanceof Call.MethodCall methodCall) {
         generateMethodCall(methodCall, writer);
-        currentEntity = methodCall.type();
+        currentEntityName = methodCall.ownerName();
       } else if (call instanceof Call.Group groupCall) {
         generateCalls(groupCall, writer);
       } else {
-        throw new IllegalStateException();
+        throw new AssertionError();
       }
     }
 
@@ -215,7 +216,7 @@ public final class PlantUmlGenerator implements Generator {
     return callGroup.calls().stream()
         .filter(call -> {
           if (call instanceof MethodCall methodCall) {
-            return methodCall.type().name().startsWith(p.name());
+            return methodCall.ownerName().startsWith(p.name());
           }
           return true;
         })
@@ -237,7 +238,7 @@ public final class PlantUmlGenerator implements Generator {
     if (header) {
       addHeader(writer);
     }
-    currentEntity = entryEntity.type();
+    currentEntityName = entryEntity.type().name();
     generateCalls(relevantCallsGroup(entryPoint.callGroup(), p), writer);
 
     if (header) {

@@ -150,11 +150,10 @@ public class ClassFileParserTest {
                     List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
-                                    TypeInfo.of(Tv.class.getName()),
+                                    Tv.class.getName(),
                                     "changeChannel",
-                                    TypeInfo.of(boolean.class.getName()),
-                                    List.of(TypeInfo.of(String.class.getName()))
-                            )))
+                                    "(Ljava/lang/String;)Z")
+                            ))
             ),
             new Method(
                     Set.of(Modifier.PUBLIC),
@@ -163,11 +162,10 @@ public class ClassFileParserTest {
                     List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
-                                    TypeInfo.of(Tv.class.getName()),
+                                    Tv.class.getName(),
                                     "getChannel",
-                                    new TypeInfo(Optional.empty(), List.class.getName(), List.of(TypeInfo.of(String.class.getName()))),
-                                    List.of()
-                            )))
+                                    "(Ljava/util/List;)V")
+                            ))
             )
     );
     assertEquals(Remote.class.getName(), parsingResult.type().name());
