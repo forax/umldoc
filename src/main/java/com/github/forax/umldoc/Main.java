@@ -1,8 +1,5 @@
 package com.github.forax.umldoc;
 
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import com.github.forax.umldoc.classfile.ModuleScrapper;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.editor.CommandLineParser;
@@ -47,6 +44,13 @@ public class Main {
       return;
     }
 
+    var index = args[1].lastIndexOf(".");
+    if(index == -1) {
+      System.err.println("Couldn't find an extension in "+args[1]);
+      return;
+    }
+
+    var extension = args[1].substring(index + 1);
     var fileName = "resultFile.md";
     var inputPath = Path.of(args[1]);
     var outputPath = Path.of(fileName);
@@ -57,9 +61,8 @@ public class Main {
       var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
 
-      var editor = new Editor(config, packages);
+      var editor = new Editor(extension, config, packages);
       editor.edit(writer, reader);
-      Files.move(outputPath, inputPath, REPLACE_EXISTING, ATOMIC_MOVE);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
     }
