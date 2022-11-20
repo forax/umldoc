@@ -322,33 +322,36 @@ public class PlantUmlGeneratorTest {
             Call.Group.EMPTY_GROUP
     ));
 
-    // ICICICIIC
-    var bobAltGroup = new Call.Group(Call.Group.Kind.ALTERNATE, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
-                    "method2",
-                    new TypeInfo(Optional.empty(), "void", List.of()),
-                    List.of()
-            ),
-            Call.Group.EMPTY_GROUP,
+    var bobAltElse1Group = new Call.Group(Call.Group.Kind.NONE, List.of(
             new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
                     "method3",
                     new TypeInfo(Optional.empty(), "void", List.of()),
                     List.of()
             ),
-            method3Group,
+            method3Group
+    ));
+
+    var bobAltElse2Group = new Call.Group(Call.Group.Kind.NONE, List.of(
             new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
                     "method7",
                     new TypeInfo(Optional.empty(), "void", List.of()),
                     List.of()
+            )
+    ));
+
+    var bobAltGroup = new Call.Group(Call.Group.Kind.ALTERNATE, List.of(
+            new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
+                    "method2",
+                    new TypeInfo(Optional.empty(), "void", List.of()), List.of()
             ),
-            Call.Group.EMPTY_GROUP
+            bobAltElse1Group,
+            bobAltElse2Group
     ));
 
     var mainGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
             new Call.MethodCall(new TypeInfo(Optional.empty(), "Bob", List.of()),
                     "method1",
-                    new TypeInfo(Optional.empty(), "void", List.of()),
-                    List.of()
+                    new TypeInfo(Optional.empty(), "void", List.of()), List.of()
             ),
             bobAltGroup
     ));

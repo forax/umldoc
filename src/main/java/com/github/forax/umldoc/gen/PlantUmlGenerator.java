@@ -142,39 +142,32 @@ public final class PlantUmlGenerator implements Generator {
             .append('\n');
   }
 
-  private void generateCalls(Call.Group group, Writer writer) throws IOException {
+  private void generateCalls(Call.Group group, Call.Group.Kind parentGroupKind,
+                             Writer writer) throws IOException {
     if (group.equals(Call.Group.EMPTY_GROUP)) {
       return;
     }
 
-    var groupKind = group.kind();
+    var currentGroupKind = group.kind();
 
-    //    if( || parentKind.equals("else"))) {
-    //      writer.append("else\n");
-    //      // handleAlternate(groupCall, writer);
-    //    }
-    if (!groupKind.equals(Call.Group.Kind.NONE)
-            || (parentKind != null && (parentKind.equals(Call.Group.Kind.ALTERNATE)))) {
-      writer.append(groupKind(group.kind()));
+    if (!currentGroupKind.equals(Call.Group.Kind.NONE)
+            || parentGroupKind.equals(Call.Group.Kind.ALTERNATE)) {
+      writer.append(groupKind(currentGroupKind));
     }
 
     for (var call : group.calls()) {
       if (call instanceof Call.Group groupCall) {
         generateCalls(groupCall, writer);
+        generateCalls(groupCall, currentGroupKind, writer);
       }
 
       if (call instanceof Call.MethodCall methodCall) {
         generateMethodCall(methodCall, writer);
-        currentEntityName = methodCall.ownerName();
-      } else if (call instanceof Call.Group groupCall) {
-        generateCalls(groupCall, writer);
-      } else {
-        throw new AssertionError();
-        currentEntity = methodCall.type();
+        currentEntity = methodCall.type(); // FIXME
       }
     }
 
-    if (!groupKind.equals(Call.Group.Kind.NONE)) {
+    if (!currentGroupKind.equals(Call.Group.Kind.NONE)) {
       writer.append("end\n");
     }
   }
