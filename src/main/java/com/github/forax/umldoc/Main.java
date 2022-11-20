@@ -65,6 +65,8 @@ public class Main {
       editor.edit(writer, reader);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
+    } catch (IllegalArgumentException e) {
+      System.err.println(e + " - Supported file type : pu, mmd, md");
     }
   }
 }
