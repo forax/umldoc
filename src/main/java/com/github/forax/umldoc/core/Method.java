@@ -25,7 +25,8 @@ public record Method(Signature signature, Call.Group callGroup) {
    * @deprecated use {@link Method#Method(Signature, Call.Group)} instead.
    */
   @Deprecated
-  public Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo, List<Parameter> parameters, Call.Group callGroup) {
+  public Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
+                List<Parameter> parameters, Call.Group callGroup) {
     this(new Signature(modifiers, name, returnTypeInfo, parameters), callGroup);
   }
 
@@ -49,10 +50,10 @@ public record Method(Signature signature, Call.Group callGroup) {
      * @param parameters     the parameters
      */
     public Signature {
-      requireNonNull(modifiers);
+      modifiers = Set.copyOf(requireNonNull(modifiers));
       requireNonNull(name);
       requireNonNull(returnTypeInfo);
-      requireNonNull(parameters);
+      parameters = List.copyOf(requireNonNull(parameters));
     }
   }
 

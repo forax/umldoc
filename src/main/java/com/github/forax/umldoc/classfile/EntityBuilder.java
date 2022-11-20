@@ -47,7 +47,8 @@ final class EntityBuilder {
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parameters);
-    var methodBuilder = new MethodBuilder(new Method.Signature(modifiers, name, returnType, parameters));
+    var methodBuilder = new MethodBuilder(new Method.Signature(modifiers, name,
+            returnType, parameters));
     methodBuilders.add(methodBuilder);
     return methodBuilder;
   }
