@@ -1,6 +1,5 @@
 package com.github.forax.umldoc.classfile;
 
-import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
@@ -107,15 +106,8 @@ final class ClassFileParser {
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
                                       boolean isInterface) {
 
-            var ownerOfMethod = TypeInfo.of(owner.replace("/", "."));
-            var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
-                    .map(parameter -> TypeInfo.of(parameter.getClassName()))
-                    .toList();
-
-            Call.MethodCall call = new Call.MethodCall(ownerOfMethod, name,
-                    returnType, parametersType);
-
+            var ownerName = owner.replace("/", ".");
+            var call = new Call.MethodCall(ownerName, name, descriptor);
             methodBuilder.addCallToGroup(call);
           }
         };

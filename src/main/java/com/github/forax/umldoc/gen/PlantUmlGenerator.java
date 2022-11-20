@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.AssociationDependency.Cardinality;
 import com.github.forax.umldoc.core.Call;
+import com.github.forax.umldoc.core.Call.MethodCall;
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
@@ -20,7 +21,8 @@ import java.util.List;
  * Generate a class diagram using the plantuml format.
  */
 public final class PlantUmlGenerator implements Generator {
-  private TypeInfo currentEntity;
+  // FIXME !!!, a generator should not have fields ! otherwise, it is not thread safe
+  private String currentEntityName;
 
   private static String cardinality(Cardinality cardinality) {
     return switch (cardinality) {
@@ -130,9 +132,9 @@ public final class PlantUmlGenerator implements Generator {
   private void generateMethodCall(Call.MethodCall methodCall, Writer writer)
           throws IOException {
 
-    writer.append(currentEntity.name())
+    writer.append(currentEntityName)
             .append(" -> ")
-            .append(methodCall.type().name())
+            .append(methodCall.ownerName())
             .append(": ")
             .append(methodCall.name())
             .append("()")
@@ -157,11 +159,11 @@ public final class PlantUmlGenerator implements Generator {
     for (var call : group.calls()) {
       if (call instanceof Call.MethodCall methodCall) {
         generateMethodCall(methodCall, writer);
-        currentEntity = methodCall.type();
+        currentEntityName = methodCall.ownerName();
       } else if (call instanceof Call.Group groupCall) {
         generateCalls(groupCall, writer);
       } else {
-        throw new IllegalStateException();
+        throw new AssertionError();
       }
     }
 
@@ -195,6 +197,32 @@ public final class PlantUmlGenerator implements Generator {
     }
   }
 
+  // FIXME move somewhere else
+  public static Call.Group relevantCallsGroup(Call.Group callGroup, Package p) {
+    var relevantCalls = getCallsFromPackage(callGroup, p);
+    return new Call.Group(callGroup.kind(), relevantCalls);
+  }
+
+
+  /**
+   * A method which returns the list of relevant calls for the sequence diagram.
+   * A call is relevant if its target is one of our entity.
+   *
+   * @param p the {@link Package} which we are interested in
+   * @return the list of relevant calls
+   */
+  // FIXME move somewhere else
+  static List<Call> getCallsFromPackage(Call.Group callGroup, Package p) {
+    return callGroup.calls().stream()
+        .filter(call -> {
+          if (call instanceof MethodCall methodCall) {
+            return methodCall.ownerName().startsWith(p.name());
+          }
+          return true;
+        })
+        .toList();
+  }
+
   @Override
   public void generateSequenceDiagram(boolean header, Entity entryEntity,
                                       Method entryPoint, Package p,
@@ -210,8 +238,8 @@ public final class PlantUmlGenerator implements Generator {
     if (header) {
       addHeader(writer);
     }
-    currentEntity = entryEntity.type();
-    generateCalls(entryPoint.relevantCallsGroup(p), writer);
+    currentEntityName = entryEntity.type().name();
+    generateCalls(relevantCallsGroup(entryPoint.callGroup(), p), writer);
 
     if (header) {
       addFooter(writer);

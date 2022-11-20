@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import com.github.forax.umldoc.gen.PlantUmlGenerator;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -128,7 +130,7 @@ public class ClassFileParserTest {
 
     var tvMethods = parsingResult.methods().stream()
             .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(p).calls())))
+                    new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())))
             .toList();
 
     assertEquals(methods, tvMethods);
@@ -148,11 +150,10 @@ public class ClassFileParserTest {
                     List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
-                                    TypeInfo.of(Tv.class.getName()),
+                                    Tv.class.getName(),
                                     "changeChannel",
-                                    TypeInfo.of(boolean.class.getName()),
-                                    List.of(TypeInfo.of(String.class.getName()))
-                            )))
+                                    "(Ljava/lang/String;)Z")
+                            ))
             ),
             new Method(
                     Set.of(Modifier.PUBLIC),
@@ -161,11 +162,10 @@ public class ClassFileParserTest {
                     List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
-                                    TypeInfo.of(Tv.class.getName()),
+                                    Tv.class.getName(),
                                     "getChannel",
-                                    new TypeInfo(Optional.empty(), List.class.getName(), List.of(TypeInfo.of(String.class.getName()))),
-                                    List.of()
-                            )))
+                                    "(Ljava/util/List;)V")
+                            ))
             )
     );
     assertEquals(Remote.class.getName(), parsingResult.type().name());
@@ -173,7 +173,7 @@ public class ClassFileParserTest {
     var p = new Package(Remote.class.getPackageName(), List.of(), List.of());
     var remoteMethods = parsingResult.methods().stream()
             .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(p).calls())
+                    new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())
             ))
             .toList();
 
