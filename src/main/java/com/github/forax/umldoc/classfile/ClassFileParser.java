@@ -4,18 +4,24 @@ import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
+import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
@@ -97,19 +103,63 @@ final class ClassFileParser {
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
         var method = entityBuilder.addMethod(modifiers, name, returnType, parameters, EMPTY_GROUP);
+        System.out.println(" METHOD ENTER  " + name + "descriptor:" + descriptor + "name:" + name + "signature:" + signature);
 
-        return new MethodVisitor(ASM9) {
+        var x = new MethodVisitor(ASM9) {
+          private ArrayList<Call.MethodCall> methodsCallBuffer = new ArrayList<>();
+          private final HashMap<Integer, String> instructions = new HashMap<>();
+
           @Override
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
                                       boolean isInterface) {
+            System.out.println(opcode + " METHOD CALL  " + " Owner " + owner + " name " + name
+                    + "descriptor:" + descriptor);
             var type = TypeInfo.of(owner);
             var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
                     .map(parameter -> TypeInfo.of(parameter.getClassName()))
                     .toList();
             var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            entityBuilder.addMethodsCall(method, type, name, returnType, parametersType);
+            var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
+            methodsCallBuffer.add(methodCall);
+            //entityBuilder.addMethodsCall(method, type, name, returnType, parametersType);
+          }
+
+          @Override
+          public void visitJumpInsn(int opcode, Label label) {
+            if (opcode == Opcodes.GOTO) {
+              //if (instructions.contains(label.toString())) {
+              //This is loop
+              //}
+              System.out.println(opcode + " GOTO  " + label);
+            } else if ((opcode >= 153 && opcode <= 166) || opcode == 198 || opcode == 199) {
+              System.out.println(opcode + " IF  " + label);
+            }
+          }
+
+          @Override
+          public void visitLabel(Label label) {
+            System.out.println("LABEL 2 :  " + label);
+            //System.out.println(label.getOffset());
+          }
+
+          @Override
+          public void visitIincInsn(int varIndex, int increment) {
+            System.out.println("INDEX :  " + varIndex + " INCREMENT : " + increment);
+            //System.out.println(label.getOffset());
+          }
+
+          @Override
+          public void visitLineNumber(int line, Label start) {
+            System.out.println("LINE :  " + line  + " LABEL : " + start);
+            instructions.put(line, start.toString());
+          }
+
+          @Override
+          public void visitEnd() {
+            System.out.println(instructions);
           }
         };
+        return x;
       }
     }, 0);
     return new ParsingResult(entityBuilder, delegations, superTypes);

@@ -66,6 +66,57 @@ final class EntityBuilder {
     var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
     var methodCallList = mappedMethodsToCall.computeIfAbsent(method, m -> new ArrayList<>());
     methodCallList.add(methodCall);
+    int i = 0;
+
+    if (i < 0) {
+      i++;
+      while (true) {
+
+      }
+    }
+
+    while (i < 5) {
+      i++;
+      test();
+      test2();
+    }
+    if (test3() != test4()) {
+      test();
+    }
+
+    while (test3() != test4()) {
+      test();
+    }
+
+    if (i > 1) {
+      test();
+    } else {
+      test2();
+    }
+
+    for (i = 5; i < 10; i++) {
+      test();
+      test2();
+    }
+
+    test();
+    test2();
+  }
+
+  private void test() {
+
+  }
+
+  private void test2() {
+
+  }
+
+  private boolean test3() {
+    return true;
+  }
+
+  private boolean test4() {
+    return false;
   }
 
   public Entity build() {
