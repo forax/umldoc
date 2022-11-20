@@ -122,10 +122,11 @@ public final class PlantUmlGenerator implements Generator {
 
   private static String groupKind(Call.Group.Kind groupKind) {
     return switch (groupKind) {
-      case LOOP -> "loop";
-      case OPTIONAL -> "opt";
-      case ALTERNATE -> "alt";
-      case NONE, PARALLEL -> "group";
+      case LOOP -> "loop\n";
+      case OPTIONAL -> "opt\n";
+      case ALTERNATE -> "alt\n";
+      case PARALLEL -> "group\n";
+      default -> "else\n";
     };
   }
 
@@ -139,12 +140,6 @@ public final class PlantUmlGenerator implements Generator {
             .append(methodCall.name())
             .append("()")
             .append('\n');
-
-    // Alice -> Bob: method name
-    // activate Bob
-
-    // Bob -> Alice: method name
-    // deactivate Bob
   }
 
   private void generateCalls(Call.Group group, Writer writer) throws IOException {
@@ -152,8 +147,15 @@ public final class PlantUmlGenerator implements Generator {
       return;
     }
 
-    if (!group.kind().equals(Call.Group.Kind.NONE)) {
-      writer.append(groupKind(group.kind())).append('\n');
+    var groupKind = group.kind();
+
+    //    if( || parentKind.equals("else"))) {
+    //      writer.append("else\n");
+    //      // handleAlternate(groupCall, writer);
+    //    }
+    if (!groupKind.equals(Call.Group.Kind.NONE)
+            || (parentKind != null && (parentKind.equals(Call.Group.Kind.ALTERNATE)))) {
+      writer.append(groupKind(group.kind()));
     }
 
     for (var call : group.calls()) {
@@ -169,14 +171,11 @@ public final class PlantUmlGenerator implements Generator {
       } else {
         throw new AssertionError();
         currentEntity = methodCall.type();
-        if (!activatedLifeLinesForEntities.contains(currentEntity)) {
-          activateLifeLine(writer);
-        }
       }
     }
 
-    if (!group.kind().equals(Call.Group.Kind.NONE)) {
-      writer.append('\n').append("end");
+    if (!groupKind.equals(Call.Group.Kind.NONE)) {
+      writer.append("end\n");
     }
   }
 
@@ -232,10 +231,6 @@ public final class PlantUmlGenerator implements Generator {
     requireNonNull(entryEntity);
     requireNonNull(entryPoint);
     requireNonNull(writer);
-
-    if (!entities.contains(entryEntity.type().name())) {
-      throw new IllegalStateException();
-    }
 
     if (header) {
       addHeader(writer);
