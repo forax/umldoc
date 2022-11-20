@@ -33,15 +33,15 @@ public class Main {
       return;
     }
     var finder = ModuleFinder.of(Path.of(args[0]));
-    var module = finder.find("com.github.forax.umldoc");
+    var modules = finder.findAll().iterator();
 
-    if (module.isEmpty()) {
-      System.err.println("Couldn't find the Module");
+    if (!modules.hasNext()) {
+      System.err.println("Couldn't find a Module");
       return;
     }
     List<Package> packages;
     try {
-      packages = ModuleScrapper.scrapModule(module.get());
+      packages = ModuleScrapper.scrapModule(modules.next());
     } catch (IOException e) {
       System.err.println("Couldn't get the list of Packages : " + e.getMessage());
       return;
