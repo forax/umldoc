@@ -1,9 +1,9 @@
 package com.github.forax.umldoc.editor;
 
 import com.github.forax.umldoc.gen.PlantUmlGenerator;
+import java.util.Optional;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
-import java.util.Optional;
 
 /**
  * This class is used to parse the command line for the PlantUML export.
@@ -30,7 +30,6 @@ public class PlantCmdLineParser implements CommandLineParser {
 
     }
   }
-
 
   /**
    * This method parse each line, by detecting if it starts with the begin sequence :
