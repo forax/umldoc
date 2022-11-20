@@ -45,8 +45,8 @@ public class Main {
     }
 
     var index = args[1].lastIndexOf(".");
-    if(index == -1) {
-      System.err.println("Couldn't find an extension in "+args[1]);
+    if (index == -1) {
+      System.err.println("Couldn't find an extension in " + args[1]);
       return;
     }
 

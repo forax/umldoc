@@ -22,10 +22,17 @@ public class Editor {
     READWRITE
   }
 
+  enum Extension {
+    MARKDOWN,
+    PLANTUML,
+    MERMAID
+  }
+
   private final Map<String, CommandLineParser> registration;
   private final List<Package> module;
   private State state;
   private CommandLineParser parser;
+  private Extension extension;
 
   /**
    * The constructor of Editor.
@@ -33,11 +40,17 @@ public class Editor {
    * @param registration Map, register a String with a CommandLineParser.
    * @param module List, a list of package.
    */
-  public Editor(Map<String, CommandLineParser> registration,
+  public Editor(String extension, Map<String, CommandLineParser> registration,
                 List<Package> module) {
     this.registration = Map.copyOf(registration);
     this.module = List.copyOf(module);
     this.state = State.READWRITE;
+    switch (extension) {
+      case "md" -> this.extension = Extension.MARKDOWN;
+      case "pu" -> this.extension = Extension.PLANTUML;
+      case "mmd" -> this.extension = Extension.MERMAID;
+      default -> throw new IllegalArgumentException("unsupported file type");
+    }
   }
 
   /**
@@ -74,6 +87,9 @@ public class Editor {
    * @throws IOException If the file couldn't be opened.
    */
   State readWrite(String line, Writer writer) throws IOException {
+    if (extension != Extension.MARKDOWN) {
+      return searchCommandLine(line, writer);
+    }
     writer.write(line + "\n");
     if (line.matches("```.+")) {
       var type = line.substring("```".length());
@@ -101,7 +117,7 @@ public class Editor {
       return State.READONLY;
     }
     writer.write(line);
-    if (line.matches("```")) {
+    if (line.matches("```") || extension != Extension.MARKDOWN) {
       return State.READWRITE;
     }
     return State.SEARCHCOMMANDLINE;
@@ -116,7 +132,7 @@ public class Editor {
    * @return State, READWRITE or READONLY.
    */
   State readOnly(String line, Writer writer) throws IOException {
-    if (line.matches("```")) {
+    if (line.matches("```") || extension != Extension.MARKDOWN) {
       writer.write(line);
       return State.READWRITE;
     }

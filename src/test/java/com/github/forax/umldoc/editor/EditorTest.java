@@ -16,7 +16,7 @@ public class EditorTest {
     public void readWriteShouldReturnSearchCommandLine() throws IOException {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
-        var editor = new Editor(map, List.of());
+        var editor = new Editor("md", map, List.of());
         var line = "```test";
         var result = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.SEARCHCOMMANDLINE, result);
@@ -26,7 +26,7 @@ public class EditorTest {
     public void readWriteShouldReturnReadWrite() throws IOException {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
-        var editor = new Editor(map, List.of());
+        var editor = new Editor("md", map, List.of());
         var line = "```notest:(";
         var result = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.READWRITE, result);
@@ -37,7 +37,7 @@ public class EditorTest {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
         var testPackage = new Package("test", List.of(), List.of());
-        var editor = new Editor(map, List.of(testPackage));
+        var editor = new Editor("md", map, List.of(testPackage));
         var line = "```test";
         var parserSetter = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.SEARCHCOMMANDLINE, parserSetter);
@@ -50,7 +50,7 @@ public class EditorTest {
     public void searchCommandLineShouldReturnReadWrite() throws IOException {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
-        var editor = new Editor(map, List.of());
+        var editor = new Editor("md", map, List.of());
         var line = "```test";
         var parserSetter = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.SEARCHCOMMANDLINE, parserSetter);
@@ -63,7 +63,7 @@ public class EditorTest {
     public void searchCommandLineShouldReturnSearchCommandLine() throws IOException {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
-        var editor = new Editor(map, List.of());
+        var editor = new Editor("md", map, List.of());
         var line = "```test";
         var parserSetter = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.SEARCHCOMMANDLINE, parserSetter);
@@ -77,7 +77,7 @@ public class EditorTest {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
         var testPackage = new Package("test", List.of(), List.of());
-        var editor = new Editor(map, List.of(testPackage));
+        var editor = new Editor("md", map, List.of(testPackage));
         var line = "```test";
         var parserSetter = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.SEARCHCOMMANDLINE, parserSetter);
@@ -94,7 +94,7 @@ public class EditorTest {
         var map = new HashMap<String, CommandLineParser>();
         map.put("test", new MermaidCmdLineParser());
         var testPackage = new Package("test", List.of(), List.of());
-        var editor = new Editor(map, List.of(testPackage));
+        var editor = new Editor("md", map, List.of(testPackage));
         var line = "```test";
         var parserSetter = editor.readWrite(line, new StringWriter());
         assertEquals(Editor.State.SEARCHCOMMANDLINE, parserSetter);
