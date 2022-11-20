@@ -75,7 +75,7 @@ public class Editor {
    * @throws IOException If the file couldn't be opened.
    */
   State readWrite(String line, Writer writer) throws IOException {
-    writer.write(line);
+    writer.write(line + "\n");
     if (line.matches("```.+")) {
       var type = line.substring("```".length());
       parser = registration.get(type);
@@ -102,7 +102,7 @@ public class Editor {
       return State.READONLY;
     }
     writer.write(line);
-    if (parser.endline(line)) {
+    if (line.matches("```")) {
       return State.READWRITE;
     }
     return State.SEARCHCOMMANDLINE;
@@ -117,7 +117,7 @@ public class Editor {
    * @return State, READWRITE or READONLY.
    */
   State readOnly(String line, Writer writer) throws IOException {
-    if (parser.endline(line)) {
+    if (line.matches("```")) {
       writer.write(line);
       return State.READWRITE;
     }
