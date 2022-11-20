@@ -103,9 +103,10 @@ final class ClassFileParser {
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
         var method = entityBuilder.addMethod(modifiers, name, returnType, parameters, EMPTY_GROUP);
-        System.out.println(" METHOD ENTER  " + name + "descriptor:" + descriptor + "name:" + name + "signature:" + signature);
+        System.out.println(" METHOD ENTER  " + name + "descriptor:" + descriptor
+                + "name:" + name + "signature:" + signature + "  " + method);
 
-        var x = new MethodVisitor(ASM9) {
+        return new MethodVisitor(ASM9) {
           private ArrayList<Call.MethodCall> methodsCallBuffer = new ArrayList<>();
           private final HashMap<Integer, String> instructions = new HashMap<>();
 
@@ -159,7 +160,6 @@ final class ClassFileParser {
             System.out.println(instructions);
           }
         };
-        return x;
       }
     }, 0);
     return new ParsingResult(entityBuilder, delegations, superTypes);

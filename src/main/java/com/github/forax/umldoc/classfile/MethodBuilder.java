@@ -4,19 +4,14 @@ import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Set;
-
-import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 
 final class MethodBuilder {
   private final GroupBuilder builder = new GroupBuilder();
@@ -25,7 +20,8 @@ final class MethodBuilder {
   private final List<Method.Parameter> parameters;
   private final TypeInfo returnType;
 
-  public MethodBuilder(Set<Modifier> modifiers, String name, TypeInfo returnType, List<Method.Parameter> parameters) {
+  public MethodBuilder(Set<Modifier> modifiers, String name, TypeInfo returnType,
+                       List<Method.Parameter> parameters) {
     this.modifiers = Objects.requireNonNull(modifiers);
     this.name = Objects.requireNonNull(name);
     this.returnType = Objects.requireNonNull(returnType);
@@ -44,9 +40,9 @@ final class MethodBuilder {
     builder.addMethod(instructionName, method);
   }
 
-  public Method build(){
-    var groupCall = builder.build();
-    return new Method(modifiers, name, returnType, parameters, groupCall);
+  public Method build() {
+    return new Method(modifiers, name, returnType, parameters,
+            builder.build().orElseGet(() -> Call.Group.EMPTY_GROUP));
   }
 
   static class GroupBuilder {
@@ -75,22 +71,25 @@ final class MethodBuilder {
       list.addAll(methodCall);
     }
 
-    Call.Group build() {
+    Optional<Call.Group> build() {
       //TODO Optional<Call.Group> if no methods found into GroupBuilder ?
       var callsList = new ArrayList<Call>();
       var instruction = methodInstructions.pollLast();
       while (!(instruction == null)) {
-        // If the type of the instruction is IF then add the associated Call.Group otherwise add methods associated to the instruction
-        if(instruction.type == InstructionType.IF){
-          callsList.add(groups.get(instruction.instructionName).build());
-        } else {
-          var instructionMethods = methods.get(instruction.instructionName);
-          if(instructionMethods != null){
-            callsList.addAll(instructionMethods);
-          }
+        var instructionMethods = methods.get(instruction.instructionName);
+        if (instructionMethods != null) {
+          callsList.addAll(instructionMethods);
         }
+        var getGroup = groups.get(instruction.instructionName);
+        if (getGroup != null) {
+          getGroup.build().ifPresent(callsList::add);
+        }
+        instruction = methodInstructions.pollLast();
       }
-      return new Call.Group(kind, callsList);
+      if (callsList.isEmpty()) {
+        return Optional.empty();
+      }
+      return Optional.of(new Call.Group(kind, callsList));
     }
 
     void setKind(Call.Group.Kind kind) {
@@ -128,11 +127,12 @@ final class MethodBuilder {
           //Should be if/else
         } else {
           //Add current instruction methods to the new group
-          var instructionMethods = methods.remove(instructionName);
+          var instructionMethods = methods.remove(instruction.instructionName);
           if (instructionMethods != null) {
+            newGroup.addInstruction(InstructionType.NONE, instruction.instructionName);
             newGroup.addMethods(instruction.instructionName, instructionMethods);
           }
-          addGroup(instructionName, newGroup);
+          //addGroup(instructionName, newGroup);
           allInstructions.remove(instruction.instructionName);
         }
         instruction = methodInstructions.pollLast();
@@ -144,6 +144,12 @@ final class MethodBuilder {
       // Set kind of the new group
       if (type == InstructionType.GOTO) {
         newGroup.setKind(Call.Group.Kind.LOOP);
+        var instructionMethods = methods.remove(instructionName);
+        if (instructionMethods != null) {
+          newGroup.addInstruction(InstructionType.NONE, instructionName);
+          newGroup.addMethods(instructionName, instructionMethods);
+        }
+
       } else if (type == InstructionType.IF) {
         newGroup.setKind(Call.Group.Kind.OPTIONAL);
       } else {
