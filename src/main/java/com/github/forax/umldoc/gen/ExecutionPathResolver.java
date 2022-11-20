@@ -10,6 +10,9 @@ import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that compute the execution path (method calls and subsequent method calls).
+ */
 public class ExecutionPathResolver {
   record ExecutionItem(Entity source, Entity target, Method method) {
     ExecutionItem {
@@ -19,7 +22,17 @@ public class ExecutionPathResolver {
     }
   }
 
-  public static List<ExecutionItem> generateExecutionPath(Entity entryEntity, Method entryPoint, Package p) {
+  /**
+   * Generate the execution path from a given entry in the program.
+   *
+   * @param entryEntity the entity defining the entry method
+   * @param entryPoint the entry method
+   * @param p the package
+   * @return a list of {@link ExecutionItem} that represents the execution path
+   */
+  public static List<ExecutionItem> generateExecutionPath(Entity entryEntity,
+                                                          Method entryPoint,
+                                                          Package p) {
     requireNonNull(entryEntity);
     requireNonNull(entryPoint);
     requireNonNull(p);
@@ -32,7 +45,9 @@ public class ExecutionPathResolver {
     return calls;
   }
 
-  static List<ExecutionItem> resolveCallExecution(Call call, Entity sourceEntity, List<Entity> entities) {
+  static List<ExecutionItem> resolveCallExecution(Call call,
+                                                  Entity sourceEntity,
+                                                  List<Entity> entities) {
     var callExecution = new ArrayList<ExecutionItem>();
     if (call instanceof Call.MethodCall methodCall) {
       var targetType = methodCall.type();
@@ -42,7 +57,7 @@ public class ExecutionPathResolver {
       callExecution.add(executionItem);
       var targetCalls = targetMethod.callGroup().calls();
       for (var subCall : targetCalls) {
-          callExecution.addAll(resolveCallExecution(subCall, targetEntity, entities));
+        callExecution.addAll(resolveCallExecution(subCall, targetEntity, entities));
       }
     } else if (call instanceof Call.Group group) {
       if (group.equals(Call.Group.EMPTY_GROUP)) {
@@ -69,14 +84,16 @@ public class ExecutionPathResolver {
     var methodParametersType = methodCall.parameterTypes();
     var methods = entity.methods();
     return methods.stream().filter(method -> {
-              var returnType = method.returnTypeInfo();
-              var parameters = method.parameters().stream().map(Method.Parameter::typeInfo).toList();
-              var name = method.name();
-              return returnType.equals(methodReturnType) &&
-                      parameters.equals(methodParametersType) &&
-                      name.equals(methodName);
-            })
-            .findFirst()
-            .orElseThrow();
+      var returnType = method.returnTypeInfo();
+      var parameters = method.parameters().stream()
+              .map(Method.Parameter::typeInfo)
+              .toList();
+      var name = method.name();
+      return returnType.equals(methodReturnType)
+              && parameters.equals(methodParametersType)
+              && name.equals(methodName);
+    })
+    .findFirst()
+    .orElseThrow();
   }
 }
