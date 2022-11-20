@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.AssociationDependency.Cardinality;
 import com.github.forax.umldoc.core.Call;
+import com.github.forax.umldoc.core.Call.MethodCall;
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
@@ -195,6 +196,32 @@ public final class PlantUmlGenerator implements Generator {
     }
   }
 
+  // FIXME move somewhere else
+  public static Call.Group relevantCallsGroup(Call.Group callGroup, Package p) {
+    var relevantCalls = getCallsFromPackage(callGroup, p);
+    return new Call.Group(callGroup.kind(), relevantCalls);
+  }
+
+
+  /**
+   * A method which returns the list of relevant calls for the sequence diagram.
+   * A call is relevant if its target is one of our entity.
+   *
+   * @param p the {@link Package} which we are interested in
+   * @return the list of relevant calls
+   */
+  // FIXME move somewhere else
+  static List<Call> getCallsFromPackage(Call.Group callGroup, Package p) {
+    return callGroup.calls().stream()
+        .filter(call -> {
+          if (call instanceof MethodCall methodCall) {
+            return methodCall.type().name().startsWith(p.name());
+          }
+          return true;
+        })
+        .toList();
+  }
+
   @Override
   public void generateSequenceDiagram(boolean header, Entity entryEntity,
                                       Method entryPoint, Package p,
@@ -211,7 +238,7 @@ public final class PlantUmlGenerator implements Generator {
       addHeader(writer);
     }
     currentEntity = entryEntity.type();
-    generateCalls(entryPoint.relevantCallsGroup(p), writer);
+    generateCalls(relevantCallsGroup(entryPoint.callGroup(), p), writer);
 
     if (header) {
       addFooter(writer);
