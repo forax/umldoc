@@ -2,7 +2,6 @@ package com.github.forax.umldoc.classfile;
 
 import static java.util.Objects.requireNonNull;
 
-import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
@@ -48,7 +47,7 @@ final class EntityBuilder {
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parameters);
-    var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters);
+    var methodBuilder = new MethodBuilder(new Method.Signature(modifiers, name, returnType, parameters));
     methodBuilders.add(methodBuilder);
     return methodBuilder;
   }

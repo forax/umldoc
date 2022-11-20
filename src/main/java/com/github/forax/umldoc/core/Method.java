@@ -15,6 +15,21 @@ import java.util.Set;
 public record Method(Signature signature, Call.Group callGroup) {
 
   /**
+   * A method of an {@link Entity}.
+   *
+   * @param modifiers      the method modifier
+   * @param name           the method name
+   * @param returnTypeInfo the return type
+   * @param parameters     the parameters
+   *
+   * @deprecated use {@link Method#Method(Signature, Call.Group)} instead.
+   */
+  @Deprecated
+  public Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo, List<Parameter> parameters, Call.Group callGroup) {
+    this(new Signature(modifiers, name, returnTypeInfo, parameters), callGroup);
+  }
+
+  /**
    * A method signature.
    *
    * @param modifiers      the method modifier
@@ -59,6 +74,18 @@ public record Method(Signature signature, Call.Group callGroup) {
 
   public TypeInfo returnTypeInfo() {
     return signature.returnTypeInfo();
+  }
+
+  public String name() {
+    return signature.name();
+  }
+
+  public List<Parameter> parameters() {
+    return signature.parameters();
+  }
+
+  public Set<Modifier> modifiers() {
+    return signature.modifiers();
   }
 
   /**
