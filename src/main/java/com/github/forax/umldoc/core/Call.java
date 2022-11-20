@@ -3,7 +3,6 @@ package com.github.forax.umldoc.core;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Either a method call or a group of method calls.
@@ -56,14 +55,14 @@ public sealed interface Call {
      * A method which returns the list of relevant calls for the sequence diagram.
      * A call is relevant if its target is one of our entity.
      *
-     * @param entitiesNames a {@link Set} containing every entity name
-     * @return the list of relevant Call
+     * @param p the {@link Package} which we are interested in
+     * @return the list of relevant calls
      */
-    public List<Call> getRelevantCallsFromSet(Set<? super String> entitiesNames) {
+    public List<Call> getCallsFromPackage(Package p) {
       return calls.stream()
               .filter(call -> {
                 if (call instanceof MethodCall methodCall) {
-                  return entitiesNames.contains(methodCall.type.name());
+                  return methodCall.type.name().startsWith(p.name());
                 }
                 return true;
               })

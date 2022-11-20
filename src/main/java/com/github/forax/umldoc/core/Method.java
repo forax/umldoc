@@ -34,8 +34,8 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
     requireNonNull(callGroup);
   }
 
-  public Call.Group relevantCallsGroup(Set<? super String> entities) {
-    var relevantCalls = callGroup.getRelevantCallsFromSet(entities);
+  public Call.Group relevantCallsGroup(Package p) {
+    var relevantCalls = callGroup.getCallsFromPackage(p);
     return new Call.Group(callGroup.kind(), relevantCalls);
   }
 
