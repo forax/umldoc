@@ -56,12 +56,9 @@ public class Main {
     var inputPath = Path.of(args[1]);
     var outputPath = Path.of(fileName);
     var extension = args[1].substring(index + 1);
-    var fileName = "resultFile.md";
-    var inputPath = Path.of(args[1]);
-    var outputPath = Path.of(fileName);
     try (
-            var reader = Files.newBufferedReader(inputPath);
-            var writer = Files.newBufferedWriter(outputPath)
+            var reader = Files.newBufferedReader(Path.of(args[1]));
+            var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
     ) {
       var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
