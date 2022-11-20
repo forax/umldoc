@@ -1,5 +1,8 @@
 package com.github.forax.umldoc;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.github.forax.umldoc.classfile.ModuleScrapper;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.editor.CommandLineParser;
@@ -11,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Contain the main method.
@@ -58,7 +59,7 @@ public class Main {
 
       var editor = new Editor(config, packages);
       editor.edit(writer, reader);
-      Files.move(outputPath, inputPath, REPLACE_EXISTING);
+      Files.move(outputPath, inputPath, REPLACE_EXISTING, ATOMIC_MOVE);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
     }
