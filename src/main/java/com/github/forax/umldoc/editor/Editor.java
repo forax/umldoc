@@ -34,7 +34,7 @@ public class Editor {
    * @param module List, a list of package.
    */
   public Editor(Map<String, CommandLineParser> registration,
-                List<com.github.forax.umldoc.core.Package> module) {
+                List<Package> module) {
     this.registration = Map.copyOf(registration);
     this.module = List.copyOf(module);
     this.state = State.READWRITE;
@@ -75,6 +75,7 @@ public class Editor {
    * @throws IOException If the file couldn't be opened.
    */
   State readWrite(String line, Writer writer) throws IOException {
+    writer.write(line + "\n");
     if (line.matches("```.+")) {
       var type = line.substring("```".length());
       parser = registration.get(type);
@@ -82,7 +83,6 @@ public class Editor {
         return State.SEARCHCOMMANDLINE;
       }
     }
-    writer.write(line);
     return State.READWRITE;
   }
 
@@ -101,10 +101,10 @@ public class Editor {
       getDiagram(optional.get(), writer);
       return State.READONLY;
     }
-    if (parser.endline(line)) {
+    writer.write(line);
+    if (line.matches("```")) {
       return State.READWRITE;
     }
-    writer.write(line);
     return State.SEARCHCOMMANDLINE;
   }
 
@@ -116,8 +116,9 @@ public class Editor {
    * @param writer Writer, write in a temporary file.
    * @return State, READWRITE or READONLY.
    */
-  State readOnly(String line, Writer writer) {
-    if (parser.endline(line)) {
+  State readOnly(String line, Writer writer) throws IOException {
+    if (line.matches("```")) {
+      writer.write(line);
       return State.READWRITE;
     }
     return State.READONLY;
