@@ -1,5 +1,8 @@
 package com.github.forax.umldoc;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.github.forax.umldoc.classfile.ModuleScrapper;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.editor.CommandLineParser;
@@ -49,7 +52,9 @@ public class Main {
       System.err.println("Couldn't find an extension in " + args[1]);
       return;
     }
-
+    var fileName = "resultFile.md";
+    var inputPath = Path.of(args[1]);
+    var outputPath = Path.of(fileName);
     var extension = args[1].substring(index + 1);
     var fileName = "resultFile.md";
     var inputPath = Path.of(args[1]);
@@ -63,6 +68,7 @@ public class Main {
 
       var editor = new Editor(extension, config, packages);
       editor.edit(writer, reader);
+      Files.move(outputPath, inputPath, REPLACE_EXISTING, ATOMIC_MOVE);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
     } catch (IllegalArgumentException e) {
