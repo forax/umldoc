@@ -1,20 +1,22 @@
 package com.github.forax.umldoc.classfile;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.github.forax.umldoc.classfile.ClassFileParser.ParsingResult;
 import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
+import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.TypeInfo;
-import java.util.Optional;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ClassFileParserTest {
   private static ParsingResult parseClass(Class<?> clazz) throws IOException {
@@ -122,10 +124,11 @@ public class ClassFileParserTest {
             )
     );
     assertEquals(Tv.class.getName(), parsingResult.type().name());
+    var p = new Package(Tv.class.getPackageName(), List.of(), List.of());
 
     var tvMethods = parsingResult.methods().stream()
             .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(Set.of(Tv.class.getName(), Remote.class.getName())).calls())))
+                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(p).calls())))
             .toList();
 
     assertEquals(methods, tvMethods);
@@ -167,9 +170,10 @@ public class ClassFileParserTest {
     );
     assertEquals(Remote.class.getName(), parsingResult.type().name());
 
+    var p = new Package(Remote.class.getPackageName(), List.of(), List.of());
     var remoteMethods = parsingResult.methods().stream()
             .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(Set.of(Tv.class.getName(), Remote.class.getName())).calls())
+                    new Call.Group(method.callGroup().kind(), method.relevantCallsGroup(p).calls())
             ))
             .toList();
 

@@ -24,4 +24,9 @@ public record Package(String name, List<Entity> entities, List<Dependency> depen
     entities = List.copyOf(entities);
     dependencies = List.copyOf(dependencies);
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }

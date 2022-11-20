@@ -9,13 +9,13 @@ import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Entity.Stereotype;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.SubtypeDependency;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * Generate a class diagram using the mermaid format.
@@ -139,7 +139,7 @@ public final class MermaidGenerator implements Generator {
 
   @Override
   public void generateSequenceDiagram(boolean header, Entity entryEntity,
-                                      Method entryPoint, Set<? super String> entities,
+                                      Method entryPoint, Package p,
                                       Writer writer) throws IOException {
     throw new UnsupportedOperationException("TODO");
   }
