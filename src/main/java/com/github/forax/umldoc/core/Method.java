@@ -9,10 +9,13 @@ import java.util.Set;
 /**
  * A method of an {@link Entity}.
  *
- * @param signature the method signature
- * @param callGroup the method call group
+ * @param modifiers      the method modifier
+ * @param name           the method name
+ * @param returnTypeInfo the return type
+ * @param parameters     the parameters
  */
-public record Method(Signature signature, Call.Group callGroup) {
+public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
+                     List<Parameter> parameters, Call.Group callGroup) {
 
   /**
    * A method signature.
@@ -24,6 +27,8 @@ public record Method(Signature signature, Call.Group callGroup) {
    */
   public record Signature(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
                           List<Parameter> parameters) {
+
+
 
     /**
      * Creates a method signature.
@@ -44,21 +49,23 @@ public record Method(Signature signature, Call.Group callGroup) {
   /**
    * Creates a method.
    *
-   * @param signature the method signature
-   * @param callGroup the group method calls from the implementation
+   * @param modifiers      the method modifier
+   * @param name           the method name
+   * @param returnTypeInfo the return type
+   * @param parameters     the parameters
+   * @param callGroup      the group method calls from the implementation
    */
   public Method {
-    requireNonNull(signature);
+    modifiers = Set.copyOf(modifiers);
+    requireNonNull(name);
+    requireNonNull(returnTypeInfo);
+    parameters = List.copyOf(parameters);
     requireNonNull(callGroup);
   }
 
   public Call.Group relevantCallsGroup(Package p) {
     var relevantCalls = callGroup.getCallsFromPackage(p);
     return new Call.Group(callGroup.kind(), relevantCalls);
-  }
-
-  public TypeInfo returnTypeInfo() {
-    return signature.returnTypeInfo();
   }
 
   /**
@@ -68,13 +75,12 @@ public record Method(Signature signature, Call.Group callGroup) {
    * @param name       the method name
    * @param returnType the return type
    * @param parameters the parameters
-   * @deprecated use {@link #Method(Signature, Call.Group) instead}
+   * @deprecated use {@link #Method(Set, String, TypeInfo, List, Call.Group) instead}
    */
   @Deprecated
   public Method(Set<Modifier> modifiers, String name, String returnType,
                 List<Parameter> parameters) {
-    this(new Signature(modifiers, name, TypeInfo.of(returnType), parameters),
-            Call.Group.EMPTY_GROUP);
+    this(modifiers, name, TypeInfo.of(returnType), parameters, Call.Group.EMPTY_GROUP);
   }
 
   /**
@@ -85,7 +91,7 @@ public record Method(Signature signature, Call.Group callGroup) {
    */
   @Deprecated
   public String returnType() {
-    return signature.returnTypeInfo.name();
+    return returnTypeInfo.name();
   }
 
   /**
