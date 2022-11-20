@@ -44,6 +44,13 @@ public class Main {
       return;
     }
 
+    var index = args[1].lastIndexOf(".");
+    if(index == -1) {
+      System.err.println("Couldn't find an extension in "+args[1]);
+      return;
+    }
+
+    var extension = args[1].substring(index + 1);
     try (
             var reader = Files.newBufferedReader(Path.of(args[1]));
             var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
