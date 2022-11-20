@@ -11,7 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExecutionPathResolver {
-  record ExecutionItem(Entity source, Entity target, Method method) { }
+  record ExecutionItem(Entity source, Entity target, Method method) {
+    ExecutionItem {
+      requireNonNull(source);
+      requireNonNull(target);
+      requireNonNull(method);
+    }
+  }
 
   public static List<ExecutionItem> generateExecutionPath(Entity entryEntity, Method entryPoint, Package p) {
     requireNonNull(entryEntity);
@@ -26,15 +32,18 @@ public class ExecutionPathResolver {
     return calls;
   }
 
-  private static List<ExecutionItem> resolveCallExecution(Call call, Entity sourceEntity, List<Entity> entities) {
+  static List<ExecutionItem> resolveCallExecution(Call call, Entity sourceEntity, List<Entity> entities) {
     var callExecution = new ArrayList<ExecutionItem>();
     if (call instanceof Call.MethodCall methodCall) {
       var targetType = methodCall.type();
       var targetEntity = findEntity(targetType, entities);
       var targetMethod = findMethodInEntity(methodCall, targetEntity);
       var executionItem = new ExecutionItem(sourceEntity, targetEntity, targetMethod);
-      resolveCallExecution(methodCall, targetEntity, entities);
       callExecution.add(executionItem);
+      var targetCalls = targetMethod.callGroup().calls();
+      for (var subCall : targetCalls) {
+          callExecution.addAll(resolveCallExecution(subCall, targetEntity, entities));
+      }
     } else if (call instanceof Call.Group group) {
       if (group.equals(Call.Group.EMPTY_GROUP)) {
         return List.of();
