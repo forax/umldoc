@@ -45,8 +45,8 @@ public class Main {
     }
 
     var index = args[1].lastIndexOf(".");
-    if(index == -1) {
-      System.err.println("Couldn't find an extension in "+args[1]);
+    if (index == -1) {
+      System.err.println("Couldn't find an extension in " + args[1]);
       return;
     }
 
@@ -58,7 +58,7 @@ public class Main {
       var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
       //config.put("plantuml", new PlantCmdLineParser());
 
-      var editor = new Editor(config, packages);
+      var editor = new Editor(extension, config, packages);
       editor.edit(writer, reader);
     } catch (IOException e) {
       System.err.println("Couldn't read or write in the file : " + e.getMessage());
