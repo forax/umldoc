@@ -1,6 +1,6 @@
 package com.github.forax.umldoc.gen;
 
-import static com.github.forax.umldoc.gen.ExecutionPathResolver.resolveCallExecution;
+import static com.github.forax.umldoc.gen.ExecutionPathResolver.resolve;
 import static com.github.forax.umldoc.gen.ExecutionPathResolver.ExecutionItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,13 +10,13 @@ import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Type;
 
 public class ExecutionPathResolverTest {
-
 
   @Test
   void ExecutionItemTest() {
@@ -43,7 +43,7 @@ public class ExecutionPathResolverTest {
       var entity = new Entity(Set.of(), TypeInfo.of("StartEntity"), Entity.Stereotype.CLASS, List.of(), List.of(method));
 
       assertEquals(List.of(new ExecutionItem(entity, entity, method)),
-              resolveCallExecution(methodCall, entity, List.of(entity)));
+              resolve(methodCall, entity, Map.of("StartEntity", entity)));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ExecutionPathResolverTest {
       var entity1 = new Entity(Set.of(), TypeInfo.of("entity1"), Entity.Stereotype.CLASS, List.of(), List.of(startingMethod));
       var entity2 = new Entity(Set.of(), TypeInfo.of("entity2"), Entity.Stereotype.CLASS, List.of(), List.of(finalMethod));
       assertEquals(List.of(new ExecutionItem(entity1, entity1, startingMethod), new ExecutionItem(entity1, entity2, finalMethod)),
-              resolveCallExecution(startingMethodCall, entity1, List.of(entity1, entity2)));
+              resolve(startingMethodCall, entity1, Map.of("entity1", entity1, "entity2", entity2)));
     }
   }
 }

@@ -6,11 +6,11 @@ import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Package;
-import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import org.objectweb.asm.Type;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class that compute the execution path (method calls and subsequent method calls).
@@ -27,38 +27,36 @@ public class ExecutionPathResolver {
   /**
    * Generate the execution path from a given entry in the program.
    *
-   * @param entryEntity the entity defining the entry method
-   * @param entryPoint the entry method
-   * @param p the package
+   * @param p           the package that scopes the execution path
+   * @param entryEntity the entity which contains the entry method
+   * @param entryMethod the method from which the execution path start
    * @return a list of {@link ExecutionItem} that represents the execution path
    */
-  public static List<ExecutionItem> generateExecutionPath(Entity entryEntity,
-                                                          Method entryPoint,
-                                                          Package p) {
-    requireNonNull(entryEntity);
-    requireNonNull(entryPoint);
-    requireNonNull(p);
-    var entities = p.entities();
-    var entryGroup = entryPoint.callGroup();
+  public static List<ExecutionItem> generateExecutionPath(Package p,
+                                                          Entity entryEntity,
+                                                          Method entryMethod) {
+    var entityRegistry = fillEntityRegistry(p.entities());
+    var entryGroup = entryMethod.callGroup();
     var calls = new ArrayList<ExecutionItem>();
     for (var call : entryGroup.calls()) {
-      calls.addAll(resolveCallExecution(call, entryEntity, entities));
+      calls.addAll(resolve(call, entryEntity, entityRegistry));
     }
     return calls;
   }
 
-  static List<ExecutionItem> resolveCallExecution(Call call,
-                                                  Entity sourceEntity,
-                                                  List<Entity> entities) {
-    var callExecution = new ArrayList<ExecutionItem>();
+  static List<ExecutionItem> resolve(Call call,
+                                     Entity sourceEntity,
+                                     Map<String, Entity> entityRegistry) {
+    var executionItems = new ArrayList<ExecutionItem>();
     if (call instanceof Call.MethodCall methodCall) {
-      var targetEntity = findEntity(methodCall.ownerName(), entities);
+      var targetEntity = findEntity(methodCall.ownerName(), entityRegistry);
       var targetMethod = findMethodInEntity(methodCall, targetEntity);
       var executionItem = new ExecutionItem(sourceEntity, targetEntity, targetMethod);
-      callExecution.add(executionItem);
+      //TODO : filter private methods
+      executionItems.add(executionItem);
       var targetCalls = targetMethod.callGroup().calls();
       for (var subCall : targetCalls) {
-        callExecution.addAll(resolveCallExecution(subCall, targetEntity, entities));
+        executionItems.addAll(resolve(subCall, targetEntity, entityRegistry));
       }
     } else if (call instanceof Call.Group group) {
       if (group.equals(Call.Group.EMPTY_GROUP)) {
@@ -66,38 +64,38 @@ public class ExecutionPathResolver {
       }
       var calls = group.calls();
       for (var subCall : calls) {
-        callExecution.addAll(resolveCallExecution(subCall, sourceEntity, entities));
+        executionItems.addAll(resolve(subCall, sourceEntity, entityRegistry));
       }
     }
-    return callExecution;
+    return executionItems;
   }
 
-  private static Entity findEntity(String entityName, List<Entity> entities) {
-    return entities.stream()
-            .filter(entity -> entity.type().name().equals(entityName))
-            .findFirst()
+  static Entity findEntity(String entityName, Map<String, Entity> entityRegistry) {
+    return Optional.ofNullable(entityRegistry.get(entityName))
             .orElseThrow();
   }
 
-  private static Method findMethodInEntity(Call.MethodCall methodCall, Entity entity) {
+  //Find match ?
+  static Method findMethodInEntity(Call.MethodCall methodCall, Entity entity) {
+
     var descriptor = methodCall.descriptor();
-    var methodReturnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-    var methodName = methodCall.name();
-    var methodParametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
-            .map(parameter -> TypeInfo.of(parameter.getClassName()))
-            .toList();
+    var name = methodCall.name();
     var methods = entity.methods();
     return methods.stream().filter(method -> {
-      var returnType = method.returnTypeInfo();
-      var parameters = method.parameters().stream()
-              .map(Method.Parameter::typeInfo)
-              .toList();
-      var name = method.name();
-      return returnType.equals(methodReturnType)
-              && parameters.equals(methodParametersType)
+      var methodDescriptor = method.descriptor();
+      var methodName = method.name();
+      return descriptor.equals(methodDescriptor)
               && name.equals(methodName);
     })
     .findFirst()
     .orElseThrow();
+  }
+
+  static HashMap<String, Entity> fillEntityRegistry(List<Entity> entities) {
+    var map = new HashMap<String, Entity>();
+    for (var entity : entities) {
+      map.put(entity.type().name(), entity);
+    }
+    return map;
   }
 }
