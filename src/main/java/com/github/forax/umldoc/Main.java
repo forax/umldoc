@@ -95,8 +95,8 @@ public class Main {
   private static Extension getExtension(String extension) {
     return switch (extension) {
       case "md" -> Extension.MARKDOWN;
-      case "pu" -> Extension.PLANTUML;
-      case "mmd" -> Extension.MERMAID;
+      case "pu", "plantuml" -> Extension.PLANTUML;
+      case "mmd", "mermaid" -> Extension.MERMAID;
       default -> throw new IllegalArgumentException("unsupported file type");
     };
   }
