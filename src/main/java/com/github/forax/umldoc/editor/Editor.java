@@ -138,8 +138,7 @@ public class Editor {
    * @return State, READWRITE or READONLY.
    */
   State readOnly(String line, Writer writer) throws IOException {
-    if (line.matches("```") ||
-            (extension != Extension.MARKDOWN && parser.endLine(line))) {
+    if (line.matches("```") || parser.endLine(line)) {
       writer.write(line + "\n");
       return State.READWRITE;
     }
