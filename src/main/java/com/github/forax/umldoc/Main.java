@@ -34,6 +34,7 @@ public class Main {
       System.err.println("Usage : java -jar path_of_jar"
               + " path_of_jar path_of_markdown");
       System.exit(-1);
+      return;
     }
     var finder = ModuleFinder.of(Path.of(args[0]));
     var modules = finder.findAll().iterator();
@@ -41,6 +42,7 @@ public class Main {
     if (!modules.hasNext()) {
       System.err.println("Couldn't find a Module");
       System.exit(-1);
+      return;
     }
     var packages = List.<Package>of();
     try {
@@ -48,12 +50,14 @@ public class Main {
     } catch (IOException e) {
       System.err.println("Couldn't get the list of Packages : " + e.getMessage());
       System.exit(-1);
+      return;
     }
 
     var index = args[1].lastIndexOf(".");
     if (index == -1) {
       System.err.println("Couldn't find an extension in " + args[1]);
       System.exit(-1);
+      return;
     }
     var fileName = "resultFile.md";
     var inputPath = Path.of(args[1]);
