@@ -108,7 +108,7 @@ public class Editor {
 
   /**
    * Method to search the command line.
-   * <br>Example : "%% umldoc ..." or "` umldoc ...".
+   * <br>Example : "%% umldoc ..." or "' umldoc ...".
    *
    * @param line String, it is one line of a file.
    * @param writer Writer, write in a temporary file.
@@ -121,8 +121,8 @@ public class Editor {
       getDiagram(optional.get(), writer);
       return State.READONLY;
     }
-    writer.write(line);
-    if (line.matches("```") || extension != Extension.MARKDOWN) {
+    writer.write(line + "\n");
+    if (line.matches("```") || parser.endLine(line)) {
       return State.READWRITE;
     }
     return State.SEARCHCOMMANDLINE;
@@ -137,8 +137,8 @@ public class Editor {
    * @return State, READWRITE or READONLY.
    */
   State readOnly(String line, Writer writer) throws IOException {
-    if (line.matches("```") || extension != Extension.MARKDOWN) {
-      writer.write(line);
+    if (line.matches("```") || parser.endLine(line)) {
+      writer.write(line + "\n");
       return State.READWRITE;
     }
     return State.READONLY;
