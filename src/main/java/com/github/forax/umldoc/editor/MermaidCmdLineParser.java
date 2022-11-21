@@ -53,7 +53,7 @@ public class MermaidCmdLineParser implements CommandLineParser {
 
 
   public boolean endline(String line) {
-    return line.equals("```"); //to replace with "@enduml" for PlantUML
+    return true;
   }
 
   private boolean isStartingLine(String line) {
