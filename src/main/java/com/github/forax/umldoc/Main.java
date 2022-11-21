@@ -40,7 +40,7 @@ public class Main {
 
     var finder = ModuleFinder.of(Path.of(args[0]));
     var packages = getPackage(finder);
-    if(packages == null) {
+    if (packages == null) {
       return;
     }
 
