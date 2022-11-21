@@ -9,44 +9,51 @@ import java.util.Set;
 /**
  * A method of an {@link Entity}.
  *
- * @param modifiers      the method modifier
- * @param name           the method name
+ * @param modifiers the method modifier
+ * @param name the method name
  * @param returnTypeInfo the return type
- * @param parameters     the parameters
+ * @param parameters the parameters
+ * @param descriptor the descriptor
+ * @param callGroup the call group
  */
 public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
-                     List<Parameter> parameters, Call.Group callGroup) {
+                     List<Parameter> parameters,
+                     String descriptor,
+                     Call.Group callGroup) {
 
   /**
    * Creates a method.
    *
-   * @param modifiers      the method modifier
-   * @param name           the method name
+   * @param modifiers the method modifier
+   * @param name the method name
    * @param returnTypeInfo the return type
-   * @param parameters     the parameters
-   * @param callGroup      the group method calls from the implementation
+   * @param parameters the parameters
+   * @param descriptor the descriptor
+   * @param callGroup the group method calls from the implementation
    */
   public Method {
     modifiers = Set.copyOf(modifiers);
     requireNonNull(name);
     requireNonNull(returnTypeInfo);
     parameters = List.copyOf(parameters);
+    requireNonNull(descriptor);
     requireNonNull(callGroup);
   }
 
   /**
    * Creates a method.
    *
-   * @param modifiers  the method modifier
-   * @param name       the method name
+   * @param modifiers the method modifier
+   * @param name the method name
    * @param returnType the return type
    * @param parameters the parameters
-   * @deprecated use {@link #Method(Set, String, TypeInfo, List, Call.Group) instead}
+   * @param descriptor the descriptor
+   * @deprecated use {@link #Method(Set, String, TypeInfo, List, String, Call.Group) instead}
    */
   @Deprecated
   public Method(Set<Modifier> modifiers, String name, String returnType,
-                List<Parameter> parameters) {
-    this(modifiers, name, TypeInfo.of(returnType), parameters, Call.Group.EMPTY_GROUP);
+                List<Parameter> parameters, String descriptor) {
+    this(modifiers, name, TypeInfo.of(returnType), parameters, descriptor, Call.Group.EMPTY_GROUP);
   }
 
   /**

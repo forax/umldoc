@@ -108,6 +108,7 @@ public class ClassFileParserTest {
                     "getChannel",
                     new TypeInfo(Optional.empty(), List.class.getName(),List.of(TypeInfo.of(String.class.getName()))),
                     List.of(),
+                    "()Ljava/util/List;",
                     Call.Group.EMPTY_GROUP
             ),
             new Method(
@@ -115,6 +116,7 @@ public class ClassFileParserTest {
                     "changeChannel",
                     TypeInfo.of(boolean.class.getName()),
                     List.of(new Method.Parameter("", TypeInfo.of(String.class.getName()))),
+                    "(Ljava/lang/String;)Z",
                     Call.Group.EMPTY_GROUP
             ),
             new Method(
@@ -122,6 +124,7 @@ public class ClassFileParserTest {
                     "shutdown",
                     TypeInfo.of(void.class.getName()),
                     List.of(),
+                    "()V",
                     Call.Group.EMPTY_GROUP
             )
     );
@@ -129,8 +132,11 @@ public class ClassFileParserTest {
     var p = new Package(Tv.class.getPackageName(), List.of(), List.of());
 
     var tvMethods = parsingResult.methods().stream()
-            .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())))
+            .map(method -> new Method(method.modifiers(),
+                method.name(),
+                method.returnTypeInfo(), method.parameters(),
+                method.descriptor(),
+                new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())))
             .toList();
 
     assertEquals(methods, tvMethods);
@@ -148,6 +154,7 @@ public class ClassFileParserTest {
                     "changeChannel",
                     TypeInfo.of(void.class.getName()),
                     List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
+                    "(" + Tv.class.descriptorString() + ")V",
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
                                     Tv.class.getName(),
@@ -160,6 +167,7 @@ public class ClassFileParserTest {
                     "countChannel",
                     TypeInfo.of(int.class.getName()),
                     List.of(new Method.Parameter("", TypeInfo.of(Tv.class.getName()))),
+                    "(" + Tv.class.descriptorString() + ")I",
                     new Call.Group(Call.Group.Kind.NONE,
                             List.of(new Call.MethodCall(
                                     Tv.class.getName(),
@@ -172,8 +180,12 @@ public class ClassFileParserTest {
 
     var p = new Package(Remote.class.getPackageName(), List.of(), List.of());
     var remoteMethods = parsingResult.methods().stream()
-            .map(method -> new Method(method.modifiers(), method.name(), method.returnTypeInfo(), method.parameters(),
-                    new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())
+            .map(method -> new Method(method.modifiers(),
+                method.name(),
+                method.returnTypeInfo(),
+                method.parameters(),
+                method.descriptor(),
+                new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())
             ))
             .toList();
 

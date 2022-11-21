@@ -16,6 +16,7 @@ public class MethodBuilder {
   private final String name;
   private final TypeInfo returnTypeInfo;
   private final List<Method.Parameter> parameters;
+  private final String descriptor;
   private final CallGroupBuilder callGroupBuilder = new CallGroupBuilder(Call.Group.Kind.NONE);
 
   /**
@@ -25,16 +26,19 @@ public class MethodBuilder {
    * @param name the name of the method
    * @param returnTypeInfo the return type of the method
    * @param parameters the list of parameters of the method
+   * @param descriptor the descriptor
    */
   public MethodBuilder(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
-                       List<Method.Parameter> parameters) {
+                       List<Method.Parameter> parameters, String descriptor) {
     Objects.requireNonNull(modifiers);
     Objects.requireNonNull(name);
     Objects.requireNonNull(returnTypeInfo);
+    Objects.requireNonNull(descriptor);
     Objects.requireNonNull(parameters);
     this.modifiers = Set.copyOf(modifiers);
     this.name = name;
     this.returnTypeInfo = returnTypeInfo;
+    this.descriptor = descriptor;
     this.parameters = List.copyOf(parameters);
   }
 
@@ -50,8 +54,17 @@ public class MethodBuilder {
     return this;
   }
 
+  /**
+   * Build the method.
+   *
+   * @return a new method
+   */
   public Method build() {
-
-    return new Method(modifiers, name, returnTypeInfo, parameters, callGroupBuilder.build());
+    return new Method(modifiers,
+        name,
+        returnTypeInfo,
+        parameters,
+        descriptor,
+        callGroupBuilder.build());
   }
 }

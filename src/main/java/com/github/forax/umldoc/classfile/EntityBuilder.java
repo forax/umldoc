@@ -43,12 +43,13 @@ final class EntityBuilder {
   }
 
   public MethodBuilder addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
-                        List<Method.Parameter> parameters) {
+                        List<Method.Parameter> parameters, String descriptor) {
     requireNonNull(modifiers);
     requireNonNull(name);
     requireNonNull(returnType);
     requireNonNull(parameters);
-    var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters);
+    requireNonNull(descriptor);
+    var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters, descriptor);
     methodBuilders.add(methodBuilder);
     return methodBuilder;
   }
