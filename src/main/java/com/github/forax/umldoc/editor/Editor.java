@@ -122,8 +122,7 @@ public class Editor {
       return State.READONLY;
     }
     writer.write(line + "\n");
-    if (line.matches("```") ||
-            (extension != Extension.MARKDOWN && parser.endLine(line))) {
+    if (line.matches("```") || parser.endLine(line)) {
       return State.READWRITE;
     }
     return State.SEARCHCOMMANDLINE;

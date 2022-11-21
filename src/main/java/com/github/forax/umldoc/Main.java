@@ -10,15 +10,12 @@ import com.github.forax.umldoc.editor.Editor;
 import com.github.forax.umldoc.editor.Editor.Extension;
 import com.github.forax.umldoc.editor.MermaidCmdLineParser;
 import com.github.forax.umldoc.editor.PlantCmdLineParser;
-import picocli.CommandLine;
-
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Contain the main method.

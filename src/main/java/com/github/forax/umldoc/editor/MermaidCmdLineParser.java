@@ -51,7 +51,7 @@ public class MermaidCmdLineParser implements CommandLineParser {
 
 
   public boolean endLine(String line) {
-    return true;
+    return false;
   }
 
   private boolean isStartingLine(String line) {
