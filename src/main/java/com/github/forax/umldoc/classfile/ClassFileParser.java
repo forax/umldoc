@@ -1,5 +1,6 @@
 package com.github.forax.umldoc.classfile;
 
+import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
@@ -16,7 +17,6 @@ import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
@@ -97,49 +97,19 @@ final class ClassFileParser {
         var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
-        var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters);
-        return new MethodVisitor(ASM9) {
-          private String lastInstructionName = "";
 
+        var methodBuilder = entityBuilder.addMethod(modifiers, name, returnType,
+                parameters, descriptor);
+
+
+        return new MethodVisitor(ASM9) {
           @Override
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
                                       boolean isInterface) {
-            var type = TypeInfo.of(owner);
-            var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
-                    .map(parameter -> TypeInfo.of(parameter.getClassName()))
-                    .toList();
-            var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            //TODO replace this filter by selected package
-            if (type.name().contains("com/github")) {
-              var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
-              methodBuilder.addMethod(lastInstructionName, methodCall);
-            }
-          }
 
-          @Override
-          public void visitJumpInsn(int opcode, Label label) {
-            var instructionName = label.toString();
-            if (opcode == Opcodes.GOTO) {
-              methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
-              lastInstructionName = instructionName;
-            } else if ((opcode >= 153 && opcode <= 166) || opcode == 198 || opcode == 199) {
-              methodBuilder.addInstruction(MethodBuilder.InstructionType.IF, instructionName);
-              lastInstructionName = instructionName;
-            }
-          }
-
-          @Override
-          public void visitLineNumber(int line, Label start) {
-            var instructionName = start.toString();
-            methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
-            lastInstructionName = instructionName;
-          }
-
-          @Override
-          public void visitEnd() {
-            var method = methodBuilder.build();
-            entityBuilder.addMethod(method);
-            lastInstructionName = "";
+            var ownerName = owner.replace("/", ".");
+            var call = new Call.MethodCall(ownerName, name, descriptor);
+            methodBuilder.addCallToGroup(call);
           }
         };
       }

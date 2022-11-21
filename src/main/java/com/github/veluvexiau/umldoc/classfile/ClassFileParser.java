@@ -104,7 +104,7 @@ public final class ClassFileParser {
                                              String descriptor,
                                              String signature,
                                              Object value) {
-                //TODO create method to get the full type
+                //TODO create method to get the full ownerName
                 // (like String, List<String>, Set<Entity> for exemple -->
                 // concatenation of descriptor and signature
                 if (modifier(access) != null) {
@@ -147,6 +147,7 @@ public final class ClassFileParser {
                       name,
                       TypeInfo.of(((signature == null) ? "" : signature)),
                       parameters,
+                      desc,
                       Group.EMPTY_GROUP);
                   listOfMethods.add(method);
                   var entity = new Entity(oldEntity.modifiers(), oldEntity.type(),

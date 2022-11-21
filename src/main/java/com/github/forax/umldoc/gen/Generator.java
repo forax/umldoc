@@ -3,6 +3,7 @@ package com.github.forax.umldoc.gen;
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Package;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -35,6 +36,7 @@ public interface Generator {
    * @param writer the writer
    * @throws IOException if an I/O exception occurs
    */
-  void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
+  void generateSequenceDiagram(boolean header, Entity entryEntity,
+                               Method entryPoint, Package p,
                                Writer writer) throws IOException;
 }

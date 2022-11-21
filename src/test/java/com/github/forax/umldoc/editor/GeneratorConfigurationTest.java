@@ -1,5 +1,7 @@
 package com.github.forax.umldoc.editor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
@@ -8,7 +10,6 @@ import com.github.forax.umldoc.gen.Generator;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 public class GeneratorConfigurationTest {
@@ -34,6 +35,6 @@ public class GeneratorConfigurationTest {
 
     @Override
     public void generateSequenceDiagram(boolean header, Entity entryEntity, Method entryPoint,
-                                        Writer writer) throws IOException {}
+                                        Package p, Writer writer) throws IOException {}
   }
 }

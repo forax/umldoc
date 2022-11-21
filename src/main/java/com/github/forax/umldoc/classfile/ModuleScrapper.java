@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -64,7 +63,7 @@ public final class ModuleScrapper {
 
   // should be a local class inside #resolvePackage, but it's trigger a false positive by SpotBug
   private record AssociationInfo(Set<Modifier> modifiers, String leftClassName,
-                                  String rightClassName, String label, Cardinality cardinality) {}
+                                 String rightClassName, String label, Cardinality cardinality) {}
 
   private static Package resolvePackage(String packageName, List<ParsingResult> parsingResults) {
     var entityNames = parsingResults.stream()
@@ -101,8 +100,8 @@ public final class ModuleScrapper {
       entityMap.put(javaClassName(entity.type()), entity);
 
       var interfacesAsJavaclassname = parsingResult.superTypes().stream()
-              .map(TypeInfo::name)
-              .toList();
+          .map(TypeInfo::name)
+          .toList();
       if (!interfacesAsJavaclassname.isEmpty()) {
         entityInterfacesMap.put(entity, interfacesAsJavaclassname);
       }
@@ -128,24 +127,23 @@ public final class ModuleScrapper {
   }
 
   //package private for testing
-  static Stream<SubtypeDependency> getSubtypeDependencies(
-          Map<Entity, List<String>> entityInterfacesMap,
-          Map<String, Entity> entityMap) {
+  static Stream<Dependency> getSubtypeDependencies(Map<Entity, List<String>> entityInterfacesMap,
+                                                   Map<String, Entity> entityMap) {
     return entityInterfacesMap.entrySet().stream()
-            .map(entry -> {
-              var subtype = entry.getKey();
-              var superTypes = entry.getValue().stream()
-                      .map(entityMap::get)
-                      .filter(Objects::nonNull)
-                      .toList();
-              var subtypeDependencies = new ArrayList<SubtypeDependency>();
-              for (var superType : superTypes) {
-                var subtypeDependency = new SubtypeDependency(superType, subtype);
-                subtypeDependencies.add(subtypeDependency);
-              }
-              return subtypeDependencies;
-            })
-            .flatMap(ArrayList::stream);
+        .map(entry -> {
+          var subtype = entry.getKey();
+          var superTypes = entry.getValue().stream()
+              .map(entityMap::get)
+              .filter(entity -> entity != null)
+              .toList();
+          var subtypeDependencies = new ArrayList<Dependency>();
+          for (var superType : superTypes) {
+            var subtypeDependency = new SubtypeDependency(superType, subtype);
+            subtypeDependencies.add(subtypeDependency);
+          }
+          return subtypeDependencies;
+        })
+        .flatMap(ArrayList::stream);
   }
 
 
@@ -210,7 +208,7 @@ public final class ModuleScrapper {
       throw e.getCause();
     }
     return parsingResultMap.entrySet().stream()
-      .map(entry -> resolvePackage(entry.getKey(), entry.getValue()))
-      .toList();
+        .map(entry -> resolvePackage(entry.getKey(), entry.getValue()))
+        .toList();
   }
 }

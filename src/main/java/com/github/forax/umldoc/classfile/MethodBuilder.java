@@ -11,11 +11,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-final class MethodBuilder {
+/**
+ * A builder for a {@link Method}.
+ */
+public class MethodBuilder {
   private final GroupBuilder builder = new GroupBuilder();
   private final Set<Modifier> modifiers;
   private final String name;
+  private final TypeInfo returnTypeInfo;
   private final List<Method.Parameter> parameters;
+  private final String descriptor;
+  private final CallGroupBuilder callGroupBuilder = new CallGroupBuilder(Call.Group.Kind.NONE);
   private final TypeInfo returnType;
 
   public MethodBuilder(Set<Modifier> modifiers, String name, TypeInfo returnType,
@@ -26,18 +32,53 @@ final class MethodBuilder {
     this.parameters = Objects.requireNonNull(parameters);
   }
 
-  public void addInstruction(InstructionType type, String instructionName) {
-    Objects.requireNonNull(type);
-    Objects.requireNonNull(instructionName);
-    builder.addInstruction(type, instructionName);
+  /**
+   * Constructor of MethodBuilder.
+   *
+   * @param modifiers the modifiers of the method
+   * @param name the name of the method
+   * @param returnTypeInfo the return type of the method
+   * @param parameters the list of parameters of the method
+   * @param descriptor the descriptor
+   */
+  public MethodBuilder(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
+                       List<Method.Parameter> parameters, String descriptor) {
+    Objects.requireNonNull(modifiers);
+    Objects.requireNonNull(name);
+    Objects.requireNonNull(returnTypeInfo);
+    Objects.requireNonNull(descriptor);
+    Objects.requireNonNull(parameters);
+    this.modifiers = Set.copyOf(modifiers);
+    this.name = name;
+    this.returnTypeInfo = returnTypeInfo;
+    this.descriptor = descriptor;
+    this.parameters = List.copyOf(parameters);
   }
 
-  public void addMethod(String instructionName, Call.MethodCall method) {
-    Objects.requireNonNull(instructionName);
-    Objects.requireNonNull(method);
-    builder.addMethod(instructionName, method);
+  /**
+   * Add a call to the {@link com.github.forax.umldoc.core.Call.Group} of the method.
+   *
+   * @param call the call to add to the group
+   * @return the instance of {@link MethodBuilder}
+   */
+  public MethodBuilder addCallToGroup(Call call) {
+    Objects.requireNonNull(call);
+    this.callGroupBuilder.add(call);
+    return this;
   }
 
+  /**
+   * Build the method.
+   *
+   * @return a new method
+   */
+  public Method build() {
+    return new Method(modifiers,
+        name,
+        returnTypeInfo,
+        parameters,
+        descriptor,
+        callGroupBuilder.build());
   public Method build() {
     return new Method(modifiers, name, returnType, parameters,
             builder.build().orElse(Call.Group.EMPTY_GROUP));
