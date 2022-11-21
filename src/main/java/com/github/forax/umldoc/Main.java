@@ -33,7 +33,7 @@ public class Main {
   public static void main(String[] args) {
     if (args.length != 2) {
       System.err.println("Usage : java -jar path_of_jar"
-              + " path_of_jar path_of_markdown");
+              + " path_of_repository_module-info.class path_of_markdown");
       System.exit(-1);
       return;
     }
