@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The class Editor is able to read a file and write lines.
@@ -22,10 +23,21 @@ public class Editor {
     READWRITE
   }
 
+  /**
+   * The enum Extension corresponds to the type of the file.
+   * <br>Mermaid, PlantUML and Markdown.
+   */
+  public enum Extension {
+    MARKDOWN,
+    PLANTUML,
+    MERMAID
+  }
+
   private final Map<String, CommandLineParser> registration;
   private final List<Package> module;
   private State state;
   private CommandLineParser parser;
+  private final Extension extension;
 
   /**
    * The constructor of Editor.
@@ -33,11 +45,15 @@ public class Editor {
    * @param registration Map, register a String with a CommandLineParser.
    * @param module List, a list of package.
    */
-  public Editor(Map<String, CommandLineParser> registration,
+  public Editor(Extension extension, Map<String, CommandLineParser> registration,
                 List<Package> module) {
+    Objects.requireNonNull(extension);
+    Objects.requireNonNull(registration);
+    Objects.requireNonNull(module);
     this.registration = Map.copyOf(registration);
     this.module = List.copyOf(module);
     this.state = State.READWRITE;
+    this.extension = extension;
   }
 
   /**
@@ -48,7 +64,9 @@ public class Editor {
    * @throws IOException If the file cannot be opened.
    */
   public void edit(Writer writer, BufferedReader reader) throws IOException {
-    var line = "";
+    Objects.requireNonNull(writer);
+    Objects.requireNonNull(reader);
+    String line;
     while ((line = reader.readLine()) != null) {
       state = switch (state) {
         case READWRITE -> readWrite(line, writer);
@@ -56,7 +74,6 @@ public class Editor {
         case READONLY -> readOnly(line, writer);
       };
     }
-    // Move to final file
   }
 
   private void getDiagram(GeneratorConfiguration generatorConfiguration,
@@ -75,6 +92,10 @@ public class Editor {
    * @throws IOException If the file couldn't be opened.
    */
   State readWrite(String line, Writer writer) throws IOException {
+    if (extension != Extension.MARKDOWN) {
+      return searchCommandLine(line, writer);
+    }
+    writer.write(line + "\n");
     if (line.matches("```.+")) {
       var type = line.substring("```".length());
       parser = registration.get(type);
@@ -82,13 +103,12 @@ public class Editor {
         return State.SEARCHCOMMANDLINE;
       }
     }
-    writer.write(line);
     return State.READWRITE;
   }
 
   /**
    * Method to search the command line.
-   * <br>Example : "%% umldoc ..." or "` umldoc ...".
+   * <br>Example : "%% umldoc ..." or "' umldoc ...".
    *
    * @param line String, it is one line of a file.
    * @param writer Writer, write in a temporary file.
@@ -101,10 +121,10 @@ public class Editor {
       getDiagram(optional.get(), writer);
       return State.READONLY;
     }
-    if (parser.endline(line)) {
+    writer.write(line + "\n");
+    if (line.matches("```") || parser.endLine(line)) {
       return State.READWRITE;
     }
-    writer.write(line);
     return State.SEARCHCOMMANDLINE;
   }
 
@@ -116,8 +136,9 @@ public class Editor {
    * @param writer Writer, write in a temporary file.
    * @return State, READWRITE or READONLY.
    */
-  State readOnly(String line, Writer writer) {
-    if (parser.endline(line)) {
+  State readOnly(String line, Writer writer) throws IOException {
+    if (line.matches("```") || parser.endLine(line)) {
+      writer.write(line + "\n");
       return State.READWRITE;
     }
     return State.READONLY;

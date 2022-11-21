@@ -11,23 +11,20 @@ public sealed interface Call {
   /**
    * A method call.
    *
-   * @param type type target type of the method call
+   * @param ownerName ownerName target ownerName of the method call
    * @param name name of the method call
-   * @param returnType return type of the method call
-   * @param parameterTypes parameter types of the method call
+   * @param descriptor descriptor of the method call
    */
-  record MethodCall(TypeInfo type, String name, TypeInfo returnType,
-                    List<TypeInfo> parameterTypes)
+  record MethodCall(String ownerName, String name, String descriptor)
       implements Call {
 
     /**
      * Creates a method call.
      */
     public MethodCall {
-      requireNonNull(type);
+      requireNonNull(ownerName);
       requireNonNull(name);
-      requireNonNull(returnType);
-      parameterTypes = List.copyOf(parameterTypes);
+      requireNonNull(descriptor);
     }
   }
 

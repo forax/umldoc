@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Set;
 
+
 /**
  * A method of an {@link Entity}.
  *
@@ -12,9 +13,14 @@ import java.util.Set;
  * @param name the method name
  * @param returnTypeInfo the return type
  * @param parameters the parameters
+ * @param descriptor the descriptor
+ * @param callGroup the call group
  */
 public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeInfo,
-                     List<Parameter> parameters, Call.Group callGroup) {
+                     List<Parameter> parameters,
+                     String descriptor,
+                     Call.Group callGroup) {
+
   /**
    * Creates a method.
    *
@@ -22,6 +28,7 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    * @param name the method name
    * @param returnTypeInfo the return type
    * @param parameters the parameters
+   * @param descriptor the descriptor
    * @param callGroup the group method calls from the implementation
    */
   public Method {
@@ -29,6 +36,7 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
     requireNonNull(name);
     requireNonNull(returnTypeInfo);
     parameters = List.copyOf(parameters);
+    requireNonNull(descriptor);
     requireNonNull(callGroup);
   }
 
@@ -39,20 +47,19 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
    * @param name the method name
    * @param returnType the return type
    * @param parameters the parameters
-   *
-   * @deprecated use {@link #Method(Set, String, TypeInfo, List, Call.Group) instead}
+   * @param descriptor the descriptor
+   * @deprecated use {@link #Method(Set, String, TypeInfo, List, String, Call.Group) instead}
    */
   @Deprecated
   public Method(Set<Modifier> modifiers, String name, String returnType,
-                List<Parameter> parameters) {
-    this(modifiers, name, TypeInfo.of(returnType), parameters, Call.Group.EMPTY_GROUP);
+                List<Parameter> parameters, String descriptor) {
+    this(modifiers, name, TypeInfo.of(returnType), parameters, descriptor, Call.Group.EMPTY_GROUP);
   }
 
   /**
    * Returns the return type as a string.
    *
    * @return the return type as a string.
-   *
    * @deprecated use {@link #returnTypeInfo() instead}
    */
   @Deprecated
@@ -63,10 +70,11 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
   /**
    * A parameter of a method.
    *
-   * @param name the parameter name
+   * @param name     the parameter name
    * @param typeInfo the parameter type
    */
   public record Parameter(String name, TypeInfo typeInfo) {
+
     public Parameter {
       requireNonNull(name);
       requireNonNull(typeInfo);
@@ -77,7 +85,6 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
      *
      * @param name the parameter name
      * @param type the parameter type as a string
-     *
      * @deprecated use {@link #Parameter(String, TypeInfo) instead}
      */
     @Deprecated
@@ -89,7 +96,6 @@ public record Method(Set<Modifier> modifiers, String name, TypeInfo returnTypeIn
      * Returns the type as a string.
      *
      * @return the type as a string.
-     *
      * @deprecated use {@link #returnTypeInfo() instead}
      */
     @Deprecated

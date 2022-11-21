@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface CommandLineParser {
   Optional<GeneratorConfiguration> parseLine(String line);
 
-  public boolean endline(String line);
+  public boolean endLine(String line);
 
 }
