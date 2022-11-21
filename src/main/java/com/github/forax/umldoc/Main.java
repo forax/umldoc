@@ -37,20 +37,10 @@ public class Main {
       System.exit(-1);
       return;
     }
-    var finder = ModuleFinder.of(Path.of(args[0]));
-    var modules = finder.findAll().iterator();
 
-    if (!modules.hasNext()) {
-      System.err.println("Couldn't find a Module");
-      System.exit(-1);
-      return;
-    }
-    List<Package> packages;
-    try {
-      packages = ModuleScrapper.scrapModule(modules.next());
-    } catch (IOException e) {
-      System.err.println("Couldn't get the list of Packages : " + e.getMessage());
-      System.exit(-1);
+    var finder = ModuleFinder.of(Path.of(args[0]));
+    var packages = getPackage(finder);
+    if(packages == null) {
       return;
     }
 
@@ -60,13 +50,13 @@ public class Main {
       System.exit(-1);
       return;
     }
-    var fileName = "resultFile.md";
+
     var inputPath = Path.of(args[1]);
-    var outputPath = Path.of(fileName);
+    var outputPath = Path.of("resultFile.md");
     var extension = args[1].substring(index + 1);
     try (
-            var reader = Files.newBufferedReader(Path.of(args[1]));
-            var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
+            var reader = Files.newBufferedReader(inputPath);
+            var writer = Files.newBufferedWriter(outputPath)
     ) {
       var config = new HashMap<String, CommandLineParser>();
       config.put("mermaid", new MermaidCmdLineParser());
@@ -81,6 +71,24 @@ public class Main {
     } catch (IllegalArgumentException e) {
       System.err.println(e + " - Supported file type : pu, mmd, md");
       System.exit(-1);
+    }
+  }
+
+  private static List<Package> getPackage(ModuleFinder finder) {
+    var module = finder.findAll().stream().findFirst();
+
+    if (module.isEmpty()) {
+      System.err.println("Couldn't find a Module");
+      System.exit(-1);
+      return null;
+    }
+
+    try {
+      return ModuleScrapper.scrapModule(module.get());
+    } catch (IOException e) {
+      System.err.println("Couldn't get the list of Packages : " + e.getMessage());
+      System.exit(-1);
+      return null;
     }
   }
 
