@@ -21,7 +21,8 @@ public class ExecutionPathResolverTest {
   @Test
   void ExecutionItemTest() {
     var entity = new Entity(Set.of(), TypeInfo.of("test"), Entity.Stereotype.CLASS, List.of(), List.of());
-    var method = new Method(Set.of(), "test", TypeInfo.of("test"), List.of(), Call.Group.EMPTY_GROUP);
+    var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+    var method = new Method(Set.of(), "test", TypeInfo.of("test"), List.of(), descriptor, Call.Group.EMPTY_GROUP);
     assertThrows(NullPointerException.class, () -> new ExecutionItem(null, entity, method));
     assertThrows(NullPointerException.class, () -> new ExecutionItem(entity, null, method));
     assertThrows(NullPointerException.class, () -> new ExecutionItem(entity, entity, null));
@@ -36,7 +37,8 @@ public class ExecutionPathResolverTest {
 
     @Test
     void methodWithEmptyGroupCallReturnsOneItemExecutionList() {
-      var method = new Method(Set.of(), "test", TypeInfo.of("void"), List.of(), Call.Group.EMPTY_GROUP);
+      var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+      var method = new Method(Set.of(), "test", TypeInfo.of("void"), List.of(), descriptor, Call.Group.EMPTY_GROUP);
       var methodCall = new Call.MethodCall("StartEntity", "test", Type.getMethodDescriptor(Type.getType(void.class)));
       var entity = new Entity(Set.of(), TypeInfo.of("StartEntity"), Entity.Stereotype.CLASS, List.of(), List.of(method));
 
@@ -46,11 +48,12 @@ public class ExecutionPathResolverTest {
 
     @Test
     void methodThatCallsAnotherMethod() {
+      var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
       //Final method
-      var finalMethod = new Method(Set.of(), "end", TypeInfo.of("void"), List.of(), Call.Group.EMPTY_GROUP);
+      var finalMethod = new Method(Set.of(), "end", TypeInfo.of("void"), List.of(), descriptor, Call.Group.EMPTY_GROUP);
       var finalMethodCall = new Call.MethodCall("entity2", "end", Type.getMethodDescriptor(Type.getType(void.class)));
       //Starting method
-      var startingMethod = new Method(Set.of(), "start", TypeInfo.of("void"), List.of(),
+      var startingMethod = new Method(Set.of(), "start", TypeInfo.of("void"), List.of(), descriptor,
               new Call.Group(Call.Group.Kind.NONE, List.of(finalMethodCall)));
       var startingMethodCall = new Call.MethodCall("entity1", "start", Type.getMethodDescriptor(Type.getType(void.class)));
 
