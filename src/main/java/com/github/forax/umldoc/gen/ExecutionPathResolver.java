@@ -1,11 +1,11 @@
 package com.github.forax.umldoc.gen;
 
-import com.github.forax.umldoc.core.Modifier;
 import static java.util.Objects.requireNonNull;
 
 import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.Package;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,8 +73,8 @@ public class ExecutionPathResolver {
         executionItems.addAll(resolve(subCall, sourceEntity, entityRegistry));
       }
     }
-    return executionItems.stream().
-            filter(executionItem -> isPublic(executionItem.method()))
+    return executionItems.stream()
+            .filter(executionItem -> isPublic(executionItem.method()))
             .toList();
   }
 
