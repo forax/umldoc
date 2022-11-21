@@ -2,14 +2,12 @@ package com.github.forax.umldoc.classfile;
 
 import static java.util.Objects.requireNonNull;
 
-import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 
 /**
