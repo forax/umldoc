@@ -41,8 +41,7 @@ public class PlantCmdLineParser implements CommandLineParser {
   public Optional<GeneratorConfiguration> parseLine(String line) {
     if (!isStartUmlAnnotationPresent) {
       isStartUmlAnnotationPresent = isStartAnnotationPresent(line);
-    }
-    if (isStartingLine(line) && isStartUmlAnnotationPresent) {
+    } else if (isStartingLine(line) && isStartUmlAnnotationPresent) {
       var options = new OptionsCmd();
       var args = line.substring("` umldoc".length() + 1).split(" ");
       new CommandLine(options).execute(args);
@@ -50,7 +49,6 @@ public class PlantCmdLineParser implements CommandLineParser {
               .filterPackage(options.packageName, new PlantUmlGenerator());
       return Optional.of(generator);
     }
-
     return Optional.empty();
   }
 
@@ -60,7 +58,7 @@ public class PlantCmdLineParser implements CommandLineParser {
   }
 
   private boolean isStartingLine(String line) {
-    return line.startsWith("` umldoc");
+    return line.startsWith("' umldoc");
   }
 
   private boolean isStartAnnotationPresent(String line) {

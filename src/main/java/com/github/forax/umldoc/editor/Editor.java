@@ -121,8 +121,9 @@ public class Editor {
       getDiagram(optional.get(), writer);
       return State.READONLY;
     }
-    writer.write(line);
-    if (line.matches("```") || extension != Extension.MARKDOWN) {
+    writer.write(line + "\n");
+    if (line.matches("```") ||
+            (extension != Extension.MARKDOWN && parser.endline(line))) {
       return State.READWRITE;
     }
     return State.SEARCHCOMMANDLINE;
@@ -137,8 +138,9 @@ public class Editor {
    * @return State, READWRITE or READONLY.
    */
   State readOnly(String line, Writer writer) throws IOException {
-    if (line.matches("```") || extension != Extension.MARKDOWN) {
-      writer.write(line);
+    if (line.matches("```") ||
+            (extension != Extension.MARKDOWN && parser.endline(line))) {
+      writer.write(line + "\n");
       return State.READWRITE;
     }
     return State.READONLY;
