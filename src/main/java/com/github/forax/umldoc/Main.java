@@ -39,8 +39,12 @@ public class Main {
     }
 
     var finder = ModuleFinder.of(Path.of(args[0]));
-    var packages = getPackage(finder);
-    if (packages == null) {
+    List<Package> packages;
+    try {
+      packages = getPackage(finder);
+    } catch (IllegalStateException e) {
+      System.err.println(e.getMessage());
+      System.exit(-1);
       return;
     }
 
@@ -74,21 +78,17 @@ public class Main {
     }
   }
 
-  private static List<Package> getPackage(ModuleFinder finder) {
+  private static List<Package> getPackage(ModuleFinder finder) throws IllegalStateException {
     var module = finder.findAll().stream().findFirst();
 
     if (module.isEmpty()) {
-      System.err.println("Couldn't find a Module");
-      System.exit(-1);
-      return null;
+      throw new IllegalStateException("Couldn't find a Module");
     }
 
     try {
       return ModuleScrapper.scrapModule(module.get());
     } catch (IOException e) {
-      System.err.println("Couldn't get the list of Packages : " + e.getMessage());
-      System.exit(-1);
-      return null;
+      throw new IllegalStateException("Couldn't get the list of Packages : " + e.getMessage());
     }
   }
 
