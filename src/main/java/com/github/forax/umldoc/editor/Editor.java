@@ -108,7 +108,7 @@ public class Editor {
 
   /**
    * Method to search the command line.
-   * <br>Example : "%% umldoc ..." or "` umldoc ...".
+   * <br>Example : "%% umldoc ..." or "' umldoc ...".
    *
    * @param line String, it is one line of a file.
    * @param writer Writer, write in a temporary file.
