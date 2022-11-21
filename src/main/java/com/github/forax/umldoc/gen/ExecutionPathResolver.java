@@ -57,8 +57,6 @@ public class ExecutionPathResolver {
       var targetEntity = findEntity(methodCall.ownerName(), entityRegistry);
       var targetMethod = findMethodInEntity(methodCall, targetEntity);
       var executionItem = new ExecutionItem(sourceEntity, targetEntity, targetMethod);
-      //TODO : filter private methods
-
       executionItems.add(executionItem);
       var targetCalls = targetMethod.callGroup().calls();
       for (var subCall : targetCalls) {
