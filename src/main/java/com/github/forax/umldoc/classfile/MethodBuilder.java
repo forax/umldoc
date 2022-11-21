@@ -4,10 +4,8 @@ import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.TypeInfo;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -99,20 +97,19 @@ final class MethodBuilder {
       // For each instruction of the GroupBuilder
       while (posInstruction1 < methodInstructions.size()) {
         var currentInstruction = methodInstructions.get(posInstruction1);
-        //System.out.println("Instruction1:" + currentInstruction);
         // Search for another instruction that should be the end of the statement
-        var posInstruction2 = searchFromIndexInstruction(posInstruction1 + 1,
-                currentInstruction.instructionName());
-        //System.out.println("POS2:" + posInstruction2);
+        var posInstruction2 = searchFromIndexInstruction(
+                posInstruction1 + 1,
+                      currentInstruction.instructionName());
+
         if (posInstruction2 >= 0) {
           var instruction2 = methodInstructions.get(posInstruction2);
-          //System.out.println("Instruction2:" + instruction2);
-          //System.out.println("PositionInstruction2:" + posInstruction2);
           // Manage OPTIONAL and ALTERNATE statement
           if (currentInstruction.type() == InstructionType.IF
                   && instruction2.type() == InstructionType.NONE) {
+
             // Check if statement is alternate
-            var loopInstruction = extractLoopInstruction(0, posInstruction2);
+            var loopInstruction = extractLoopInstruction(posInstruction1, posInstruction2);
             var alternateEndPoint = loopInstruction.stream()
                     .mapToInt(instruction -> searchFromIndexInstruction(posInstruction2 + 1,
                             instruction.instructionName()))
@@ -128,11 +125,7 @@ final class MethodBuilder {
               groupIf.setKind(Call.Group.Kind.ALTERNATE);
               groupElse.setKind(Call.Group.Kind.ALTERNATE);
               // Generate and add IF group
-              for (int i = posInstruction1; i < posInstruction2 - 1; i++) {
-                var extractedInstruction = methodInstructions.remove(posInstruction1);
-                //System.out.println("ExtractedG1:" + extractedInstruction);
-                addInstructionWithMethodsToGroup(extractedInstruction, groupIf);
-              }
+              generateStatement(posInstruction1, posInstruction2 - 1, groupIf);
               groups.put(currentInstruction.instructionName(), groupIf);
               // Get the GOTO instruction and associate it with the ELSE group
               var secondGroupEndPointInstruction = methodInstructions.get(posInstruction1);
@@ -140,14 +133,8 @@ final class MethodBuilder {
               posInstruction1++;
               // Generate and add ELSE group
               var posInstruction3 = alternateEndPoint.getAsInt();
-              for (int i = posInstruction1; i < posInstruction3 - 2; i++) {
-                var extractedInstruction = methodInstructions.remove(posInstruction1);
-                //System.out.println("ExtractedG2:" + extractedInstruction);
-                addInstructionWithMethodsToGroup(extractedInstruction, groupElse);
-              }
+              generateStatement(posInstruction1, posInstruction3 - 2, groupElse);
               groups.put(secondGroupEndPointInstruction.instructionName(), groupElse);
-              //methodInstructionsFormatted.add(methodInstructions.remove(posInstruction1));
-              //posInstruction1++;
             } else {
               // Add current instruction to
               methodInstructionsFormatted.add(currentInstruction);
@@ -156,11 +143,7 @@ final class MethodBuilder {
               var groupIf = new GroupBuilder();
               groupIf.setKind(Call.Group.Kind.OPTIONAL);
               // Generate and add IF group
-              for (int i = posInstruction1; i < posInstruction2; i++) {
-                var extractedInstruction = methodInstructions.remove(posInstruction1);
-                //System.out.println("Extracted:" + extractedInstruction);
-                addInstructionWithMethodsToGroup(extractedInstruction, groupIf);
-              }
+              generateStatement(posInstruction1, posInstruction2, groupIf);
               groups.put(currentInstruction.instructionName(), groupIf);
               methodInstructionsFormatted.add(methodInstructions.get(posInstruction1));
               posInstruction1++;
@@ -168,8 +151,6 @@ final class MethodBuilder {
           } else if (currentInstruction.type() == InstructionType.NONE
                   && instruction2.type() == InstructionType.GOTO) {
             //Manage LOOP statement
-            //System.out.println("GOTO add instruction to methodInstructionsFormatted:"
-            //        + currentInstruction);
             methodInstructionsFormatted.add(currentInstruction);
             posInstruction1++;
             //System.out.println("GOTO position instruction1" + posInstruction1);
@@ -178,16 +159,13 @@ final class MethodBuilder {
             // Add current instruction methods which are related to the loop
             addInstructionWithMethodsToGroup(currentInstruction, groupLoop);
             // Generate and add IF group
-            for (int i = posInstruction1; i < posInstruction2; i++) {
-              var extractedInstruction = methodInstructions.remove(posInstruction1);
-              //System.out.println("GOTO Extracted instruction:" + extractedInstruction);
-              addInstructionWithMethodsToGroup(extractedInstruction, groupLoop);
-            }
+            generateStatement(posInstruction1, posInstruction2, groupLoop);
             groups.put(currentInstruction.instructionName(), groupLoop);
             posInstruction1++;
           } else {
             //TODO manage unhandled statement
             //throw new AssertionError("Unhandled statement.");
+            //methodInstructionsFormatted.add(currentInstruction);
             posInstruction1++;
           }
 
@@ -201,17 +179,11 @@ final class MethodBuilder {
             var groupIf = new GroupBuilder();
             groupIf.setKind(Call.Group.Kind.OPTIONAL);
             // Generate and add IF group
-            var instructionsListSize = methodInstructions.size();
-            for (int i = posInstruction1; i < instructionsListSize - 1; i++) {
-              var extractedInstruction = methodInstructions.remove(posInstruction1);
-              //System.out.println("Extracted:" + extractedInstruction);
-              addInstructionWithMethodsToGroup(extractedInstruction, groupIf);
-            }
+            generateStatement(posInstruction1, methodInstructions.size() - 1, groupIf);
             groups.put(currentInstruction.instructionName(), groupIf);
             methodInstructionsFormatted.add(methodInstructions.get(posInstruction1));
             posInstruction1++;
           } else {
-            //System.out.println("SIMPLE INSTRUCTION ADDED:" + currentInstruction);
             // If there is no special semantic simply add instruction
             // to the formatted list of instructions
             methodInstructionsFormatted.add(currentInstruction);
@@ -221,15 +193,18 @@ final class MethodBuilder {
       }
     }
 
+    private void generateStatement(int at, int to, GroupBuilder group) {
+      for (int i = at; i < to; i++) {
+        addInstructionWithMethodsToGroup(methodInstructions.remove(at), group);
+      }
+    }
+
     private int searchFromIndexInstruction(int index, String instructionName) {
-      //System.out.println("START INDEX :" + index);
       var foundIndex = methodInstructions.subList(index, methodInstructions.size()).stream()
               .map(Instruction::instructionName).toList().indexOf(instructionName);
       if (foundIndex < 0) {
         return foundIndex;
       }
-      //System.out.println("END INDEX :" + foundIndex);
-      //System.out.println("END INDEX CONCAT :" + (index + foundIndex));
       return index + foundIndex;
     }
 

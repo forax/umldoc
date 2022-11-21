@@ -1,6 +1,5 @@
 package com.github.forax.umldoc.classfile;
 
-import static com.github.forax.umldoc.core.Call.Group.EMPTY_GROUP;
 import static java.util.Objects.requireNonNull;
 import static org.objectweb.asm.Opcodes.ASM9;
 
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -100,19 +98,12 @@ final class ClassFileParser {
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
         var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters);
-        //var method = entityBuilder.addMethod(modifiers, name, returnType,
-        // parameters, EMPTY_GROUP);
-        System.out.println(" METHOD ENTER  " + name + "descriptor:" + descriptor
-                + "name:" + name + "signature:" + signature);
-
         return new MethodVisitor(ASM9) {
           private String lastInstructionName = "";
 
           @Override
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
                                       boolean isInterface) {
-            System.out.println(opcode + " METHOD CALL  " + " Owner " + owner + " name " + name
-                    + "descriptor:" + descriptor);
             var type = TypeInfo.of(owner);
             var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
                     .map(parameter -> TypeInfo.of(parameter.getClassName()))
@@ -131,17 +122,14 @@ final class ClassFileParser {
             if (opcode == Opcodes.GOTO) {
               methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
               lastInstructionName = instructionName;
-              System.out.println(opcode + " GOTO  " + label);
             } else if ((opcode >= 153 && opcode <= 166) || opcode == 198 || opcode == 199) {
               methodBuilder.addInstruction(MethodBuilder.InstructionType.IF, instructionName);
               lastInstructionName = instructionName;
-              System.out.println(opcode + " IF  " + label);
             }
           }
 
           @Override
           public void visitLineNumber(int line, Label start) {
-            System.out.println("LINE :  " + line  + " LABEL : " + start);
             var instructionName = start.toString();
             methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
             lastInstructionName = instructionName;
@@ -150,8 +138,8 @@ final class ClassFileParser {
           @Override
           public void visitEnd() {
             var method = methodBuilder.build();
-            System.out.println(method);
             entityBuilder.addMethod(method);
+            lastInstructionName = "";
           }
         };
       }
