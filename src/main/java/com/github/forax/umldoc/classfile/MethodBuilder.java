@@ -42,24 +42,24 @@ final class MethodBuilder {
 
   public Method build() {
     return new Method(modifiers, name, returnType, parameters,
-            builder.build().orElseGet(() -> Call.Group.EMPTY_GROUP));
+            builder.build().orElse(Call.Group.EMPTY_GROUP));
   }
 
   static class GroupBuilder {
-    private final HashSet<String> allInstructions = new HashSet<>();
-    private  final ArrayDeque<Instruction> methodInstructions = new ArrayDeque<>();
+    private  final ArrayList<Instruction> methodInstructions = new ArrayList<>();
+    private  final ArrayList<Instruction> methodInstructionsFormatted = new ArrayList<>();
     private final HashMap<String, GroupBuilder> groups = new HashMap<>();
     private final HashMap<String, ArrayList<Call.MethodCall>> methods = new HashMap<>();
     private Call.Group.Kind kind = Call.Group.Kind.NONE;
 
     void addInstruction(InstructionType type, String instructionName) {
-      if (allInstructions.contains(instructionName)) {
-        resolveGroup(type, instructionName);
-        return;
-      }
-      allInstructions.add(instructionName);
       methodInstructions.add(new Instruction(type, instructionName));
     }
+
+    private void addInstruction(Instruction instruction) {
+      methodInstructions.add(instruction);
+    }
+
 
     void addMethod(String instructionName, Call.MethodCall methodCall) {
       var list = methods.computeIfAbsent(instructionName, l -> new ArrayList<>());
@@ -72,19 +72,17 @@ final class MethodBuilder {
     }
 
     Optional<Call.Group> build() {
-      //TODO Optional<Call.Group> if no methods found into GroupBuilder ?
+      resolveGroups();
       var callsList = new ArrayList<Call>();
-      var instruction = methodInstructions.pollLast();
-      while (!(instruction == null)) {
-        var instructionMethods = methods.get(instruction.instructionName);
+      for (var instruction : methodInstructionsFormatted) {
+        var instructionMethods = methods.remove(instruction.instructionName());
         if (instructionMethods != null) {
           callsList.addAll(instructionMethods);
         }
-        var getGroup = groups.get(instruction.instructionName);
+        var getGroup = groups.remove(instruction.instructionName());
         if (getGroup != null) {
           getGroup.build().ifPresent(callsList::add);
         }
-        instruction = methodInstructions.pollLast();
       }
       if (callsList.isEmpty()) {
         return Optional.empty();
@@ -96,70 +94,158 @@ final class MethodBuilder {
       this.kind = kind;
     }
 
-    void addGroup(String instructionName, GroupBuilder group) {
-      groups.put(instructionName, group);
-    }
+    private void resolveGroups() {
+      int posInstruction1 = 0;
+      // For each instruction of the GroupBuilder
+      while (posInstruction1 < methodInstructions.size()) {
+        var currentInstruction = methodInstructions.get(posInstruction1);
+        //System.out.println("Instruction1:" + currentInstruction);
+        // Search for another instruction that should be the end of the statement
+        var posInstruction2 = searchFromIndexInstruction(posInstruction1 + 1,
+                currentInstruction.instructionName());
+        //System.out.println("POS2:" + posInstruction2);
+        if (posInstruction2 >= 0) {
+          var instruction2 = methodInstructions.get(posInstruction2);
+          //System.out.println("Instruction2:" + instruction2);
+          //System.out.println("PositionInstruction2:" + posInstruction2);
+          // Manage OPTIONAL and ALTERNATE statement
+          if (currentInstruction.type() == InstructionType.IF
+                  && instruction2.type() == InstructionType.NONE) {
+            // Check if statement is alternate
+            var loopInstruction = extractLoopInstruction(0, posInstruction2);
+            var alternateEndPoint = loopInstruction.stream()
+                    .mapToInt(instruction -> searchFromIndexInstruction(posInstruction2 + 1,
+                            instruction.instructionName()))
+                    .filter(index -> index > 0).findFirst();
 
-    private boolean containsInstruction(String instructionName) {
-      /*
-      if (isInsideGroup) {
-        return groups.getLast().containsInstruction(instructionName);
-      }
-      */
-      return allInstructions.contains(instructionName);
-    }
-
-    private void resolveGroup(InstructionType type, String instructionName) {
-      var newGroup = new GroupBuilder();
-      var instruction = methodInstructions.pollLast();
-      while (!(instruction == null) && !instruction.instructionName.equals(instructionName)) {
-        if (instruction.type == InstructionType.IF) {
-          // If loop is conditional create a new group and adding the current one
-          if (type == InstructionType.GOTO) {
-            newGroup.setKind(Call.Group.Kind.OPTIONAL);
-            var lastGroup = newGroup;
-            newGroup = new GroupBuilder();
-            newGroup.addInstruction(InstructionType.IF, instruction.instructionName);
-            newGroup.addGroup(instruction.instructionName, lastGroup);
+            // If statement is alternate
+            if (alternateEndPoint.isPresent()) {
+              // Add current instruction to
+              methodInstructionsFormatted.add(currentInstruction);
+              posInstruction1++;
+              var groupIf = new GroupBuilder();
+              var groupElse = new GroupBuilder();
+              groupIf.setKind(Call.Group.Kind.ALTERNATE);
+              groupElse.setKind(Call.Group.Kind.ALTERNATE);
+              // Generate and add IF group
+              for (int i = posInstruction1; i < posInstruction2 - 1; i++) {
+                var extractedInstruction = methodInstructions.remove(posInstruction1);
+                //System.out.println("ExtractedG1:" + extractedInstruction);
+                addInstructionWithMethodsToGroup(extractedInstruction, groupIf);
+              }
+              groups.put(currentInstruction.instructionName(), groupIf);
+              // Get the GOTO instruction and associate it with the ELSE group
+              var secondGroupEndPointInstruction = methodInstructions.get(posInstruction1);
+              methodInstructionsFormatted.add(secondGroupEndPointInstruction);
+              posInstruction1++;
+              // Generate and add ELSE group
+              var posInstruction3 = alternateEndPoint.getAsInt();
+              for (int i = posInstruction1; i < posInstruction3 - 2; i++) {
+                var extractedInstruction = methodInstructions.remove(posInstruction1);
+                //System.out.println("ExtractedG2:" + extractedInstruction);
+                addInstructionWithMethodsToGroup(extractedInstruction, groupElse);
+              }
+              groups.put(secondGroupEndPointInstruction.instructionName(), groupElse);
+              //methodInstructionsFormatted.add(methodInstructions.remove(posInstruction1));
+              //posInstruction1++;
+            } else {
+              // Add current instruction to
+              methodInstructionsFormatted.add(currentInstruction);
+              posInstruction1++;
+              // If is optional statement add instruction to a new group
+              var groupIf = new GroupBuilder();
+              groupIf.setKind(Call.Group.Kind.OPTIONAL);
+              // Generate and add IF group
+              for (int i = posInstruction1; i < posInstruction2; i++) {
+                var extractedInstruction = methodInstructions.remove(posInstruction1);
+                //System.out.println("Extracted:" + extractedInstruction);
+                addInstructionWithMethodsToGroup(extractedInstruction, groupIf);
+              }
+              groups.put(currentInstruction.instructionName(), groupIf);
+              methodInstructionsFormatted.add(methodInstructions.get(posInstruction1));
+              posInstruction1++;
+            }
+          } else if (currentInstruction.type() == InstructionType.NONE
+                  && instruction2.type() == InstructionType.GOTO) {
+            //Manage LOOP statement
+            //System.out.println("GOTO add instruction to methodInstructionsFormatted:"
+            //        + currentInstruction);
+            methodInstructionsFormatted.add(currentInstruction);
+            posInstruction1++;
+            //System.out.println("GOTO position instruction1" + posInstruction1);
+            var groupLoop = new GroupBuilder();
+            groupLoop.setKind(Call.Group.Kind.LOOP);
+            // Add current instruction methods which are related to the loop
+            addInstructionWithMethodsToGroup(currentInstruction, groupLoop);
+            // Generate and add IF group
+            for (int i = posInstruction1; i < posInstruction2; i++) {
+              var extractedInstruction = methodInstructions.remove(posInstruction1);
+              //System.out.println("GOTO Extracted instruction:" + extractedInstruction);
+              addInstructionWithMethodsToGroup(extractedInstruction, groupLoop);
+            }
+            groups.put(currentInstruction.instructionName(), groupLoop);
+            posInstruction1++;
+          } else {
+            //TODO manage unhandled statement
+            //throw new AssertionError("Unhandled statement.");
+            posInstruction1++;
           }
-          //newGroup.addInstruction();
-        } else if (instruction.type == InstructionType.GOTO) {
-          //Should be if/else
+
         } else {
-          //Add current instruction methods to the new group
-          var instructionMethods = methods.remove(instruction.instructionName);
-          if (instructionMethods != null) {
-            newGroup.addInstruction(InstructionType.NONE, instruction.instructionName);
-            newGroup.addMethods(instruction.instructionName, instructionMethods);
+          // No end instruction found, so it is a statement inside another one
+          if (currentInstruction.type() == InstructionType.IF) {
+            // Add current instruction to
+            methodInstructionsFormatted.add(currentInstruction);
+            posInstruction1++;
+            // If is optional statement add instruction to a new group
+            var groupIf = new GroupBuilder();
+            groupIf.setKind(Call.Group.Kind.OPTIONAL);
+            // Generate and add IF group
+            var instructionsListSize = methodInstructions.size();
+            for (int i = posInstruction1; i < instructionsListSize - 1; i++) {
+              var extractedInstruction = methodInstructions.remove(posInstruction1);
+              //System.out.println("Extracted:" + extractedInstruction);
+              addInstructionWithMethodsToGroup(extractedInstruction, groupIf);
+            }
+            groups.put(currentInstruction.instructionName(), groupIf);
+            methodInstructionsFormatted.add(methodInstructions.get(posInstruction1));
+            posInstruction1++;
+          } else {
+            //System.out.println("SIMPLE INSTRUCTION ADDED:" + currentInstruction);
+            // If there is no special semantic simply add instruction
+            // to the formatted list of instructions
+            methodInstructionsFormatted.add(currentInstruction);
+            posInstruction1++;
           }
-          //addGroup(instructionName, newGroup);
-          allInstructions.remove(instruction.instructionName);
         }
-        instruction = methodInstructions.pollLast();
       }
-      if (instruction == null) {
-        // Instruction should never being null (maybe it should be replaced by NullPointerException)
-        throw new AssertionError("Instruction can't be null");
-      }
-      // Set kind of the new group
-      if (type == InstructionType.GOTO) {
-        newGroup.setKind(Call.Group.Kind.LOOP);
-        var instructionMethods = methods.remove(instructionName);
-        if (instructionMethods != null) {
-          newGroup.addInstruction(InstructionType.NONE, instructionName);
-          newGroup.addMethods(instructionName, instructionMethods);
-        }
-
-      } else if (type == InstructionType.IF) {
-        newGroup.setKind(Call.Group.Kind.OPTIONAL);
-      } else {
-        // This should never being called
-        throw new AssertionError("We should never resolve a group type of NONE");
-      }
-      //TODO check if we should re-add the current instruction
-      methodInstructions.add(instruction);
-      groups.put(instructionName, newGroup);
     }
+
+    private int searchFromIndexInstruction(int index, String instructionName) {
+      //System.out.println("START INDEX :" + index);
+      var foundIndex = methodInstructions.subList(index, methodInstructions.size()).stream()
+              .map(Instruction::instructionName).toList().indexOf(instructionName);
+      if (foundIndex < 0) {
+        return foundIndex;
+      }
+      //System.out.println("END INDEX :" + foundIndex);
+      //System.out.println("END INDEX CONCAT :" + (index + foundIndex));
+      return index + foundIndex;
+    }
+
+    private List<Instruction> extractLoopInstruction(int fromIndex, int toIndex) {
+      return methodInstructions.subList(fromIndex, toIndex).stream()
+              .filter(instruction -> instruction.type() == InstructionType.GOTO).toList();
+    }
+
+    private void addInstructionWithMethodsToGroup(Instruction instruction, GroupBuilder group) {
+      var instructionMethods = this.methods.remove(instruction.instructionName());
+      if (instructionMethods != null) {
+        group.addMethods(instruction.instructionName(), instructionMethods);
+      }
+      group.addInstruction(instruction);
+    }
+
   }
 
   record Instruction(InstructionType type, String instructionName) {}

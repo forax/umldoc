@@ -11,12 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -102,13 +99,14 @@ final class ClassFileParser {
         var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
                 .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
                 .toList();
-        var method = entityBuilder.addMethod(modifiers, name, returnType, parameters, EMPTY_GROUP);
+        var methodBuilder = new MethodBuilder(modifiers, name, returnType, parameters);
+        //var method = entityBuilder.addMethod(modifiers, name, returnType,
+        // parameters, EMPTY_GROUP);
         System.out.println(" METHOD ENTER  " + name + "descriptor:" + descriptor
-                + "name:" + name + "signature:" + signature + "  " + method);
+                + "name:" + name + "signature:" + signature);
 
         return new MethodVisitor(ASM9) {
-          private ArrayList<Call.MethodCall> methodsCallBuffer = new ArrayList<>();
-          private final HashMap<Integer, String> instructions = new HashMap<>();
+          private String lastInstructionName = "";
 
           @Override
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
@@ -120,44 +118,40 @@ final class ClassFileParser {
                     .map(parameter -> TypeInfo.of(parameter.getClassName()))
                     .toList();
             var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-            var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
-            methodsCallBuffer.add(methodCall);
-            //entityBuilder.addMethodsCall(method, type, name, returnType, parametersType);
+            //TODO replace this filter by selected package
+            if (type.name().contains("com/github")) {
+              var methodCall = new Call.MethodCall(type, name, returnType, parametersType);
+              methodBuilder.addMethod(lastInstructionName, methodCall);
+            }
           }
 
           @Override
           public void visitJumpInsn(int opcode, Label label) {
+            var instructionName = label.toString();
             if (opcode == Opcodes.GOTO) {
-              //if (instructions.contains(label.toString())) {
-              //This is loop
-              //}
+              methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
+              lastInstructionName = instructionName;
               System.out.println(opcode + " GOTO  " + label);
             } else if ((opcode >= 153 && opcode <= 166) || opcode == 198 || opcode == 199) {
+              methodBuilder.addInstruction(MethodBuilder.InstructionType.IF, instructionName);
+              lastInstructionName = instructionName;
               System.out.println(opcode + " IF  " + label);
             }
           }
 
           @Override
-          public void visitLabel(Label label) {
-            System.out.println("LABEL 2 :  " + label);
-            //System.out.println(label.getOffset());
-          }
-
-          @Override
-          public void visitIincInsn(int varIndex, int increment) {
-            System.out.println("INDEX :  " + varIndex + " INCREMENT : " + increment);
-            //System.out.println(label.getOffset());
-          }
-
-          @Override
           public void visitLineNumber(int line, Label start) {
             System.out.println("LINE :  " + line  + " LABEL : " + start);
-            instructions.put(line, start.toString());
+            var instructionName = start.toString();
+            methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
+            lastInstructionName = instructionName;
           }
 
           @Override
           public void visitEnd() {
-            System.out.println(instructions);
+            var method = methodBuilder.build();
+            System.out.println(method);
+            entityBuilder.addMethod(method);
           }
         };
       }

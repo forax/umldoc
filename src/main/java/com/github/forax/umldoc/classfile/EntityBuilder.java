@@ -44,16 +44,9 @@ final class EntityBuilder {
     fields.add(new Field(modifiers, name, type));
   }
 
-  public Method addMethod(Set<Modifier> modifiers, String name, TypeInfo returnType,
-                        List<Method.Parameter> parameters, Call.Group group) {
-    requireNonNull(modifiers);
-    requireNonNull(name);
-    requireNonNull(returnType);
-    requireNonNull(parameters);
-    requireNonNull(group);
-    var method = new Method(modifiers, name, returnType, parameters, group);
+  public void addMethod(Method method) {
+    requireNonNull(method);
     methods.add(method);
-    return method;
   }
 
   public void addMethodsCall(Method method, TypeInfo type, String name,
@@ -90,6 +83,12 @@ final class EntityBuilder {
 
     if (i > 1) {
       test();
+    } else if (i > 2) {
+      test2();
+    } else if (i > 3) {
+      test2();
+    } else if (i > 2) {
+      test2();
     } else {
       test2();
     }
