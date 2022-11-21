@@ -147,6 +147,7 @@ public final class ClassFileParser {
                       name,
                       TypeInfo.of(((signature == null) ? "" : signature)),
                       parameters,
+                      desc,
                       Group.EMPTY_GROUP);
                   listOfMethods.add(method);
                   var entity = new Entity(oldEntity.modifiers(), oldEntity.type(),
