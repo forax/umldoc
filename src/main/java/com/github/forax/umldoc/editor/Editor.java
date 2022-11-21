@@ -66,7 +66,7 @@ public class Editor {
   public void edit(Writer writer, BufferedReader reader) throws IOException {
     Objects.requireNonNull(writer);
     Objects.requireNonNull(reader);
-    var line = "";
+    String line;
     while ((line = reader.readLine()) != null) {
       state = switch (state) {
         case READWRITE -> readWrite(line, writer);

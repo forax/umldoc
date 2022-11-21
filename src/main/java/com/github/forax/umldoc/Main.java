@@ -44,7 +44,7 @@ public class Main {
       System.exit(-1);
       return;
     }
-    var packages = List.<Package>of();
+    List<Package> packages;
     try {
       packages = ModuleScrapper.scrapModule(modules.next());
     } catch (IOException e) {
