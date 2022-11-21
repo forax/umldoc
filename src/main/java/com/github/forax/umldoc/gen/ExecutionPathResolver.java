@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import com.github.forax.umldoc.core.Call;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Method;
+import com.github.forax.umldoc.core.Modifier;
 import com.github.forax.umldoc.core.Package;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,10 @@ public class ExecutionPathResolver {
     return calls;
   }
 
+  private static boolean isPublic(Method method) {
+    return method.modifiers().contains(Modifier.PUBLIC);
+  }
+
   static List<ExecutionItem> resolve(Call call,
                                      Entity sourceEntity,
                                      Map<String, Entity> entityRegistry) {
@@ -52,7 +57,6 @@ public class ExecutionPathResolver {
       var targetEntity = findEntity(methodCall.ownerName(), entityRegistry);
       var targetMethod = findMethodInEntity(methodCall, targetEntity);
       var executionItem = new ExecutionItem(sourceEntity, targetEntity, targetMethod);
-      //TODO : filter private methods
       executionItems.add(executionItem);
       var targetCalls = targetMethod.callGroup().calls();
       for (var subCall : targetCalls) {
@@ -67,7 +71,9 @@ public class ExecutionPathResolver {
         executionItems.addAll(resolve(subCall, sourceEntity, entityRegistry));
       }
     }
-    return executionItems;
+    return executionItems.stream()
+            .filter(executionItem -> isPublic(executionItem.method()))
+            .toList();
   }
 
   static Entity findEntity(String entityName, Map<String, Entity> entityRegistry) {
