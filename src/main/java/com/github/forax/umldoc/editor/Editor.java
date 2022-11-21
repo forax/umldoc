@@ -123,7 +123,7 @@ public class Editor {
     }
     writer.write(line + "\n");
     if (line.matches("```") ||
-            (extension != Extension.MARKDOWN && parser.endline(line))) {
+            (extension != Extension.MARKDOWN && parser.endLine(line))) {
       return State.READWRITE;
     }
     return State.SEARCHCOMMANDLINE;
@@ -139,7 +139,7 @@ public class Editor {
    */
   State readOnly(String line, Writer writer) throws IOException {
     if (line.matches("```") ||
-            (extension != Extension.MARKDOWN && parser.endline(line))) {
+            (extension != Extension.MARKDOWN && parser.endLine(line))) {
       writer.write(line + "\n");
       return State.READWRITE;
     }

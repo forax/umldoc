@@ -53,7 +53,7 @@ public class PlantCmdLineParser implements CommandLineParser {
   }
 
 
-  public boolean endline(String line) {
+  public boolean endLine(String line) {
     return line.equals("@enduml");
   }
 

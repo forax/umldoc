@@ -50,7 +50,7 @@ public class MermaidCmdLineParser implements CommandLineParser {
   }
 
 
-  public boolean endline(String line) {
+  public boolean endLine(String line) {
     return true;
   }
 
