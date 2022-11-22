@@ -15,8 +15,10 @@ import com.github.forax.umldoc.core.SubtypeDependency;
 import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -143,6 +145,7 @@ public final class MermaidGenerator implements Generator {
   }
 
   private static void generateCalls(Call.Group group, Set<Entity> entities,
+                                    Map<String, Entity> cache,
                                     Writer writer) throws IOException {
     if (group.equals(Call.Group.EMPTY_GROUP)) {
       return;
@@ -161,6 +164,7 @@ public final class MermaidGenerator implements Generator {
         generateCalls(
                 groupCall,
                 entities,
+                cache,
                 writer
         );
 
@@ -170,7 +174,9 @@ public final class MermaidGenerator implements Generator {
       } else if (call instanceof Call.MethodCall methodCall) {
         var srcEntityName = methodCall.ownerName();
         var dstEntityName = ExecutionPathResolver
-                .findEntityFromMethodName(methodCall.name(), entities).type().name();
+                .getEntityFromMethodName(methodCall.name(), entities, cache)
+                .type().name();
+
         generateMethodCall(srcEntityName, dstEntityName, methodCall.name(), writer);
       } else {
         throw new IllegalStateException("Unknown Call subtype : must be Group or MethodCall");
@@ -219,7 +225,8 @@ public final class MermaidGenerator implements Generator {
             .filter(entity -> entity.type().name().startsWith(p.name()))
             .collect(Collectors.toSet());
 
-    generateCalls(firstGroup, entities, writer);
+    var cache = new HashMap<String, Entity>();
+    generateCalls(firstGroup, entities, cache, writer);
 
     writer.append('\n');
   }

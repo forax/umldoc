@@ -94,6 +94,12 @@ public class ExecutionPathResolver {
     throw new IllegalStateException();
   }
 
+  static Entity getEntityFromMethodName(String methodName, Set<Entity> entities,
+                                        Map<String, Entity> cache) {
+    return cache.computeIfAbsent(methodName, name ->
+            ExecutionPathResolver.findEntityFromMethodName(name, entities));
+  }
+
   //Find match ?
   static Method findMethodInEntity(Call.MethodCall methodCall, Entity entity) {
 
