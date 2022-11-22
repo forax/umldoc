@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
@@ -102,13 +103,38 @@ final class ClassFileParser {
 
 
         return new MethodVisitor(ASM9) {
+          private String lastInstructionName = "";
           @Override
           public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
                                       boolean isInterface) {
 
             var ownerName = owner.replace("/", ".");
             var call = new Call.MethodCall(ownerName, name, descriptor);
-            methodBuilder.addCallToGroup(call);
+            methodBuilder.addMethod(lastInstructionName, call);
+          }
+
+          @Override
+          public void visitJumpInsn(int opcode, Label label) {
+            var instructionName = label.toString();
+            if (opcode == Opcodes.GOTO) {
+              methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
+              lastInstructionName = instructionName;
+            } else if ((opcode >= 153 && opcode <= 166) || opcode == 198 || opcode == 199) {
+              methodBuilder.addInstruction(MethodBuilder.InstructionType.IF, instructionName);
+              lastInstructionName = instructionName;
+            }
+          }
+
+          @Override
+          public void visitLineNumber(int line, Label start) {
+            var instructionName = start.toString();
+            methodBuilder.addInstruction(MethodBuilder.InstructionType.GOTO, instructionName);
+            lastInstructionName = instructionName;
+          }
+
+          @Override
+          public void visitEnd() {
+            lastInstructionName = "";
           }
         };
       }
