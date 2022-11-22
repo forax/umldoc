@@ -15,7 +15,7 @@ import java.util.Set;
  * A builder for a {@link Method}.
  */
 public class MethodBuilder {
-  private final GroupBuilder builder = new GroupBuilder();
+  private final GroupBuilder builder = new GroupBuilder(Call.Group.Kind.NONE);
   private final Set<Modifier> modifiers;
   private final String name;
   private final TypeInfo returnTypeInfo;
@@ -89,7 +89,16 @@ public class MethodBuilder {
     private  final ArrayList<Instruction> methodInstructionsFormatted = new ArrayList<>();
     private final HashMap<String, GroupBuilder> groups = new HashMap<>();
     private final HashMap<String, ArrayList<Call.MethodCall>> methods = new HashMap<>();
-    private Call.Group.Kind kind = Call.Group.Kind.NONE;
+    private final Call.Group.Kind kind;
+
+    /**
+     * Constructor of GroupBuilder.
+     *
+     * @param kind the kind of the group
+     */
+    GroupBuilder(Call.Group.Kind kind) {
+      this.kind = Objects.requireNonNull(kind);
+    }
 
     void addInstruction(InstructionType type, String instructionName) {
       methodInstructions.add(new Instruction(type, instructionName));
@@ -98,7 +107,6 @@ public class MethodBuilder {
     void addInstruction(Instruction instruction) {
       methodInstructions.add(instruction);
     }
-
 
     void addMethod(String instructionName, Call.MethodCall methodCall) {
       var list = methods.computeIfAbsent(instructionName, l -> new ArrayList<>());
@@ -129,10 +137,6 @@ public class MethodBuilder {
       return Optional.of(new Call.Group(kind, callsList));
     }
 
-    void setKind(Call.Group.Kind kind) {
-      this.kind = kind;
-    }
-
     private void resolveGroups() {
       int posInstruction1 = 0;
       // For each instruction of the GroupBuilder
@@ -161,10 +165,7 @@ public class MethodBuilder {
               // Add current instruction to
               methodInstructionsFormatted.add(currentInstruction);
               posInstruction1++;
-              var groupIf = new GroupBuilder();
-              var groupElse = new GroupBuilder();
-              groupIf.setKind(Call.Group.Kind.ALTERNATE);
-              groupElse.setKind(Call.Group.Kind.ALTERNATE);
+              var groupIf = new GroupBuilder(Call.Group.Kind.ALTERNATE);
               // Generate and add IF group
               generateStatement(posInstruction1, posInstruction2 - 1, groupIf);
               groups.put(currentInstruction.instructionName(), groupIf);
@@ -174,6 +175,7 @@ public class MethodBuilder {
               posInstruction1++;
               // Generate and add ELSE group
               var posInstruction3 = alternateEndPoint.getAsInt();
+              var groupElse = new GroupBuilder(Call.Group.Kind.ALTERNATE);
               generateStatement(posInstruction1, posInstruction3 - 2, groupElse);
               groups.put(secondGroupEndPointInstruction.instructionName(), groupElse);
             } else {
@@ -181,8 +183,7 @@ public class MethodBuilder {
               methodInstructionsFormatted.add(currentInstruction);
               posInstruction1++;
               // If is optional statement add instruction to a new group
-              var groupIf = new GroupBuilder();
-              groupIf.setKind(Call.Group.Kind.OPTIONAL);
+              var groupIf = new GroupBuilder(Call.Group.Kind.OPTIONAL);
               // Generate and add IF group
               generateStatement(posInstruction1, posInstruction2, groupIf);
               groups.put(currentInstruction.instructionName(), groupIf);
@@ -195,8 +196,7 @@ public class MethodBuilder {
             methodInstructionsFormatted.add(currentInstruction);
             posInstruction1++;
             //System.out.println("GOTO position instruction1" + posInstruction1);
-            var groupLoop = new GroupBuilder();
-            groupLoop.setKind(Call.Group.Kind.LOOP);
+            var groupLoop = new GroupBuilder(Call.Group.Kind.LOOP);
             // Add current instruction methods which are related to the loop
             addInstructionWithMethodsToGroup(currentInstruction, groupLoop);
             // Generate and add IF group
@@ -216,8 +216,7 @@ public class MethodBuilder {
             methodInstructionsFormatted.add(currentInstruction);
             posInstruction1++;
             // If is optional statement add instruction to a new group
-            var groupIf = new GroupBuilder();
-            groupIf.setKind(Call.Group.Kind.OPTIONAL);
+            var groupIf = new GroupBuilder(Call.Group.Kind.OPTIONAL);
             // Generate and add IF group
             generateStatement(posInstruction1, methodInstructions.size() - 1, groupIf);
             groups.put(currentInstruction.instructionName(), groupIf);
