@@ -123,7 +123,7 @@ public final class PlantUmlGenerator implements Generator {
       case OPTIONAL -> "opt\n";
       case ALTERNATE -> "alt\n";
       case PARALLEL -> "group\n";
-      default -> "";
+      case NONE -> "";
     };
   }
 
@@ -162,13 +162,13 @@ public final class PlantUmlGenerator implements Generator {
         if (currentGroupKind.equals(Call.Group.Kind.ALTERNATE) && nbCalls < group.calls().size()) {
           writer.append("else\n");
         }
-      }
-
-      if (call instanceof Call.MethodCall methodCall) {
+      } else if (call instanceof Call.MethodCall methodCall) {
         var srcEntityName = methodCall.ownerName();
         var dstEntityName = ExecutionPathResolver
                 .findEntityFromMethodName(methodCall.name(), entities).type().name();
         generateMethodCall(srcEntityName, dstEntityName, methodCall.name(), writer);
+      } else {
+        throw new IllegalStateException("Unknown Call subtype : must be Group or MethodCall");
       }
     }
 
