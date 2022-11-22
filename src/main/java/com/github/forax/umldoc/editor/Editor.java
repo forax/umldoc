@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -93,6 +94,7 @@ public class Editor {
    */
   State readWrite(String line, Writer writer) throws IOException {
     if (extension != Extension.MARKDOWN) {
+      parser = registration.get(this.extension.name().toLowerCase(Locale.ROOT));
       return searchCommandLine(line, writer);
     }
     writer.write(line + "\n");
