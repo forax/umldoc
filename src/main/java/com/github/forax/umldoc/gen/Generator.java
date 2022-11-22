@@ -30,13 +30,11 @@ public interface Generator {
    * Eg : Could be the main() method.
    *
    * @param header if a header/footer should be generated
-   * @param entryEntity The entity where the entry point method is located
    * @param entryPoint the first method that will appear in the sequence diagram.
    *                   This method must be configured by the user.
    * @param writer the writer
    * @throws IOException if an I/O exception occurs
    */
-  void generateSequenceDiagram(boolean header, Entity entryEntity,
-                               Method entryPoint, Package p,
+  void generateSequenceDiagram(boolean header, Method entryPoint, Package p,
                                Writer writer) throws IOException;
 }
