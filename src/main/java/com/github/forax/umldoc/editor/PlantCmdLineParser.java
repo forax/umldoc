@@ -1,15 +1,18 @@
 package com.github.forax.umldoc.editor;
 
-import com.github.forax.umldoc.gen.MermaidGenerator;
+import com.github.forax.umldoc.gen.PlantUmlGenerator;
 import java.util.Optional;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 /**
- * This class is used to parse the command line for the mermaid export.
+ * This class is used to parse the command line for the PlantUML export.
  *
  */
-public class MermaidCmdLineParser implements CommandLineParser {
+public class PlantCmdLineParser implements CommandLineParser {
+
+  private boolean isStartUmlAnnotationPresent = false;
+
 
   /**
    * This class is used to filter the options given in the command line.
@@ -28,39 +31,43 @@ public class MermaidCmdLineParser implements CommandLineParser {
     }
   }
 
-
   /**
-   * This method parse each line, by detecting if it start with the begin sequence :
-   *  --> "%% umldoc" for the Mermaid.
+   * This method parse each line, by detecting if it starts with the begin sequence :
+   *  --> "` umldoc" for the PlantUML.
    *
    * @param line the line to parse
    * @return an Optional of GeneratorConfiguration.
    */
   public Optional<GeneratorConfiguration> parseLine(String line) {
-    if (isStartingLine(line)) {
+    if (!isStartUmlAnnotationPresent) {
+      isStartUmlAnnotationPresent = isStartAnnotationPresent(line);
+    } else if (isStartingLine(line) && isStartUmlAnnotationPresent) {
       var options = new OptionsCmd();
-      var args = line.substring("%% umldoc".length() + 1).split(" ");
+      var args = line.substring("` umldoc".length() + 1).split(" ");
       new CommandLine(options).execute(args);
       var generator = GeneratorConfiguration
-              .filterPackage(options.packageName, new MermaidGenerator());
+              .filterPackage(options.packageName, new PlantUmlGenerator());
       return Optional.of(generator);
     }
-
     return Optional.empty();
   }
 
 
   public boolean endLine(String line) {
-    return false;
+    return line.equals("@enduml");
   }
 
   private boolean isStartingLine(String line) {
-    return line.startsWith("%% umldoc");
+    return line.startsWith("' umldoc");
+  }
+
+  private boolean isStartAnnotationPresent(String line) {
+    return line.startsWith("@startuml");
   }
 
   public static void main(String[] args) {
-    var test = new MermaidCmdLineParser();
-    test.parseLine("%% umldoc -p nameThomas -t test");
+    var test = new PlantCmdLineParser();
+    test.parseLine("` umldoc -p nameThomas -t test");
   }
 
 

@@ -9,12 +9,13 @@ import com.github.forax.umldoc.editor.CommandLineParser;
 import com.github.forax.umldoc.editor.Editor;
 import com.github.forax.umldoc.editor.Editor.Extension;
 import com.github.forax.umldoc.editor.MermaidCmdLineParser;
+import com.github.forax.umldoc.editor.PlantCmdLineParser;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Contain the main method.
@@ -32,7 +33,7 @@ public class Main {
   public static void main(String[] args) {
     if (args.length != 2) {
       System.err.println("Usage : java -jar path_of_jar"
-              + " path_of_jar path_of_markdown");
+              + " path_of_repository_module-info.class path_of_markdown");
       System.exit(-1);
       return;
     }
@@ -67,8 +68,9 @@ public class Main {
             var reader = Files.newBufferedReader(Path.of(args[1]));
             var writer = Files.newBufferedWriter(Path.of("resultFile.md"))
     ) {
-      var config = Map.<String, CommandLineParser>of("mermaid", new MermaidCmdLineParser());
-      //config.put("plantuml", new PlantCmdLineParser());
+      var config = new HashMap<String, CommandLineParser>();
+      config.put("mermaid", new MermaidCmdLineParser());
+      config.put("plantuml", new PlantCmdLineParser());
 
       var editor = new Editor(getExtension(extension), config, packages);
       editor.edit(writer, reader);
