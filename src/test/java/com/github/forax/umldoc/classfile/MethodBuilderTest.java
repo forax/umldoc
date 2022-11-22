@@ -13,42 +13,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MethodBuilderTest {
 
    static class TestHelper{
-     static MethodBuilder createMethodBuilder(String name, String descriptor) {
-      var modifiers = Utils.toModifiers(1);
-      var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-      var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
+     static MethodBuilder createMethodBuilder(String name) {
+       var descriptor = "(Ljava/lang/Object;)Ljava/lang/Object;";
+       var modifiers = Utils.toModifiers(1);
+       var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
+       var parameters = Arrays.stream(Type.getArgumentTypes(descriptor))
               .map(parameter -> new Method.Parameter("", TypeInfo.of(parameter.getClassName())))
               .toList();
-      return new MethodBuilder(modifiers, name, returnType, parameters);
+       return new MethodBuilder(modifiers, name, returnType, parameters, descriptor);
     }
 
-     static Call.MethodCall createMethodCall(String name, String owner, String descriptor) {
-       var type = TypeInfo.of(owner);
-       var parametersType = Arrays.stream(Type.getArgumentTypes(descriptor))
-               .map(parameter -> TypeInfo.of(parameter.getClassName()))
-               .toList();
-       var returnType = TypeInfo.of(Type.getReturnType(descriptor).getClassName());
-      return new Call.MethodCall(type, name, returnType, parametersType);
+     static Call.MethodCall createMethodCall(String name) {
+      return new Call.MethodCall("java/lang/Object", name, "(Ljava/lang/Object;)Ljava/lang/Object;");
     }
   }
 
   @Test
   public void buildSimpleMethod() {
-    var builder = TestHelper.createMethodBuilder("test1", "(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall = TestHelper.createMethodCall("hello1","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
+    var builder = TestHelper.createMethodBuilder("test1");
+    var methodCall = TestHelper.createMethodCall("hello1");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L001");
     builder.addMethod("L001",methodCall);
     var method = builder.build();
-    assertEquals("Group[kind=NONE, calls=[MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object," +
-            " parameterTypes=[java.lang.Object]]]]", method.callGroup().toString());
+    assertEquals("Group[kind=NONE, calls=[MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]", method.callGroup().toString());
   }
 
   @Test
   public void buildMethodWithLoopOptional() {
-    var builder = TestHelper.createMethodBuilder("test1", "(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall = TestHelper.createMethodCall("hello1","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall2 = TestHelper.createMethodCall("hello2","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall3 = TestHelper.createMethodCall("hello3","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
+    var builder = TestHelper.createMethodBuilder("test2");
+    var methodCall = TestHelper.createMethodCall("hello1");
+    var methodCall2 = TestHelper.createMethodCall("hello2");
+    var methodCall3 = TestHelper.createMethodCall("hello3");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L001");
     builder.addMethod("L001",methodCall);
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L002");
@@ -64,19 +59,18 @@ public class MethodBuilderTest {
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L007");
     builder.addMethod("L007",methodCall);
     var method = builder.build();
-    assertEquals("Group[kind=NONE, calls=[MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, " +
-            "parameterTypes=[java.lang.Object]], Group[kind=LOOP, calls=[MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object," +
-            " parameterTypes=[java.lang.Object]], MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, " +
-            "parameterTypes=[java.lang.Object]], Group[kind=OPTIONAL, calls=[MethodCall[type=java/lang/Object, name=hello3, returnType=java.lang.Object, " +
-            "parameterTypes=[java.lang.Object]]]]]], MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object," +
-            " parameterTypes=[java.lang.Object]]]]", method.callGroup().toString());
+    assertEquals("Group[kind=NONE, calls=[MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], " +
+            "Group[kind=LOOP, calls=[MethodCall[ownerName=java/lang/Object, name=hello2, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], " +
+            "MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], Group[kind=OPTIONAL, " +
+            "calls=[MethodCall[ownerName=java/lang/Object, name=hello3, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]]], " +
+            "MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]", method.callGroup().toString());
   }
 
   @Test
   public void buildMethodWithOptional() {
-    var builder = TestHelper.createMethodBuilder("test1", "(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall = TestHelper.createMethodCall("hello1","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall2 = TestHelper.createMethodCall("hello2","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
+    var builder = TestHelper.createMethodBuilder("test3");
+    var methodCall = TestHelper.createMethodCall("hello1");
+    var methodCall2 = TestHelper.createMethodCall("hello2");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L001");
     builder.addMethod("L001",methodCall);
     builder.addMethod("L001",methodCall2);
@@ -85,17 +79,17 @@ public class MethodBuilderTest {
     builder.addMethod("L003",methodCall2);
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L002");
     var method = builder.build();
-    assertEquals("Group[kind=NONE, calls=[MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]," +
-            " MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object, parameterTypes=[java.lang.Object]], Group[kind=OPTIONAL," +
-            " calls=[MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]]]]]", method.callGroup().toString());
+    assertEquals("Group[kind=NONE, calls=[MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]," +
+            " MethodCall[ownerName=java/lang/Object, name=hello2, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], Group[kind=OPTIONAL," +
+            " calls=[MethodCall[ownerName=java/lang/Object, name=hello2, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]]]", method.callGroup().toString());
   }
 
   @Test
   public void buildMethodWithAlternate() {
-    var builder = TestHelper.createMethodBuilder("test1", "(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall = TestHelper.createMethodCall("hello1","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall2 = TestHelper.createMethodCall("hello2","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall3 = TestHelper.createMethodCall("hello3","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
+    var builder = TestHelper.createMethodBuilder("test4");
+    var methodCall = TestHelper.createMethodCall("hello1");
+    var methodCall2 = TestHelper.createMethodCall("hello2");
+    var methodCall3 = TestHelper.createMethodCall("hello3");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L001");
     builder.addMethod("L001",methodCall);
     builder.addInstruction(MethodBuilder.InstructionType.IF, "L002");
@@ -108,12 +102,15 @@ public class MethodBuilderTest {
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L007");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L008");
     var method = builder.build();
-    assertEquals("Group[kind=NONE, calls=[MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, parameterTypes=[java.lang.Object]], Group[kind=ALTERNATE, calls=[MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]]], Group[kind=ALTERNATE, calls=[MethodCall[type=java/lang/Object, name=hello3, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]]]]]", method.callGroup().toString());
+    assertEquals("Group[kind=NONE, calls=[MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], " +
+            "Group[kind=ALTERNATE, calls=[MethodCall[ownerName=java/lang/Object, name=hello2, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]," +
+            " Group[kind=ALTERNATE, calls=[MethodCall[ownerName=java/lang/Object, name=hello3," +
+            " descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]]]", method.callGroup().toString());
   }
 
   @Test
   public void buildMethodWithNoMethodCall() {
-    var builder = TestHelper.createMethodBuilder("test1", "(Ljava/lang/Object;)Ljava/lang/Object;");
+    var builder = TestHelper.createMethodBuilder("test5");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L001");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L002");
     builder.addInstruction(MethodBuilder.InstructionType.IF, "L003");
@@ -126,10 +123,10 @@ public class MethodBuilderTest {
 
   @Test
   public void buildMethodWithMultipleStatement() {
-    var builder = TestHelper.createMethodBuilder("test1", "(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall = TestHelper.createMethodCall("hello1","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall2 = TestHelper.createMethodCall("hello2","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
-    var methodCall3 = TestHelper.createMethodCall("hello3","java/lang/Object" ,"(Ljava/lang/Object;)Ljava/lang/Object;");
+    var builder = TestHelper.createMethodBuilder("test1");
+    var methodCall = TestHelper.createMethodCall("hello1");
+    var methodCall2 = TestHelper.createMethodCall("hello2");
+    var methodCall3 = TestHelper.createMethodCall("hello3");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L001");
     builder.addMethod("L001",methodCall);
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L002");
@@ -159,15 +156,14 @@ public class MethodBuilderTest {
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L006");
     builder.addInstruction(MethodBuilder.InstructionType.NONE, "L007");
     var method = builder.build();
-    assertEquals("Group[kind=NONE, calls=[MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]" +
-            ", Group[kind=LOOP, calls=[MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object, parameterTypes=[java.lang.Object]], " +
-            "MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, parameterTypes=[java.lang.Object]], Group[kind=OPTIONAL, " +
-            "calls=[MethodCall[type=java/lang/Object, name=hello3, returnType=java.lang.Object, parameterTypes=[java.lang.Object]], Group[kind=OPTIONAL," +
-            " calls=[MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]," +
-            " MethodCall[type=java/lang/Object, name=hello1, returnType=java.lang.Object, parameterTypes=[java.lang.Object]], Group[kind=ALTERNATE, " +
-            "calls=[MethodCall[type=java/lang/Object, name=hello2, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]]], " +
-            "Group[kind=ALTERNATE, calls=[MethodCall[type=java/lang/Object, name=hello3, returnType=java.lang.Object, parameterTypes=[java.lang.Object]]]]]" +
-            "]]]]]]]", method.callGroup().toString());
+    assertEquals("Group[kind=NONE, calls=[MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]," +
+            " Group[kind=LOOP, calls=[MethodCall[ownerName=java/lang/Object, name=hello2, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], " +
+            "MethodCall[ownerName=java/lang/Object, name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], Group[kind=OPTIONAL, calls=" +
+            "[MethodCall[ownerName=java/lang/Object, name=hello3, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], Group[kind=OPTIONAL," +
+            " calls=[MethodCall[ownerName=java/lang/Object, name=hello2, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], MethodCall[ownerName=java/lang/Object," +
+            " name=hello1, descriptor=(Ljava/lang/Object;)Ljava/lang/Object;], Group[kind=ALTERNATE, calls=[MethodCall[ownerName=java/lang/Object, name=hello2, " +
+            "descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]], Group[kind=ALTERNATE, calls=[MethodCall[ownerName=java/lang/Object, name=hello3, " +
+            "descriptor=(Ljava/lang/Object;)Ljava/lang/Object;]]]]]]]]]]]", method.callGroup().toString());
   }
 
 }

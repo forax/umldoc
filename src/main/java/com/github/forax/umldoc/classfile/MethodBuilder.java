@@ -21,16 +21,6 @@ public class MethodBuilder {
   private final TypeInfo returnTypeInfo;
   private final List<Method.Parameter> parameters;
   private final String descriptor;
-  private final CallGroupBuilder callGroupBuilder = new CallGroupBuilder(Call.Group.Kind.NONE);
-  private final TypeInfo returnType;
-
-  public MethodBuilder(Set<Modifier> modifiers, String name, TypeInfo returnType,
-                       List<Method.Parameter> parameters) {
-    this.modifiers = Objects.requireNonNull(modifiers);
-    this.name = Objects.requireNonNull(name);
-    this.returnType = Objects.requireNonNull(returnType);
-    this.parameters = Objects.requireNonNull(parameters);
-  }
 
   /**
    * Constructor of MethodBuilder.
@@ -56,16 +46,29 @@ public class MethodBuilder {
   }
 
   /**
-   * Add a call to the {@link com.github.forax.umldoc.core.Call.Group} of the method.
+   * Add instruction to the GroupBuilder.
    *
-   * @param call the call to add to the group
-   * @return the instance of {@link MethodBuilder}
+   * @param type instruction type
+   * @param instructionName instruction label name
    */
-  public MethodBuilder addCallToGroup(Call call) {
-    Objects.requireNonNull(call);
-    this.callGroupBuilder.add(call);
-    return this;
+  public void addInstruction(InstructionType type, String instructionName) {
+    Objects.requireNonNull(type);
+    Objects.requireNonNull(instructionName);
+    builder.addInstruction(type, instructionName);
   }
+
+  /**
+   * Add a method call to the GroupBuilder.
+   *
+   * @param instructionName instruction label name
+   * @param method method call associated to the instruction
+   */
+  public void addMethod(String instructionName, Call.MethodCall method) {
+    Objects.requireNonNull(instructionName);
+    Objects.requireNonNull(method);
+    builder.addMethod(instructionName, method);
+  }
+
 
   /**
    * Build the method.
@@ -74,13 +77,10 @@ public class MethodBuilder {
    */
   public Method build() {
     return new Method(modifiers,
-        name,
-        returnTypeInfo,
-        parameters,
-        descriptor,
-        callGroupBuilder.build());
-  public Method build() {
-    return new Method(modifiers, name, returnType, parameters,
+            name,
+            returnTypeInfo,
+            parameters,
+            descriptor,
             builder.build().orElse(Call.Group.EMPTY_GROUP));
   }
 
@@ -95,7 +95,7 @@ public class MethodBuilder {
       methodInstructions.add(new Instruction(type, instructionName));
     }
 
-    private void addInstruction(Instruction instruction) {
+    void addInstruction(Instruction instruction) {
       methodInstructions.add(instruction);
     }
 
@@ -206,7 +206,6 @@ public class MethodBuilder {
           } else {
             //TODO manage unhandled statement
             //throw new AssertionError("Unhandled statement.");
-            //methodInstructionsFormatted.add(currentInstruction);
             posInstruction1++;
           }
 
@@ -266,5 +265,8 @@ public class MethodBuilder {
 
   record Instruction(InstructionType type, String instructionName) {}
 
+  /**
+   * Enum of the different kinds of instruction.
+   */
   public enum InstructionType { GOTO, IF, NONE }
 }
