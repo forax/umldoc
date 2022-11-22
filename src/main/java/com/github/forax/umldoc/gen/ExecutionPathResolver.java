@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Class that compute the execution path (method calls and subsequent method calls).
@@ -81,6 +82,18 @@ public class ExecutionPathResolver {
             .orElseThrow();
   }
 
+  static Entity findEntityFromMethodName(String methodName, Set<Entity> entities) {
+    for (var entity : entities) {
+      for (var method : entity.methods()) {
+        if (method.name().equals(methodName)) {
+          return entity;
+        }
+      }
+    }
+
+    throw new IllegalStateException();
+  }
+
   //Find match ?
   static Method findMethodInEntity(Call.MethodCall methodCall, Entity entity) {
 
@@ -103,5 +116,28 @@ public class ExecutionPathResolver {
       map.put(entity.type().name(), entity);
     }
     return map;
+  }
+
+  /**
+   * A method which returns the list of relevant calls for the sequence diagram.
+   * A call is relevant if its target is one of our entity.
+   *
+   * @param p the {@link Package} which we are interested in
+   * @return the list of relevant calls
+   */
+  static List<Call> getCallsFromPackage(Call.Group callGroup, Package p) {
+    return callGroup.calls().stream()
+            .filter(call -> {
+              if (call instanceof Call.MethodCall methodCall) {
+                return methodCall.ownerName().startsWith(p.name());
+              }
+              return true;
+            })
+            .toList();
+  }
+
+  public static Call.Group relevantCallsGroup(Call.Group callGroup, Package p) {
+    var relevantCalls = getCallsFromPackage(callGroup, p);
+    return new Call.Group(callGroup.kind(), relevantCalls);
   }
 }

@@ -5,25 +5,22 @@ import static java.util.Objects.requireNonNull;
 import com.github.forax.umldoc.core.AssociationDependency;
 import com.github.forax.umldoc.core.AssociationDependency.Cardinality;
 import com.github.forax.umldoc.core.Call;
-import com.github.forax.umldoc.core.Call.MethodCall;
 import com.github.forax.umldoc.core.Dependency;
 import com.github.forax.umldoc.core.Entity;
 import com.github.forax.umldoc.core.Field;
 import com.github.forax.umldoc.core.Method;
 import com.github.forax.umldoc.core.Package;
 import com.github.forax.umldoc.core.SubtypeDependency;
-import com.github.forax.umldoc.core.TypeInfo;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Generate a class diagram using the plantuml format.
  */
 public final class PlantUmlGenerator implements Generator {
-  // FIXME !!!, a generator should not have fields ! otherwise, it is not thread safe
-  private String currentEntityName;
-
   private static String cardinality(Cardinality cardinality) {
     return switch (cardinality) {
       case ONLY_ONE -> "1";
@@ -126,44 +123,52 @@ public final class PlantUmlGenerator implements Generator {
       case OPTIONAL -> "opt\n";
       case ALTERNATE -> "alt\n";
       case PARALLEL -> "group\n";
-      default -> "else\n";
+      default -> "";
     };
   }
 
-  private void generateMethodCall(Call.MethodCall methodCall, Writer writer)
-          throws IOException {
-
-    writer.append(currentEntityName)
+  private static void generateMethodCall(String sourceEntity, String dstEntity, String methodName,
+                                         Writer writer) throws IOException {
+    writer.append(sourceEntity)
             .append(" -> ")
-            .append(methodCall.ownerName())
+            .append(dstEntity)
             .append(": ")
-            .append(methodCall.name())
-            .append("()")
-            .append('\n');
+            .append(methodName)
+            .append("()\n");
   }
 
-  private void generateCalls(Call.Group group, Call.Group.Kind parentGroupKind,
-                             Writer writer) throws IOException {
+  private static void generateCalls(Call.Group group, Set<Entity> entities,
+                                    Writer writer) throws IOException {
     if (group.equals(Call.Group.EMPTY_GROUP)) {
       return;
     }
 
     var currentGroupKind = group.kind();
 
-    if (!currentGroupKind.equals(Call.Group.Kind.NONE)
-            || parentGroupKind.equals(Call.Group.Kind.ALTERNATE)) {
+    if (!currentGroupKind.equals(Call.Group.Kind.NONE)) {
       writer.append(groupKind(currentGroupKind));
     }
 
+    var nbCalls = 0;
     for (var call : group.calls()) {
+      nbCalls += 1;
       if (call instanceof Call.Group groupCall) {
-        generateCalls(groupCall, writer);
-        generateCalls(groupCall, currentGroupKind, writer);
+        generateCalls(
+                groupCall,
+                entities,
+                writer
+        );
+
+        if (currentGroupKind.equals(Call.Group.Kind.ALTERNATE) && nbCalls < group.calls().size()) {
+          writer.append("else\n");
+        }
       }
 
       if (call instanceof Call.MethodCall methodCall) {
-        generateMethodCall(methodCall, writer);
-        currentEntity = methodCall.type(); // FIXME
+        var srcEntityName = methodCall.ownerName();
+        var dstEntityName = ExecutionPathResolver
+                .findEntityFromMethodName(methodCall.name(), entities).type().name();
+        generateMethodCall(srcEntityName, dstEntityName, methodCall.name(), writer);
       }
     }
 
@@ -191,45 +196,23 @@ public final class PlantUmlGenerator implements Generator {
     }
   }
 
-  // FIXME move somewhere else
-  public static Call.Group relevantCallsGroup(Call.Group callGroup, Package p) {
-    var relevantCalls = getCallsFromPackage(callGroup, p);
-    return new Call.Group(callGroup.kind(), relevantCalls);
-  }
-
-
-  /**
-   * A method which returns the list of relevant calls for the sequence diagram.
-   * A call is relevant if its target is one of our entity.
-   *
-   * @param p the {@link Package} which we are interested in
-   * @return the list of relevant calls
-   */
-  // FIXME move somewhere else
-  static List<Call> getCallsFromPackage(Call.Group callGroup, Package p) {
-    return callGroup.calls().stream()
-        .filter(call -> {
-          if (call instanceof MethodCall methodCall) {
-            return methodCall.ownerName().startsWith(p.name());
-          }
-          return true;
-        })
-        .toList();
-  }
-
   @Override
-  public void generateSequenceDiagram(boolean header, Entity entryEntity,
-                                      Method entryPoint, Package p,
+  public void generateSequenceDiagram(boolean header, Method entryPoint, Package p,
                                       Writer writer) throws IOException {
-    requireNonNull(entryEntity);
     requireNonNull(entryPoint);
     requireNonNull(writer);
 
     if (header) {
       addHeader(writer);
     }
-    currentEntityName = entryEntity.type().name();
-    generateCalls(relevantCallsGroup(entryPoint.callGroup(), p), writer);
+
+    var firstGroup = ExecutionPathResolver.relevantCallsGroup(entryPoint.callGroup(), p);
+
+    var entities = p.entities().stream()
+            .filter(entity -> entity.type().name().startsWith(p.name()))
+            .collect(Collectors.toSet());
+
+    generateCalls(firstGroup, entities, writer);
 
     if (header) {
       addFooter(writer);

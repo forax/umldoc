@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.Type;
 
 public class PlantUmlGeneratorTest {
   @Test
@@ -53,6 +54,40 @@ public class PlantUmlGeneratorTest {
         """, writer.toString());
   }
 
+  @Test
+  public void generateSequenceDiagramSimple() throws IOException {
+    var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+    var voidType = TypeInfo.of("void");
+    var publicModifier = Set.of(Modifier.PUBLIC);
+
+    var mainGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
+            new Call.MethodCall("A", "m1", descriptor),
+            new Call.MethodCall("A", "m2", descriptor),
+            new Call.MethodCall("A", "m3", descriptor),
+            new Call.MethodCall("A", "m4", descriptor)
+    ));
+    var m1 = new Method(publicModifier, "m1", voidType, List.of(), descriptor, mainGroup);
+    var m2 = new Method(publicModifier, "m2", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var m3 = new Method(publicModifier, "m3", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var m4 = new Method(publicModifier, "m4", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var a = new Entity(Set.of(), new TypeInfo(Optional.empty(), "A", List.of()), Stereotype.CLASS, List.of(), List.of());
+    var b = new Entity(Set.of(), new TypeInfo(Optional.empty(), "B", List.of()), Stereotype.CLASS, List.of(), List.of(m1, m2, m3, m4));
+    var p = new Package("", List.of(a, b), List.of());
+
+    var writer = new StringWriter();
+    var generator = new PlantUmlGenerator();
+    generator.generateSequenceDiagram(true, m1, p, writer);
+    assertEquals("""
+            @startuml
+            
+            A -> B: m1()
+            A -> B: m2()
+            A -> B: m3()
+            A -> B: m4()
+            @enduml
+            """, writer.toString());
+  }
+
   /*
       class Alice {
         void main() {
@@ -85,37 +120,55 @@ public class PlantUmlGeneratorTest {
    */
   @Test
   public void generateSequenceDiagramMethodsPlantUml() throws IOException {
+    var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+    var voidType = TypeInfo.of("void");
+    var publicModifier = Set.of(Modifier.PUBLIC);
+
     var helloGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall("Alice", "main", "()V"),
-            new Call.MethodCall("Bob", "helloBob", "()V"),
-            new Call.MethodCall("Alice", "helloAlice","()V")
+            new Call.MethodCall("Alice", "toto", descriptor),
+            new Call.MethodCall("Alice", "helloBob", descriptor),
+            new Call.MethodCall("Bob", "helloAlice", descriptor) // ambiguity
     ));
-    var voidType = new TypeInfo(Optional.empty(), "void", List.of());
-    var main = new Method(Set.of(Modifier.PUBLIC), "main", voidType, List.of(), "()V", helloGroup);
-//    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", voidType, List.of(), "()V", helloGroup);
-    var helloBob = new Method(Set.of(Modifier.PUBLIC), "helloBob", voidType, List.of(), "()V", helloGroup);
-    var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(), List.of(main, helloBob));
-//    var bob = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Bob", List.of()), Stereotype.CLASS, List.of(), List.of(helloAlice));
+
+    var toto = new Method(
+            publicModifier,
+            "toto",
+            voidType,
+            List.of(),
+            descriptor,
+            helloGroup
+    );
+    var helloBob = new Method(
+            publicModifier,
+            "helloBob",
+            voidType,
+            List.of(),
+            descriptor,
+            Call.Group.EMPTY_GROUP
+    );
+    var helloAlice = new Method(
+            publicModifier,
+            "helloAlice",
+            voidType,
+            List.of(),
+            descriptor,
+            Call.Group.EMPTY_GROUP
+    );
+    var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(), List.of(toto, helloAlice));
+    var bob = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Bob", List.of()), Stereotype.CLASS, List.of(), List.of(helloBob));
+    var p = new Package("", List.of(alice, bob), List.of());
 
     var writer = new StringWriter();
     var generator = new PlantUmlGenerator();
-    var p = new Package("", List.of(), List.of());
-    generator.generateSequenceDiagram(true, alice, main, p, writer);
+    generator.generateSequenceDiagram(true, toto, p, writer);
     assertEquals("""
         @startuml
         
-        Alice -> Alice: main()
+        Alice -> Alice: toto()
         Alice -> Bob: helloBob()
         Bob -> Alice: helloAlice()
         @enduml
         """, writer.toString());
-            @startuml
-
-            Alice -> Bob: helloBob()
-            Bob -> Alice: helloAlice()
-            Alice -> Bob: toto()
-            @enduml
-            """, writer.toString());
   }
 
   /*
@@ -160,73 +213,84 @@ public class PlantUmlGeneratorTest {
    */
   @Test
   public void generateSequenceDiagramMethodsPlantUmlWith3Entities() throws IOException {
+    var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+    var voidType = TypeInfo.of("void");
+    var publicModifier = Set.of(Modifier.PUBLIC);
+
     var charlieGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Bob",
-                            List.of()
-                    ),
-                    "tata",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-            ),
-            Call.Group.EMPTY_GROUP
+            new Call.MethodCall("Charlie", "tata", descriptor)
     ));
 
     var bobGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Charlie",
-                            List.of()
-                    ),
-                    "toto",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-            ),
+            new Call.MethodCall("Bob", "toto", descriptor),
             charlieGroup,
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Alice",
-                            List.of()
-                    ),
-                    "helloAlice",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-            )
+            new Call.MethodCall("Bob", "helloAlice", descriptor)
     ));
 
     var mainGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(
-                    new TypeInfo(Optional.empty(),
-                            "Bob",
-                            List.of()
-                    ),
-                    "helloBob",
-                    new TypeInfo(
-                            Optional.empty(),
-                            "void",
-                            List.of()),
-                    List.of()
-            ),
-            bobGroup,
-            Call.Group.EMPTY_GROUP
+            new Call.MethodCall("Alice", "helloBob", descriptor),
+            bobGroup
     ));
 
-    var helloBob = new Method(Set.of(Modifier.PUBLIC), "helloBob", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), mainGroup);
-    var helloAlice = new Method(Set.of(Modifier.PUBLIC), "helloAlice", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), bobGroup);
-    var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(), List.of(helloAlice));
+    var helloBob = new Method(
+            publicModifier,
+            "helloBob",
+            voidType, List.of(),
+            descriptor,
+            mainGroup
+    );
+    var helloAlice = new Method(
+            publicModifier,
+            "helloAlice",
+            voidType,
+            List.of(),
+            descriptor,
+            Call.Group.EMPTY_GROUP
+    );
+    var toto = new Method(
+            publicModifier,
+            "toto",
+            voidType,
+            List.of(),
+            descriptor,
+            Call.Group.EMPTY_GROUP
+    );
+    var tata = new Method(
+            publicModifier,
+            "tata",
+            voidType,
+            List.of(),
+            descriptor,
+            Call.Group.EMPTY_GROUP
+    );
+    var alice = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Alice", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(helloAlice)
+    );
+    var bob = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Bob", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(helloBob, tata)
+    );
+    var charlie = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Charlie", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(toto)
+    );
     var writer = new StringWriter();
     var generator = new PlantUmlGenerator();
-    generator.generateSequenceDiagram(true, alice, helloBob, new Package("", List.of(), List.of()), writer);
+    generator.generateSequenceDiagram(true, helloBob,
+            new Package("", List.of(alice, bob, charlie),
+                    List.of()),
+            writer
+    );
     assertEquals("""
             @startuml
 
@@ -234,6 +298,53 @@ public class PlantUmlGeneratorTest {
             Bob -> Charlie: toto()
             Charlie -> Bob: tata()
             Bob -> Alice: helloAlice()
+            @enduml
+            """, writer.toString());
+  }
+
+  @Test
+  public void generateSequenceDiagramMethodsWithOptionalGroupKind() throws IOException {
+    var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+    var voidType = TypeInfo.of("void");
+    var publicModifier = Set.of(Modifier.PUBLIC);
+
+    var mainGroup = new Call.Group(Call.Group.Kind.OPTIONAL, List.of(
+            new Call.MethodCall("Alice", "helloBob", descriptor)
+    ));
+    var helloBob = new Method(
+            publicModifier,
+            "helloBob",
+            voidType,
+            List.of(),
+            descriptor,
+            mainGroup
+    );
+    var alice = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Alice", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of()
+    );
+    var bob = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Bob", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(helloBob)
+    );
+    var writer = new StringWriter();
+    var generator = new PlantUmlGenerator();
+    generator.generateSequenceDiagram(true, helloBob,
+            new Package("", List.of(alice, bob), List.of()),
+            writer
+    );
+    assertEquals("""
+            @startuml
+            
+            opt
+            Alice -> Bob: helloBob()
+            end
             @enduml
             """, writer.toString());
   }
@@ -298,74 +409,72 @@ public class PlantUmlGeneratorTest {
    */
   @Test
   public void generateSequenceDiagramMethodsPlantUmlWith3EntitiesAndDifferentGroups() throws IOException {
+    var descriptor = Type.getMethodDescriptor(Type.getType(void.class));
+    var voidType = TypeInfo.of("void");
+    var publicModifier = Set.of(Modifier.PUBLIC);
+
     var method3LoopGroup = new Call.Group(Call.Group.Kind.LOOP, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Bob", List.of()),
-                    "method5",
-                    new TypeInfo(Optional.empty(), "void", List.of()), List.of()
-            ),
-            Call.Group.EMPTY_GROUP
+            new Call.MethodCall("Alice", "method5", descriptor)
     ));
-
     var method3Group = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Charlie", List.of()),
-                    "method4",
-                    new TypeInfo(Optional.empty(), "void", List.of()),
-                    List.of()
-            ),
-            Call.Group.EMPTY_GROUP,
+            new Call.MethodCall("Alice", "method4", descriptor),
             method3LoopGroup,
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Charlie", List.of()),
-                    "method6",
-                    new TypeInfo(Optional.empty(), "void", List.of()),
-                    List.of()
-            ),
-            Call.Group.EMPTY_GROUP
+            new Call.MethodCall("Alice", "method6", descriptor)
     ));
-
     var bobAltElse1Group = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
-                    "method3",
-                    new TypeInfo(Optional.empty(), "void", List.of()),
-                    List.of()
-            ),
+            new Call.MethodCall("Bob", "method3", descriptor),
             method3Group
     ));
-
     var bobAltElse2Group = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
-                    "method7",
-                    new TypeInfo(Optional.empty(), "void", List.of()),
-                    List.of()
-            )
+            new Call.MethodCall("Bob", "method7", descriptor),
+            new Call.MethodCall("Bob", "method3Bis", descriptor)
     ));
-
     var bobAltGroup = new Call.Group(Call.Group.Kind.ALTERNATE, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Alice", List.of()),
-                    "method2",
-                    new TypeInfo(Optional.empty(), "void", List.of()), List.of()
-            ),
+            new Call.Group(Call.Group.Kind.NONE, List.of(
+                    new Call.MethodCall("Bob", "method2", descriptor)
+            )),
             bobAltElse1Group,
             bobAltElse2Group
     ));
-
     var mainGroup = new Call.Group(Call.Group.Kind.NONE, List.of(
-            new Call.MethodCall(new TypeInfo(Optional.empty(), "Bob", List.of()),
-                    "method1",
-                    new TypeInfo(Optional.empty(), "void", List.of()), List.of()
-            ),
+            new Call.MethodCall("Alice", "method1", descriptor),
             bobAltGroup
     ));
-
-    var method1 = new Method(Set.of(Modifier.PUBLIC), "method1", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), mainGroup);
-    var method2 = new Method(Set.of(Modifier.PUBLIC), "method2", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), bobAltGroup);
-    var method3 = new Method(Set.of(Modifier.PUBLIC), "method3", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), bobAltGroup);
-    var method7 = new Method(Set.of(Modifier.PUBLIC), "method7", new TypeInfo(Optional.empty(), "void", List.of()), List.of(), bobAltGroup);
-    var alice = new Entity(Set.of(), new TypeInfo(Optional.empty(), "Alice", List.of()), Stereotype.CLASS, List.of(),
-            List.of(method2, method3, method7)
+    var method1 = new Method(publicModifier, "method1", voidType, List.of(), descriptor, mainGroup);
+    var method2 = new Method(publicModifier, "method2", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var method3 = new Method(publicModifier, "method3", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var method3Bis = new Method(publicModifier, "method3Bis", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var method4 = new Method(publicModifier, "method4", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var method5 = new Method(publicModifier, "method5", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var method6 = new Method(publicModifier, "method6", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var method7 = new Method(publicModifier, "method7", voidType, List.of(), descriptor, Call.Group.EMPTY_GROUP);
+    var alice = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Alice", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(method2, method3, method3Bis, method7)
+    );
+    var bob = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Bob", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(method1, method5)
+    );
+    var charlie = new Entity(
+            Set.of(),
+            new TypeInfo(Optional.empty(), "Charlie", List.of()),
+            Stereotype.CLASS,
+            List.of(),
+            List.of(method4, method6)
     );
     var writer = new StringWriter();
     var generator = new PlantUmlGenerator();
-    generator.generateSequenceDiagram(true, alice, method1, new Package("", List.of(), List.of()), writer);
+    generator.generateSequenceDiagram(true, method1,
+            new Package("", List.of(alice, bob, charlie), List.of()),
+            writer
+    );
     assertEquals("""
             @startuml
 
@@ -381,6 +490,7 @@ public class PlantUmlGeneratorTest {
             Alice -> Charlie: method6()
             else
             Bob -> Alice: method7()
+            Bob -> Alice: method3Bis()
             end
             @enduml
             """, writer.toString());

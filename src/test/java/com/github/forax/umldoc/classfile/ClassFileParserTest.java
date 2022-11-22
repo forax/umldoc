@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.github.forax.umldoc.gen.PlantUmlGenerator;
+import com.github.forax.umldoc.gen.ExecutionPathResolver;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -136,7 +136,7 @@ public class ClassFileParserTest {
                 method.name(),
                 method.returnTypeInfo(), method.parameters(),
                 method.descriptor(),
-                new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())))
+                new Call.Group(method.callGroup().kind(), ExecutionPathResolver.relevantCallsGroup(method.callGroup(), p).calls())))
             .toList();
 
     assertEquals(methods, tvMethods);
@@ -185,7 +185,7 @@ public class ClassFileParserTest {
                 method.returnTypeInfo(),
                 method.parameters(),
                 method.descriptor(),
-                new Call.Group(method.callGroup().kind(), PlantUmlGenerator.relevantCallsGroup(method.callGroup(), p).calls())
+                new Call.Group(method.callGroup().kind(), ExecutionPathResolver.relevantCallsGroup(method.callGroup(), p).calls())
             ))
             .toList();
 
