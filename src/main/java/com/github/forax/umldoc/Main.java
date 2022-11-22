@@ -88,7 +88,7 @@ public class Main {
     try {
       return ModuleScrapper.scrapModule(module.get());
     } catch (IOException e) {
-      throw new IllegalStateException("Couldn't get the list of Packages : " + e.getMessage());
+      throw new IllegalStateException("Couldn't get the list of Packages",  e);
     }
   }
 
